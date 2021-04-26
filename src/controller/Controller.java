@@ -37,7 +37,7 @@ public class Controller
         appScene = scn;
         header = new HeaderPane();
         login = new LoginPage(this);
-        editAppt = new AddEditAppointment();
+        editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview();
@@ -116,7 +116,11 @@ public class Controller
 
     private void loadEditAppointment(Appointment a)
     {
-
+        if(a != null)
+        {
+            //load an existing appointment for editing
+        }
+        appScene.setRoot(editAppt);
     }
 
     private void logLoginAttempt(String username, boolean valid)
