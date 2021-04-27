@@ -61,4 +61,9 @@ public class Appointment
     {
         return "";
     }
+
+    public String getAppointmentId()
+    {
+        return appointmentId;
+    }
 }

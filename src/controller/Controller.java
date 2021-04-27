@@ -1,14 +1,19 @@
 package controller;
 
 import appointment.Appointment;
+import appointment.AppointmentType;
+import appointment.Location;
 import customer.Customer;
 import javafx.scene.Scene;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
 
+import java.util.Date;
+
 public class Controller
 {
+    private final Scene appScene;
     private final HeaderPane header;
     private final LoginPage login;
     private final AddEditAppointment editAppt;
@@ -16,11 +21,11 @@ public class Controller
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
 
-    private final Scene appScene;
+    /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
     private final int testPassword = hashPassword("test");
     private Customer testCustomer1 = new Customer(
-            "T1",
+            "C1",
             "Nicholas",
             "Warner",
             "8012314827",
@@ -31,6 +36,18 @@ public class Controller
             "Utah",
             "84102"
     );
+    private final Appointment testAppointment1 = new Appointment(
+            "A1",
+            "E1",
+            "C1",
+            "Welcome Meeting",
+            AppointmentType.TYPE_ONE,
+            "Orientation for new employees",
+            new Date(2021, 10, 1),
+            new Date(2021, 10, 1),
+            Location.LONDON
+    );
+    /////////////////////////////////////////////////////////////////////////////////////////
 
     public Controller(Scene scn)
     {
@@ -61,7 +78,7 @@ public class Controller
                 loadEditCustomer(null);
                 break;
             case EDIT_APPOINTMENT:
-                loadEditAppointment(null);
+                loadEditAppointment();
                 break;
             default:
         }//switch
@@ -98,6 +115,15 @@ public class Controller
 
     }
 
+    public void loadAppointmentToEdit(Appointment a)
+    {
+        if(a != null)
+            editAppt.loadAppointmentInfo(a);
+        else
+            editAppt.loadAppointmentInfo(testAppointment1);
+        changeScene(SceneCode.EDIT_APPOINTMENT);
+    }
+
     private void loadCustomerOverview()
     {
         appScene.setRoot(custOverview);
@@ -114,18 +140,19 @@ public class Controller
         appScene.setRoot(editCust);
     }
 
-    private void loadEditAppointment(Appointment a)
+    private void loadEditAppointment()
     {
-        if(a != null)
-        {
-            //load an existing appointment for editing
-        }
         appScene.setRoot(editAppt);
     }
 
     private void logLoginAttempt(String username, boolean valid)
     {
 
+    }
+
+    public String nextAppointmentId()
+    {
+        return "A1";
     }
 
     public void updateCustomer()

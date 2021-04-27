@@ -21,8 +21,11 @@ public class CustomerOverview  extends BorderPane
         messageLabel = new Label("Hello Nora!!");
         returnButton = new Button("Return");
         addCustomerButton = new Button("Add Customer");
-        Button addApptButton = new Button("Add Appointment"); //TODO: this will go in appt. overview scene
+        ///////////////FOR TESTING/////////////////////////////////////////////////////////////////////////////////
+        Button addApptButton = new Button("Add Appointment");
+        Button editApptButton = new Button("Edit Appointment");
         testCustomerButton = new Button("Load");
+        ///////////////FOR TESTING/////////////////////////////////////////////////////////////////////////////////
         HBox buttonPane = new HBox(addCustomerButton, testCustomerButton, addApptButton, returnButton);
         this.setTop(controller.getHeader());
         this.setCenter(messageLabel);
@@ -40,6 +43,10 @@ public class CustomerOverview  extends BorderPane
         addApptButton.setOnAction(event ->
         {
             controller.changeScene(SceneCode.EDIT_APPOINTMENT);
+        });
+        editApptButton.setOnAction(event ->
+        {
+            controller.loadAppointmentToEdit(null);
         });
     }//constructor
 }

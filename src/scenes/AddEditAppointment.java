@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import utils.DateBox;
 
 public class AddEditAppointment extends BorderPane
 {
@@ -15,9 +16,9 @@ public class AddEditAppointment extends BorderPane
     private Label apptTitleLabel;   private TextField apptTitleField;
     private Label apptTypeLabel;    private ComboBox apptTypeCombo;
     private Label customerIdLabel;  private TextField customerIdField;      private TextField customerContactField;
-    private Label contactIdLabel;   private TextField contactIdField;       private TextField contactContactField;
-    private Label startLabel;       private TextField startDateField;       private TextField startTimeField;
-    private Label endLabel;         private TextField endDateField;         private TextField endTimeField;
+    private Label contactIdLabel;   private ComboBox contactIdCombo;        private TextField contactContactField;
+    private Label startLabel;       private TextField startTimeField;       private DateBox startDateBox;
+    private Label endLabel;         private TextField endTimeField;         private DateBox endDateBox;
     private Label locationLabel;    private ComboBox locationCombo;
     private Label descriptionLabel; private TextArea descriptionArea;
     private Button scheduleButton;  private Button cancelButton;
@@ -40,13 +41,13 @@ public class AddEditAppointment extends BorderPane
         customerIdField = new TextField("");
         customerContactField = new TextField("");
         contactIdLabel = new Label("Contact");
-        contactIdField = new TextField("");
+        contactIdCombo = new ComboBox<String>();
         contactContactField = new TextField("");
         startLabel = new Label("Start Time");
-        startDateField = new TextField("10/10/10");
+        startDateBox = new DateBox();
         startTimeField = new TextField("10:00");
         endLabel = new Label("End Time");
-        endDateField = new TextField("10/10/10");
+        endDateBox = new DateBox();
         endTimeField = new TextField("22:00");
         locationLabel = new Label("Location");
         locationCombo = new ComboBox<String>();
@@ -55,6 +56,15 @@ public class AddEditAppointment extends BorderPane
         scheduleButton = new Button("Submit");
         cancelButton = new Button("Cancel");
 
+        //set initial states for scene elements
+        //customer information fields are disabled
+        customerContactField.setDisable(true);
+        customerIdField.setDisable(true);
+        //appoint id is auto-generated
+        apptIdField.setDisable(true);
+        //contact info auto-filled based on selection
+        contactContactField.setDisable(true);
+
         //add scene elements to container
         GridPane contentPane = new GridPane();
         contentPane.addRow(0, sceneLabel);
@@ -62,12 +72,18 @@ public class AddEditAppointment extends BorderPane
         contentPane.addRow(2, apptIdLabel, apptIdField);
         contentPane.addRow(3, apptTitleLabel, apptTitleField);
         contentPane.addRow(4, apptTypeLabel, apptTypeCombo);
-        contentPane.addRow(5, contactIdLabel, contactIdField, contactContactField);
-        contentPane.addRow(6, startLabel, startDateField, startTimeField);
-        contentPane.addRow(7, endLabel, endDateField, endTimeField);
+        contentPane.addRow(5, contactIdLabel, contactIdCombo, contactContactField);
+        contentPane.addRow(6, startLabel, startDateBox, startTimeField);
+        contentPane.addRow(7, endLabel, endDateBox, endTimeField);
         contentPane.addRow(8, locationLabel, locationCombo);
         contentPane.addRow(9, descriptionLabel, descriptionArea);
         contentPane.addRow(10, scheduleButton, cancelButton);
         this.setCenter(contentPane);
+        this.setTop(header);
+    }
+
+    public void loadAppointmentInfo(Appointment a)
+    {
+
     }
 }
