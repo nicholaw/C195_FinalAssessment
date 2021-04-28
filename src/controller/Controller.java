@@ -8,8 +8,8 @@ import javafx.scene.Scene;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
-
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Controller
 {
@@ -37,16 +37,20 @@ public class Controller
             "84102"
     );
     private final Appointment testAppointment1 = new Appointment(
-            "A1",
-            "E1",
-            "C1",
+            "Appointment.001",
+            "Employee.001",
+            "mkinkead@wgu.edu",
+            "Customer.001",
+            "nwarn@yahoo.com",
             "Welcome Meeting",
             AppointmentType.TYPE_ONE,
             "Orientation for new employees",
-            new Date(2021, 10, 1),
-            new Date(2021, 10, 1),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
             Location.LONDON
     );
+    public ArrayList<Customer> testCustomers = new ArrayList<>();
+    public ArrayList<Appointment> testAppointments = new ArrayList<>();
     /////////////////////////////////////////////////////////////////////////////////////////
 
     public Controller(Scene scn)
@@ -59,6 +63,11 @@ public class Controller
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview();
         this.changeScene(SceneCode.LOGIN);
+
+        ///////////FOR TESTING////////////////////////////////////////////////////////////////
+        testCustomers.add(testCustomer1);
+        testAppointments.add(testAppointment1);
+        //////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 
     public void changeScene(SceneCode code)

@@ -1,7 +1,9 @@
 package scenes;
 
 import appointment.Appointment;
+import appointment.Location;
 import controller.Controller;
+import customer.Customer;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -50,20 +52,26 @@ public class AddEditAppointment extends BorderPane
         endDateBox = new DateBox();
         endTimeField = new TextField("22:00");
         locationLabel = new Label("Location");
-        locationCombo = new ComboBox<String>();
+        locationCombo = new ComboBox<Location>();
         descriptionLabel = new Label("Description");
         descriptionArea = new TextArea();
         scheduleButton = new Button("Submit");
         cancelButton = new Button("Cancel");
 
         //set initial states for scene elements
-        //customer information fields are disabled
-        customerContactField.setDisable(true);
+        customerContactField.setDisable(true);      //customer information fields are disabled
         customerIdField.setDisable(true);
-        //appoint id is auto-generated
-        apptIdField.setDisable(true);
-        //contact info auto-filled based on selection
-        contactContactField.setDisable(true);
+        apptIdField.setDisable(true);               //appoint id is auto-generated
+        contactContactField.setDisable(true);       //contact info auto-filled based on selection
+        for(Appointment a : controller.testAppointments)    //Add employee contacts
+        {
+            contactIdCombo.getItems().add(a.getContactId());
+        }
+        //contactIdCombo.setValue(contactIdCombo.getItems().get(0));
+        locationCombo.getItems().addAll(Location.LONDON, Location.NEW_YORK, Location.QUEBEC);
+        locationCombo.setValue(locationCombo.getItems().get(0));
+        apptTypeCombo.getItems().addAll("Type 1", "Type 2", "Type 3");
+        apptTypeCombo.setValue(apptTypeCombo.getItems().get(0));
 
         //add scene elements to container
         GridPane contentPane = new GridPane();
@@ -84,6 +92,14 @@ public class AddEditAppointment extends BorderPane
 
     public void loadAppointmentInfo(Appointment a)
     {
+        customerIdField.setText(a.getCustomerId());
+        customerContactField.setText(a.getCustomerContactInfo());
+        apptTitleField.setText(a.getTitle());
+    }
 
+    public void loadCustomerInfo(Customer c)
+    {
+        customerIdField.setText(c.getCustomerId());
+        customerContactField.setText(c.getPhoneNum());
     }
 }

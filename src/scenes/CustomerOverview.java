@@ -25,7 +25,7 @@ public class CustomerOverview  extends BorderPane
         Button addApptButton = new Button("Add Appointment");
         Button editApptButton = new Button("Edit Appointment");
         testCustomerButton = new Button("Load");
-        ///////////////FOR TESTING/////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         HBox buttonPane = new HBox(addCustomerButton, testCustomerButton, addApptButton, returnButton);
         this.setTop(controller.getHeader());
         this.setCenter(messageLabel);
