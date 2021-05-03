@@ -4,10 +4,13 @@ import appointment.Appointment;
 import appointment.AppointmentType;
 import appointment.Location;
 import customer.Customer;
+import database.DBConnection;
 import javafx.scene.Scene;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
+
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -20,6 +23,7 @@ public class Controller
     private final AddEditCustomer editCust;
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
+   private final DBConnection dbConnection;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -57,6 +61,7 @@ public class Controller
     {
         appScene = scn;
         header = new HeaderPane();
+        dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
@@ -67,6 +72,8 @@ public class Controller
         ///////////FOR TESTING////////////////////////////////////////////////////////////////
         testCustomers.add(testCustomer1);
         testAppointments.add(testAppointment1);
+        //File f = new File("src\\database\\db.properties");
+        //System.out.println(f.exists());
         //////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 
