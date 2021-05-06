@@ -126,9 +126,9 @@ public class AddEditCustomer  extends BorderPane
     {
         if(c != null)
         {
-            customerIdField.setText(c.getCustomerId());
-            firstNameField.setText(c.getFirstName());
-            lastNameField.setText(c.getLastName());
+            customerIdField.setText(c.getCustomerId() + "");
+            firstNameField.setText(c.getName());
+            lastNameField.setText(c.getName());
             address1Field.setText(c.getAddressLine1());
             address2Field.setText(c.getAddressLine2());
             cityField.setText(c.getCity());
@@ -146,5 +146,10 @@ public class AddEditCustomer  extends BorderPane
                 stateCombo.setValue(null);
             temp = "";
         }
+    }//loadCustomerInfo
+
+    private boolean validateForm()
+    {
+        return false;
     }
 }

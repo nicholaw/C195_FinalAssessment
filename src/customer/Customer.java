@@ -2,9 +2,8 @@ package customer;
 
 public class Customer
 {
-    private String customerId;
-    private String firstName;
-    private String lastName;
+    private int customerId;
+    private String name;
     private String phoneNum;
     private String addressLine1;
     private String addressLine2;
@@ -12,22 +11,22 @@ public class Customer
     private String country;
     private String state;
     private String postCode;
+    private int divisionId;
 
     public Customer(
-            String id,
-            String firstName,
-            String lastName,
+            int id,
+            String name,
             String phoneNum,
             String addressLine1,
             String addressLine2,
             String city,
             String country,
             String state,
-            String postCode)
+            String postCode,
+            int division)
     {
         customerId = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.phoneNum = phoneNum;
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
@@ -35,11 +34,11 @@ public class Customer
         this.country = country;
         this.state = state;
         this.postCode = postCode;
+        this.divisionId = division;
     }
 
     public Customer(
-            String firstName,
-            String lastName,
+            String name,
             String phoneNum,
             String addressLine1,
             String addressLine2,
@@ -48,8 +47,7 @@ public class Customer
             String state,
             String postCode)
     {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.phoneNum = phoneNum;
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
@@ -60,9 +58,18 @@ public class Customer
         customerId = generateId();
     }
 
-    private static String generateId()
+    private static int generateId()
     {
-        return "";
+        return 0;
+    }
+
+    public String getAddress()
+    {
+        String str = "";
+        str = str + addressLine1 + "\n";
+        str = str + addressLine2 + "\n";
+        str = str + city + ", " + state + ", " + country;
+        return str;
     }
 
     public String getAddressLine1()
@@ -85,19 +92,14 @@ public class Customer
         return city;
     }
 
-    public String getCustomerId()
+    public int getCustomerId()
     {
         return customerId;
     }
 
-    public String getFirstName()
+    public String getName()
     {
-        return firstName;
-    }
-
-    public String getLastName()
-    {
-        return lastName;
+        return name;
     }
 
     public String getPhoneNum()
@@ -113,5 +115,10 @@ public class Customer
     public String getState()
     {
         return state;
+    }
+
+    public int getDivisionId()
+    {
+        return divisionId;
     }
 }//Customer

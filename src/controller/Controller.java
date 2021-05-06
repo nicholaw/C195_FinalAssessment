@@ -9,9 +9,9 @@ import javafx.scene.Scene;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
-
-import java.io.File;
+import utils.User;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Controller
@@ -23,22 +23,23 @@ public class Controller
     private final AddEditCustomer editCust;
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
-   private final DBConnection dbConnection;
+    private final DBConnection dbConnection;
+    private User currentUser;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
     private final int testPassword = hashPassword("test");
-    private Customer testCustomer1 = new Customer(
-            "C1",
-            "Nicholas",
-            "Warner",
-            "8012314827",
-            "130 S 1300 E",
-            "Apt. 605",
+    private final Customer testCustomer1 = new Customer(
+            0,
+            "Nick Warner",
+            "111-111-1111",
+            "500 Tenshi Ave.",
+            "Apt. 101",
             "Salt Lake City",
+            "UT",
             "USA",
-            "Utah",
-            "84102"
+            "8400",
+            1
     );
     private final Appointment testAppointment1 = new Appointment(
             "Appointment.001",
@@ -71,9 +72,9 @@ public class Controller
 
         ///////////FOR TESTING////////////////////////////////////////////////////////////////
         testCustomers.add(testCustomer1);
+        currentUser = new User(0, "Gary");
         testAppointments.add(testAppointment1);
-        //File f = new File("src\\database\\db.properties");
-        //System.out.println(f.exists());
+        //dbConnection.insertCustomer(testCustomer1, currentUser.getName(), LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         //////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 
@@ -147,7 +148,7 @@ public class Controller
 
     public void loadCustomerToEdit()
     {
-        editCust.loadCustomerInfo(testCustomer1);
+        //editCust.loadCustomerInfo(testCustomer1);
         changeScene(SceneCode.EDIT_CUSTOMER);
     }
 

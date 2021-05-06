@@ -99,7 +99,7 @@ public class AddEditAppointment extends BorderPane
 
     public void loadCustomerInfo(Customer c)
     {
-        customerIdField.setText(c.getCustomerId());
+        customerIdField.setText(c.getCustomerId() + "");
         customerContactField.setText(c.getPhoneNum());
     }
 }
