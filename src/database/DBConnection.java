@@ -3,12 +3,12 @@ package database;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
-
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -24,8 +24,7 @@ public class DBConnection
         try
         {
             conn = getDataSource().getConnection();
-        }
-        catch (SQLException e)
+        } catch (SQLException e)
         {
             conn = null;
             e.printStackTrace();
@@ -42,6 +41,48 @@ public class DBConnection
         return false;
     }//deleteCustomer
 
+    public ResultSet getAllDivisions()
+    {
+        String sql = "SELECT Division_ID AS id, Division AS name, Country_ID AS country FROM first-level divisions " +
+                "ORDER BY country, name";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            return stmt.executeQuery();
+        } catch(SQLException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }//getAllDivisions
+
+    public ResultSet getCountries()
+    {
+        String sql = "SELECT Country_ID AS id, Country AS name FROM countries ORDER BY name";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            return stmt.executeQuery();
+        } catch(SQLException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }//getCountries
+
+    public ResultSet getCountryDivisions(int countryId)
+    {
+        String sql = "SELECT Division_ID AS id, Division AS name FROM first-level divisions " +
+                "WHERE Country_ID = ? ORDER BY name";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            stmt.setInt(1, countryId);
+            return stmt.executeQuery();
+        } catch(SQLException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }//getCountryDivisions
+
     private static DataSource getDataSource() {
         Properties properties = new Properties();
         MysqlDataSource mysqlDS = null;
@@ -52,8 +93,7 @@ public class DBConnection
             mysqlDS.setURL(properties.getProperty("URL"));
             mysqlDS.setUser(properties.getProperty("USERNAME"));
             mysqlDS.setPassword(properties.getProperty("PASSWORD"));
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -84,8 +124,7 @@ public class DBConnection
             stmt.setInt(10, c.getDivisionId());
             System.out.println("Adding customer\nRows affected: " + stmt.executeUpdate());
             return true;
-        }
-        catch(SQLException e)
+        } catch(SQLException e)
         {
             e.printStackTrace();
             return false;

@@ -9,10 +9,15 @@ import javafx.scene.Scene;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
+import utils.Country;
+import utils.Division;
 import utils.User;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class Controller
 {
@@ -24,6 +29,7 @@ public class Controller
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
+    private final HashSet<Country> countries;
     private User currentUser;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
@@ -63,6 +69,7 @@ public class Controller
         appScene = scn;
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
+        countries = initializeCountries();
         login = new LoginPage(this);
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
@@ -112,6 +119,11 @@ public class Controller
         return header;
     }
 
+    public Collection<Country> getCountries()
+    {
+        return countries;
+    }//getCountries
+
     //Hashes user-provided password for validation
     private static int hashPassword(CharSequence password)
     {
@@ -121,6 +133,38 @@ public class Controller
             sum += password.charAt(i);
         return sum;
     }
+
+    private HashSet<Country> initializeCountries() {
+        //Declare local variables
+        var allCountries = new HashSet<Country>();
+        Country country;
+        int countryId;
+        //Obtain result set of all countries in Countries table
+        ResultSet rs_countries = dbConnection.getCountries();
+        ResultSet rs_divisions;
+        if(rs_countries != null)
+        {
+            try
+            {
+                //Add countries and their divisions to the set of countries
+                while(rs_countries.next())
+                {
+                    countryId = rs_countries.getInt("id");
+                    country = new Country(countryId, rs_countries.getString("name"));
+                    rs_divisions = dbConnection.getCountryDivisions(countryId);
+                    while(rs_divisions.next())
+                    {
+                        country.addDivision(new Division(rs_divisions.getInt("id"), rs_divisions.getString("name")));
+                    }
+                    allCountries.add(country);
+                }
+            } catch(SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return allCountries;
+    }//initializeCountries
 
     private void loadLogin()
     {
