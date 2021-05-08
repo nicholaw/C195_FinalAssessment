@@ -2,10 +2,7 @@ package scenes;
 
 import controller.Controller;
 import customer.Customer;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -22,8 +19,13 @@ public class AddEditCustomer  extends BorderPane
     //Scene elements
 
     private Label sceneLabel;           private HeaderPane header;
-    private CountryAndDivisionsBox countryAndDivisionsCombos;
+    private Label idLabel;              private TextField idField;
+    private Label nameLabel;            private TextField nameField;        private Label nameErrorLabel;
+    private Label phoneLabel;           private TextField phoneField;       private Label phoneErrorLabel;
+    private Label addressLabel;         private TextArea addressArea;       private Label addressErrorLabel;
     private Button submitButton;        private Button cancelButton;
+    private CountryAndDivisionsBox countryAndDivisionsCombos;
+    private Alert confirmCancelAlert;
 
     public AddEditCustomer(Controller controller)
     {
