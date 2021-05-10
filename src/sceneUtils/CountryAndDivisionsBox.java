@@ -49,4 +49,18 @@ public class CountryAndDivisionsBox extends HBox
                 firstDivisionCombo.setValue(null);
         }
     }//updateFirstDivisions
+
+    public void clear()
+    {
+        if(countryCombo.getItems().size() > 0)
+        {
+            countryCombo.setValue(countryCombo.getItems().get(0));
+            updateFirstDivisions();
+        }
+        else
+        {
+            countryCombo.setValue(null);
+            firstDivisionCombo.setValue(null);
+        }
+    }//clear
 }
