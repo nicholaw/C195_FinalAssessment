@@ -8,8 +8,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import sceneUtils.CountryAndDivisionsBox;
-import sceneUtils.CustomerConstants;
-import sceneUtils.CustomerFieldCode;
+import customer.CustomerConstants;
+import customer.CustomerFieldCode;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 
@@ -48,12 +48,14 @@ public class AddEditCustomer  extends BorderPane
         addressArea			= new TextArea("");
         cityLabel			= new Label("City");
         cityField			= new TextField("");
-        countryAndDivisionsCombos = new CountryAndDivisionsBox(controller.getCountries());
+        countryAndDivisionsCombos = controller.getCountries();
         postCodeLabel       = new Label("Postal Code");
         postCodeField       = new TextField("");
         nameErrorLabel		= new Label("");
         phoneErrorLabel		= new Label("");
         addressErrorLabel	= new Label("");
+        cityErrorLabel      = new Label("");
+        postCodeErrorLabel  = new Label("");
         confirmCancelAlert	= new Alert(AlertType.CONFIRMATION);
 
         //Instantiate buttons and add event listeners

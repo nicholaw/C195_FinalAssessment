@@ -6,18 +6,12 @@ import appointment.Location;
 import customer.Customer;
 import database.DBConnection;
 import javafx.scene.Scene;
+import sceneUtils.CountryAndDivisionsBox;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
-import utils.Country;
-import utils.Division;
 import utils.User;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 
 public class Controller
 {
@@ -29,37 +23,12 @@ public class Controller
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
-    private final HashSet<Country> countries;
+    private final CountryAndDivisionsBox countries;
     private User currentUser;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
     private final int testPassword = hashPassword("test");
-    private final Customer testCustomer1 = new Customer(
-            0,
-            "Nick Warner",
-            "111-111-1111",
-            "500 Tenshi Ave.",
-            "Apt. 101",
-            "Salt Lake City",
-            "UT",
-            "USA",
-            "8400",
-            1
-    );
-    private final Appointment testAppointment1 = new Appointment(
-            "Appointment.001",
-            "Employee.001",
-            "mkinkead@wgu.edu",
-            "Customer.001",
-            "nwarn@yahoo.com",
-            "Welcome Meeting",
-            AppointmentType.TYPE_ONE,
-            "Orientation for new employees",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Location.LONDON
-    );
     public ArrayList<Customer> testCustomers = new ArrayList<>();
     public ArrayList<Appointment> testAppointments = new ArrayList<>();
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +38,7 @@ public class Controller
         appScene = scn;
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
-        countries = initializeCountries();
+        countries = new CountryAndDivisionsBox(dbConnection.getCountries());
         login = new LoginPage(this);
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
@@ -78,9 +47,9 @@ public class Controller
         this.changeScene(SceneCode.LOGIN);
 
         ///////////FOR TESTING////////////////////////////////////////////////////////////////
-        testCustomers.add(testCustomer1);
+        //testCustomers.add(testCustomer1);
         currentUser = new User(0, "Gary");
-        testAppointments.add(testAppointment1);
+        //testAppointments.add(testAppointment1);
         //dbConnection.insertCustomer(testCustomer1, currentUser.getName(), LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         //////////////////////////////////////////////////////////////////////////////////////
     }//constructor
@@ -119,7 +88,7 @@ public class Controller
         return header;
     }
 
-    public Collection<Country> getCountries()
+    public CountryAndDivisionsBox getCountries()
     {
         return countries;
     }//getCountries
@@ -133,38 +102,6 @@ public class Controller
             sum += password.charAt(i);
         return sum;
     }
-
-    private HashSet<Country> initializeCountries() {
-        //Declare local variables
-        var allCountries = new HashSet<Country>();
-        Country country;
-        int countryId;
-        //Obtain result set of all countries in Countries table
-        ResultSet rs_countries = dbConnection.getCountries();
-        ResultSet rs_divisions;
-        if(rs_countries != null)
-        {
-            try
-            {
-                //Add countries and their divisions to the set of countries
-                while(rs_countries.next())
-                {
-                    countryId = rs_countries.getInt("id");
-                    country = new Country(countryId, rs_countries.getString("name"));
-                    rs_divisions = dbConnection.getCountryDivisions(countryId);
-                    while(rs_divisions.next())
-                    {
-                        country.addDivision(new Division(rs_divisions.getInt("id"), rs_divisions.getString("name")));
-                    }
-                    allCountries.add(country);
-                }
-            } catch(SQLException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        return allCountries;
-    }//initializeCountries
 
     private void loadLogin()
     {
@@ -181,7 +118,7 @@ public class Controller
         if(a != null)
             editAppt.loadAppointmentInfo(a);
         else
-            editAppt.loadAppointmentInfo(testAppointment1);
+            //editAppt.loadAppointmentInfo(testAppointment1);
         changeScene(SceneCode.EDIT_APPOINTMENT);
     }
 

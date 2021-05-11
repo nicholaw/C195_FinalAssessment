@@ -1,4 +1,4 @@
-package sceneUtils;
+package customer;
 
 public enum CustomerFieldCode
 {

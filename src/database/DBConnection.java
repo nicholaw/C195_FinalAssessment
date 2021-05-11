@@ -3,6 +3,8 @@ package database;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
+import utils.Country;
+import utils.Division;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +12,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 
 public class DBConnection
@@ -24,6 +28,7 @@ public class DBConnection
         try
         {
             conn = getDataSource().getConnection();
+            //this.printDbMetaData();
         } catch (SQLException e)
         {
             conn = null;
@@ -55,12 +60,22 @@ public class DBConnection
         }
     }//getAllDivisions
 
-    public ResultSet getCountries()
+    public Collection<Country> getCountries()
     {
-        String sql = "SELECT Country_ID AS id, Country AS name FROM countries ORDER BY name";
+        //TODO: wtf, why can't I use IN keyword
+        String sql = "SELECT country_id AS id, country AS name FROM countries WHERE country = 'Canada' OR country = 'United States' OR country = 'United Kingdom' ORDER BY name";
         try(var stmt = conn.prepareStatement(sql))
         {
-            return stmt.executeQuery();
+            //stmt.setString(1, DBConstants.PARTICIPATING_COUNTRIES);
+            var result = stmt.executeQuery();
+            var countries = new LinkedHashSet<Country>();
+            while(result.next())
+            {
+                countries.add(new Country(result.getInt("id"), result.getString("name")));
+                System.out.println(result.getInt("id") + "\t" + result.getString("name"));
+            }
+            setCountryDivisions(countries);
+            return countries;
         } catch(SQLException e)
         {
             e.printStackTrace();
@@ -68,20 +83,28 @@ public class DBConnection
         }
     }//getCountries
 
-    public ResultSet getCountryDivisions(int countryId)
+    private void setCountryDivisions(Collection<Country> countries)
     {
-        String sql = "SELECT Division_ID AS id, Division AS name FROM first-level divisions " +
-                "WHERE Country_ID = ? ORDER BY name";
-        try(var stmt = conn.prepareStatement(sql))
+        String sql = "";
+        //TODO: batch queries to improve performance
+        for(Country c : countries)
         {
-            stmt.setInt(1, countryId);
-            return stmt.executeQuery();
-        } catch(SQLException e)
-        {
-            e.printStackTrace();
-            return null;
+            sql = "SELECT Division_ID AS id, Division AS name FROM `first_level_divisions` " +
+                    "WHERE Country_ID = ? ORDER BY name";
+            try(var stmt = conn.prepareStatement(sql))
+            {
+                stmt.setInt(1, c.getCountryId());
+                var result = stmt.executeQuery();
+                while(result.next())
+                {
+                    c.addDivision(new Division(result.getInt("id"), result.getString("name")));
+                }
+            } catch(SQLException e)
+            {
+                e.printStackTrace();
+            }
         }
-    }//getCountryDivisions
+    }//setCountryDivisions
 
     private static DataSource getDataSource() {
         Properties properties = new Properties();
@@ -130,6 +153,25 @@ public class DBConnection
             return false;
         }
     }//insertCustomer
+
+    private void printDbMetaData()
+    {
+        String sql = "SHOW TABLES";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            var result = stmt.executeQuery();
+            while(result.next())
+            {
+                System.out.print("" + result.getString(1) + "\n");
+            }
+        } catch(SQLException e)
+        {
+            e.printStackTrace();
+        } catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }//printDbMetaData
 
     public boolean updateAppointment()
     {

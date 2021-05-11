@@ -1,7 +1,7 @@
 package utils;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Country
@@ -14,7 +14,7 @@ public class Country
     {
         this.countryId = id;
         this.countryName = name;
-        firstLevelDivisions = new HashSet<Division>();
+        firstLevelDivisions = new LinkedHashSet<Division>();
     }//constructor
 
     public boolean addDivision(Division d)

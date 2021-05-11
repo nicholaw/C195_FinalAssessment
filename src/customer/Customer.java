@@ -1,56 +1,51 @@
 package customer;
 
+import utils.Country;
+import utils.Division;
+
 public class Customer
 {
     private int customerId;
     private String name;
     private String phoneNum;
-    private String addressLine1;
-    private String addressLine2;
+    private String address;
     private String city;
-    private String country;
-    private String state;
+    private Country country;
+    private Division state;
     private String postCode;
-    private int divisionId;
 
     public Customer(
             int id,
             String name,
             String phoneNum,
-            String addressLine1,
-            String addressLine2,
+            String address,
             String city,
-            String country,
-            String state,
-            String postCode,
-            int division)
+            Country country,
+            Division state,
+            String postCode)
     {
         customerId = id;
         this.name = name;
         this.phoneNum = phoneNum;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
+        this.address = address;
         this.city = city;
         this.country = country;
         this.state = state;
         this.postCode = postCode;
-        this.divisionId = division;
     }
 
     public Customer(
             String name,
             String phoneNum,
-            String addressLine1,
-            String addressLine2,
+            String address,
             String city,
-            String country,
-            String state,
+            Country country,
+            Division state,
             String postCode)
     {
         this.name = name;
         this.phoneNum = phoneNum;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
+        this.address = address;
         this.city = city;
         this.country = country;
         this.state = state;
@@ -65,26 +60,17 @@ public class Customer
 
     public String getAddress()
     {
-        String str = "";
-        str = str + addressLine1 + "\n";
-        str = str + addressLine2 + "\n";
-        str = str + city + ", " + state + ", " + country;
-        return str;
+        return address;
     }
 
-    public String getAddressLine1()
-    {
-        return addressLine1;
-    }
-
-    public String getAddressLine2()
-    {
-        return addressLine2;
-    }
-
-    public String getCountry()
+    public Country getCountry()
     {
         return country;
+    }
+
+    public int getCountryId()
+    {
+        return country.getCountryId();
     }
 
     public String getCity()
@@ -112,13 +98,13 @@ public class Customer
         return postCode;
     }
 
-    public String getState()
+    public Division getFirstLevelDivision()
     {
         return state;
     }
 
     public int getDivisionId()
     {
-        return divisionId;
+        return state.getDivisionId();
     }
 }//Customer
