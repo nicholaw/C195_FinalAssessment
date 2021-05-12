@@ -59,7 +59,6 @@ public class AddEditCustomer  extends BorderPane
         confirmCancelAlert	= new Alert(AlertType.CONFIRMATION);
 
         //Instantiate buttons and add event listeners
-        //TODO: listeners for text fields to limit number of characters
         submitButton = new Button("Add Customer");
         submitButton.setOnAction(event -> {
             if(this.validateForm())
@@ -73,6 +72,28 @@ public class AddEditCustomer  extends BorderPane
             //TODO: if new input, confirm navigation from page
             clearAll();
             controller.changeScene(SceneCode.CUSTOMER_OVERVIEW);
+        });
+
+        //Add key event listener to text fields and areas to prevent number of characters over maximum allowed
+        nameField.setOnKeyReleased(event ->
+        {
+            checkForMaximumCharacters(nameField, CustomerConstants.MAX_CHAR_DEFAULT);
+        });
+        phoneField.setOnKeyReleased(event ->
+        {
+            checkForMaximumCharacters(phoneField, CustomerConstants.MAX_CHAR_DEFAULT);
+        });
+        addressArea.setOnKeyReleased(event ->
+        {
+            checkForMaximumCharacters(addressArea, CustomerConstants.MAX_CHAR_ADDRESS);
+        });
+        cityField.setOnKeyReleased(event ->
+        {
+            checkForMaximumCharacters(cityField, CustomerConstants.MAX_CHAR_DEFAULT);
+        });
+        postCodeField.setOnKeyReleased(event ->
+        {
+            checkForMaximumCharacters(postCodeField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
 
         //Set initial states of scene elements
@@ -92,7 +113,18 @@ public class AddEditCustomer  extends BorderPane
         fieldsPane.addRow(8, buttonPane);
         this.setTop(header);
         this.setCenter(fieldsPane);
-    }
+    }//constructor
+
+    private void checkForMaximumCharacters(TextInputControl inputElement, int maximum)
+    {
+        String oldString = inputElement.getText();
+        if(oldString.length() > maximum)
+        {
+            String newString = oldString.substring(0, (maximum));
+            inputElement.setText(newString);
+            inputElement.positionCaret(maximum);
+        }
+    }//checkForMaximumCharacters
 
     //Clears all values from input fields
     public void clearAll()
