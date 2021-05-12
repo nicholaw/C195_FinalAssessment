@@ -62,17 +62,14 @@ public class DBConnection
 
     public Collection<Country> getCountries()
     {
-        //TODO: wtf, why can't I use IN keyword
-        String sql = "SELECT country_id AS id, country AS name FROM countries WHERE country = 'Canada' OR country = 'United States' OR country = 'United Kingdom' ORDER BY name";
+        String sql = "SELECT country_id AS id, country AS name FROM countries ORDER BY name";
         try(var stmt = conn.prepareStatement(sql))
         {
-            //stmt.setString(1, DBConstants.PARTICIPATING_COUNTRIES);
             var result = stmt.executeQuery();
             var countries = new LinkedHashSet<Country>();
             while(result.next())
             {
                 countries.add(new Country(result.getInt("id"), result.getString("name")));
-                System.out.println(result.getInt("id") + "\t" + result.getString("name"));
             }
             setCountryDivisions(countries);
             return countries;
@@ -82,6 +79,29 @@ public class DBConnection
             return null;
         }
     }//getCountries
+
+    public Collection<Customer> getCustomers()
+    {
+        var list = new LinkedHashSet<Customer>();
+        String sql = "SELECT Customer_ID AS id, Customer_Name AS name, customers.Division_ID AS divId, Country_ID as countryId " +
+                "FROM customers LEFT JOIN first_level_divisions as divs" +
+                "WHERE customers.Division_ID = divs.Division_ID " +
+                "ORDER BY name, id";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            var result = stmt.executeQuery();
+            while(result.next())
+            {
+                Country customerCountry = controller.getCountry(result.getInt("countryId"));
+                list.add(new Customer(result.getInt("id"), result.getString("name"),
+                        customerCountry, controller.getDivision(customerCountry, result.getInt("divId"))));
+            }
+        } catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
+    }//getCustomers
 
     private void setCountryDivisions(Collection<Country> countries)
     {

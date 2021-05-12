@@ -1,52 +1,58 @@
 package scenes;
 
 import controller.Controller;
+import customer.Customer;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import sceneUtils.SceneCode;
+import javafx.scene.layout.Pane;
 
 public class CustomerOverview  extends BorderPane
 {
+    //Declare scene attributes and elements
     Controller controller;
-    Label messageLabel;
-    Button returnButton;
+    Pane header;
+    Label sceneLabel;
+    Label userWelcomeLabel;
+    TableView<Customer> customersTable;
     Button addCustomerButton;
-    Button testCustomerButton;
+    Button editCustomerButton;
+    Button viewAppointmentsButton;
+    Button deleteCustomerButton;
+    Button logoutButton;
 
     public CustomerOverview(Controller controller)
     {
+        //Instantiate scene elements
         this.controller = controller;
-        messageLabel = new Label("Hello Nora!!");
-        returnButton = new Button("Return");
+        this.header = controller.getHeader();
+        sceneLabel = new Label("Customer Overview");
+        userWelcomeLabel = new Label("Welcome ...");
+        customersTable = new TableView<>();
         addCustomerButton = new Button("Add Customer");
-        ///////////////FOR TESTING/////////////////////////////////////////////////////////////////////////////////
-        Button addApptButton = new Button("Add Appointment");
-        Button editApptButton = new Button("Edit Appointment");
-        testCustomerButton = new Button("Load");
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-        HBox buttonPane = new HBox(addCustomerButton, testCustomerButton, addApptButton, returnButton);
-        this.setTop(controller.getHeader());
-        this.setCenter(messageLabel);
-        this.setBottom(buttonPane);
-        returnButton.setOnAction(event ->
-        {
-            controller.changeScene(SceneCode.LOGIN);
-        });//returnButton
-        addCustomerButton.setOnAction(event -> {
-            controller.changeScene(SceneCode.EDIT_CUSTOMER);
-        });//addCustomerButton
-        testCustomerButton.setOnAction(event -> {
-            controller.loadCustomerToEdit();
-        });
-        addApptButton.setOnAction(event ->
-        {
-            controller.changeScene(SceneCode.EDIT_APPOINTMENT);
-        });
-        editApptButton.setOnAction(event ->
-        {
-            controller.loadAppointmentToEdit(null);
-        });
+        editCustomerButton = new Button("Edit Customer");
+        viewAppointmentsButton = new Button("View Appointments");
+        deleteCustomerButton = new Button("Delete Customer");
+        logoutButton = new Button("Logout");
+
+        //Set initial states for scene elements
+        customersTable.setItems(FXCollections.observableArrayList(controller.getCustomers()));
+        TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
+        TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
+        TableColumn<Customer, String> divCol = new TableColumn<>("First-Level Division");
+        TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
+        TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Outstanding Appointments");
+        customersTable.getColumns().setAll(idCol, nameCol, divCol, countryCol, apptsCol);
+
+        //Add event listeners to scene elements
+        //Add scene elements to containers
+        HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, logoutButton);
+        this.setTop(header);
+        this.setCenter(customersTable);
+        this.setBottom(buttonBox);
     }//constructor
 }

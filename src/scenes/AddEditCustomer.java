@@ -48,7 +48,7 @@ public class AddEditCustomer  extends BorderPane
         addressArea			= new TextArea("");
         cityLabel			= new Label("City");
         cityField			= new TextField("");
-        countryAndDivisionsCombos = controller.getCountries();
+        countryAndDivisionsCombos = controller.getCountryCombo();
         postCodeLabel       = new Label("Postal Code");
         postCodeField       = new TextField("");
         nameErrorLabel		= new Label("");

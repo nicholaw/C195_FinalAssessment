@@ -11,8 +11,9 @@ public class Customer
     private String address;
     private String city;
     private Country country;
-    private Division state;
+    private Division division;
     private String postCode;
+    private int scheduledAppointments = 0;
 
     public Customer(
             int id,
@@ -21,7 +22,7 @@ public class Customer
             String address,
             String city,
             Country country,
-            Division state,
+            Division div,
             String postCode)
     {
         customerId = id;
@@ -30,9 +31,9 @@ public class Customer
         this.address = address;
         this.city = city;
         this.country = country;
-        this.state = state;
+        this.division = div;
         this.postCode = postCode;
-    }
+    }//Constructor: id, name, phoneNum, address, city, country, div, postCode
 
     public Customer(
             String name,
@@ -40,7 +41,7 @@ public class Customer
             String address,
             String city,
             Country country,
-            Division state,
+            Division div,
             String postCode)
     {
         this.name = name;
@@ -48,10 +49,18 @@ public class Customer
         this.address = address;
         this.city = city;
         this.country = country;
-        this.state = state;
+        this.division = div;
         this.postCode = postCode;
         customerId = generateId();
-    }
+    }//Constructor: name, phoneNum, address, city, country, div, postCode
+
+    public Customer(int id, String name, Country country, Division div)
+    {
+        this.customerId = id;
+        this.name = name;
+        this.country = country;
+        this.division = div;
+    }//Constructor: id, name, country, div
 
     private static int generateId()
     {
@@ -100,11 +109,16 @@ public class Customer
 
     public Division getFirstLevelDivision()
     {
-        return state;
+        return division;
     }
 
     public int getDivisionId()
     {
-        return state.getDivisionId();
+        return division.getDivisionId();
+    }
+
+    public int getScheduledAppointments()
+    {
+        return scheduledAppointments;
     }
 }//Customer

@@ -42,6 +42,27 @@ public class CountryAndDivisionsBox extends HBox
         this.getChildren().addAll(countryLabel, countryCombo, divisionLabel, firstDivisionCombo);
     }//constructor
 
+    public Country getCountry(int countryId)
+    {
+        for(Country c : countries)
+        {
+            //TODO: replace linear search
+            if(c.getCountryId() == countryId)
+                return c;
+        }
+        return null;
+    }//getCountry
+
+    public Division getDivision(Country c, int divisionId)
+    {
+        for(Division d : countries.get(countries.indexOf(c)).getFirstLevelDivisions())
+        {
+            if(d.getDivisionId() == divisionId)
+                return d;
+        }
+        return null;
+    }//getDivision
+
     private void updateFirstDivisions()
     {
         if(countryCombo.getValue() != null)

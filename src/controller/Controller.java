@@ -1,8 +1,6 @@
 package controller;
 
 import appointment.Appointment;
-import appointment.AppointmentType;
-import appointment.Location;
 import customer.Customer;
 import database.DBConnection;
 import javafx.scene.Scene;
@@ -10,8 +8,11 @@ import sceneUtils.CountryAndDivisionsBox;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
+import utils.Country;
+import utils.Division;
 import utils.User;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Controller
 {
@@ -38,8 +39,9 @@ public class Controller
         appScene = scn;
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
-        countries = new CountryAndDivisionsBox(dbConnection.getCountries());
         login = new LoginPage(this);
+        //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
+        countries = new CountryAndDivisionsBox(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
@@ -88,10 +90,25 @@ public class Controller
         return header;
     }
 
-    public CountryAndDivisionsBox getCountries()
+    public Country getCountry(int countryId)
+    {
+        return countries.getCountry(countryId);
+    }//getCountry
+
+    public CountryAndDivisionsBox getCountryCombo()
     {
         return countries;
-    }//getCountries
+    }//getCountryCombo
+
+    public Collection<Customer> getCustomers()
+    {
+        return dbConnection.getCustomers();
+    }//getCustomers
+
+    public Division getDivision(Country c, int divisionId)
+    {
+        return countries.getDivision(c, divisionId);
+    }//getDivision
 
     //Hashes user-provided password for validation
     private static int hashPassword(CharSequence password)
@@ -101,7 +118,7 @@ public class Controller
         for(int i = 0; i < password.length(); i++)
             sum += password.charAt(i);
         return sum;
-    }
+    }//hashPassword
 
     private void loadLogin()
     {
