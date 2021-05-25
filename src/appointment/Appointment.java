@@ -4,124 +4,87 @@ import java.time.LocalDateTime;
 
 public class Appointment
 {
-    private String appointmentId;
-    private String contactId;
-    private String contactContactInfo;
-    private String customerId;
-    private String customerContactInfo;
+    private int appointmentId;
     private String title;
-    private AppointmentType type;
     private String description;
-    private LocalDateTime startDateAndTime; //TODO: store as UTC
-    private LocalDateTime endDateAndTime;   //TODO: store as UTC
-    private Location location;
+    private String type;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+    private int customerId;
+    private int userId;
+    private int contactId;
 
-    public Appointment(
-        String appointmentId,
-        String contactId,
-        String contactContactInfo,
-        String customerId,
-        String customerContactInfo,
-        String title,
-        AppointmentType type,
-        String description,
-        LocalDateTime start,
-        LocalDateTime end,
-        Location location)
+    public Appointment(	String title, String description, String type,
+                           LocalDateTime startDateTime, LocalDateTime endDateAndTime,
+                           int customerId, int userId, int contactId)
+    {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateAndTime;
+        this.customerId = customerId;
+        this.userId = userId;
+        this.contactId = contactId;
+    }//constructor
+
+    public Appointment(	int appointmentId, String title, String description, String type,
+                           LocalDateTime startDateTime, LocalDateTime endDateAndTime,
+                           int customerId, int userId, int contactId)
     {
         this.appointmentId = appointmentId;
-        this.contactId = contactId;
-        this.contactContactInfo = contactContactInfo;
-        this.customerId = customerId;
-        this.customerContactInfo = customerContactInfo;
         this.title = title;
         this.description = description;
         this.type = type;
-        this.startDateAndTime = start;
-        this.endDateAndTime = end;
-        this.location = location;
-    }
-
-    public Appointment(
-            String contactInfo,
-            String customerId,
-            String title,
-            AppointmentType type,
-            String description,
-            LocalDateTime start,
-            LocalDateTime end,
-            Location location)
-    {
-        this.appointmentId = generateId();
-        this.contactId = contactId;
-        this.contactContactInfo = contactContactInfo;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateAndTime;
         this.customerId = customerId;
-        this.customerContactInfo = customerContactInfo;
-        this.title = title;
-        this.description = description;
-        this.type = type;
-        this.startDateAndTime = start;
-        this.endDateAndTime = end;
-        this.location = location;
-    }
+        this.userId = userId;
+        this.contactId = contactId;
+    }//constructor w/id
 
-    private static String generateId()
-    {
-        return "";
-    }
-
-    public String getAppointmentId()
+    public int getAppointmentId()
     {
         return appointmentId;
-    }
+    }//getAppointmentId
 
-    public String getContactId()
+    public int getContactId()
     {
         return contactId;
-    }
+    }//getContactId
 
-    public String getContactContactInfo()
-    {
-        return contactContactInfo;
-    }
-
-    public String getCustomerId()
+    public int getCustomerId()
     {
         return customerId;
-    }
-
-    public String getCustomerContactInfo()
-    {
-        return customerContactInfo;
-    }
+    }//getCustomerId
 
     public String getDescription()
     {
         return description;
-    }
+    }//getDescription
 
-    public LocalDateTime getEndDateAndTime()
+    public LocalDateTime getEndDateTime()
     {
-        return endDateAndTime;
-    }
+        return endDateTime;
+    }//getEndDateTime
 
-    public Location getLocation()
+    public LocalDateTime getStartDateTime()
     {
-        return location;
-    }
-
-    public LocalDateTime getStartDateAndTime()
-    {
-        return startDateAndTime;
-    }
+        return startDateTime;
+    }//getStartDateTime
 
     public String getTitle()
     {
         return title;
-    }
+    }//getTitle
 
-    public AppointmentType getType()
+    public String getType()
     {
         return type;
-    }
-}
+    }//getType
+
+    public int getUserId()
+    {
+        return userId;
+    }//getUserId
+}//class Appointment

@@ -3,8 +3,10 @@ package controller;
 import appointment.Appointment;
 import customer.Customer;
 import database.DBConnection;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import sceneUtils.CountryAndDivisionsBox;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
@@ -17,6 +19,7 @@ import java.util.Collection;
 
 public class Controller
 {
+    //final attributes
     private final Scene appScene;
     private final HeaderPane header;
     private final LoginPage login;
@@ -25,12 +28,11 @@ public class Controller
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
-    private final CountryAndDivisionsBox countryCombo;
+    private final CountryAndDivisionsBox countries;
+
+    //non-final attributes
     private User currentUser;
-    //TODO: keep collections of customers, countries, etc. in controller, not spread out
-    private ObservableList<Country> countries;
-    private ObservableList<Customer> customers;
-    private ObservableList<Appointment> appointments;
+    private Alert confirmationAlert;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -46,11 +48,12 @@ public class Controller
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
-        countryCombo = new CountryAndDivisionsBox(dbConnection.getCountries());
+        countries = new CountryAndDivisionsBox(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
-        apptOverview = new AppointmentOverview();
+        apptOverview = new AppointmentOverview(this);
+        confirmationAlert = new Alert(Alert.AlertType.NONE);
         this.changeScene(SceneCode.LOGIN);
 
         ///////////FOR TESTING////////////////////////////////////////////////////////////////
@@ -89,20 +92,30 @@ public class Controller
         //TODO: Remember to include date and time created
     }
 
+    public void deleteAppointment(Appointment a)
+    {
+
+    }//deleteAppointment
+
     //Returns the header used for each page
     public HeaderPane getHeader()
     {
         return header;
     }
 
+    public Alert getConfirmationAlert()
+    {
+        return confirmationAlert;
+    }//getConfirmationAlert
+
     public Country getCountry(int countryId)
     {
-        return countryCombo.getCountry(countryId);
+        return countries.getCountry(countryId);
     }//getCountry
 
     public CountryAndDivisionsBox getCountryCombo()
     {
-        return countryCombo;
+        return countries;
     }//getCountryCombo
 
     public Collection<Customer> getCustomers()
@@ -110,10 +123,20 @@ public class Controller
         return dbConnection.getCustomers();
     }//getCustomers
 
+    public ObservableList<Appointment> getCustomerAppointments(Customer c)
+    {
+        return FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId()));
+    }//getCustomerAppointments
+
     public Division getDivision(Country c, int divisionId)
     {
-        return countryCombo.getDivision(c, divisionId);
+        return countries.getDivision(c, divisionId);
     }//getDivision
+
+    public User getSessionUser()
+    {
+        return currentUser;
+    }//getSessionUser
 
     //Hashes user-provided password for validation
     private static int hashPassword(CharSequence password)
@@ -141,7 +164,7 @@ public class Controller
             editAppt.loadAppointmentInfo(a);
         else
             //editAppt.loadAppointmentInfo(testAppointment1);
-        changeScene(SceneCode.EDIT_APPOINTMENT);
+            changeScene(SceneCode.EDIT_APPOINTMENT);
     }
 
     private void loadCustomerOverview()
@@ -202,4 +225,4 @@ public class Controller
         login.clearAll();
         changeScene(SceneCode.CUSTOMER_OVERVIEW);
     }
-}
+}//class Controller

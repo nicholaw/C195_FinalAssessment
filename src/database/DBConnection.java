@@ -1,5 +1,6 @@
 package database;
 
+import appointment.Appointment;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Properties;
@@ -83,9 +85,9 @@ public class DBConnection
     public Collection<Customer> getCustomers()
     {
         var list = new LinkedHashSet<Customer>();
-        String sql = "SELECT Customer_ID AS id, Customer_Name AS name, customers.Division_ID AS divId, Country_ID AS countryId " +
-                "FROM customers LEFT JOIN first_level_divisions AS divs " +
-                "ON customers.Division_ID = divs.Division_ID " +
+        String sql = "SELECT Customer_ID AS id, Customer_Name AS name, customers.Division_ID AS divId, Country_ID as countryId " +
+                "FROM customers LEFT JOIN first_level_divisions as divs" +
+                "WHERE customers.Division_ID = divs.Division_ID " +
                 "ORDER BY name, id";
         try(var stmt = conn.prepareStatement(sql))
         {
@@ -102,6 +104,32 @@ public class DBConnection
         }
         return list;
     }//getCustomers
+
+    public Collection<Appointment> getCustomerAppointments(int id)
+    {
+        var list = new LinkedHashSet<Appointment>();
+        String sql = "SELECT appointment_id, title, description, type, start, end, contact_name, contact_id " +
+                "FROM appointments AS appts" +
+                "LEFT JOIN contacts AS conts" +
+                "ON appts.contact_id = conts.contact_id " +
+                "WHERE appts.customer_id = ? " +
+                "ORDER BY start";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            stmt.setInt(1, id);
+            var result = stmt.executeQuery();
+            while(result.next())
+            {
+                list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
+                        result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
+                        id, controller.getSessionUser().getUserId(), result.getInt("contact_id")));
+            }
+        }catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
+    }//getCustomerAppointments
 
     private void setCountryDivisions(Collection<Country> countries)
     {
@@ -151,8 +179,8 @@ public class DBConnection
     public boolean insertCustomer(Customer c, String creator, String timestamp)
     {
         String sql = "INSERT INTO customers (customer_id, customer_name, address, postal_code, phone, " +
-                        "create_date, created_by, last_update, last_updated_by, division_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "create_date, created_by, last_update, last_updated_by, division_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try(var stmt = conn.prepareStatement(sql))
         {
             stmt.setInt(1, c.getCustomerId());
