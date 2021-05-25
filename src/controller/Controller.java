@@ -3,6 +3,7 @@ package controller;
 import appointment.Appointment;
 import customer.Customer;
 import database.DBConnection;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import sceneUtils.CountryAndDivisionsBox;
 import sceneUtils.HeaderPane;
@@ -24,8 +25,12 @@ public class Controller
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
-    private final CountryAndDivisionsBox countries;
+    private final CountryAndDivisionsBox countryCombo;
     private User currentUser;
+    //TODO: keep collections of customers, countries, etc. in controller, not spread out
+    private ObservableList<Country> countries;
+    private ObservableList<Customer> customers;
+    private ObservableList<Appointment> appointments;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -41,7 +46,7 @@ public class Controller
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
-        countries = new CountryAndDivisionsBox(dbConnection.getCountries());
+        countryCombo = new CountryAndDivisionsBox(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
@@ -92,12 +97,12 @@ public class Controller
 
     public Country getCountry(int countryId)
     {
-        return countries.getCountry(countryId);
+        return countryCombo.getCountry(countryId);
     }//getCountry
 
     public CountryAndDivisionsBox getCountryCombo()
     {
-        return countries;
+        return countryCombo;
     }//getCountryCombo
 
     public Collection<Customer> getCustomers()
@@ -107,7 +112,7 @@ public class Controller
 
     public Division getDivision(Country c, int divisionId)
     {
-        return countries.getDivision(c, divisionId);
+        return countryCombo.getDivision(c, divisionId);
     }//getDivision
 
     //Hashes user-provided password for validation

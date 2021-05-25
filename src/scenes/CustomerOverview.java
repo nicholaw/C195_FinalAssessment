@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -46,6 +47,7 @@ public class CustomerOverview  extends BorderPane
         TableColumn<Customer, String> divCol = new TableColumn<>("First-Level Division");
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Outstanding Appointments");
+        idCol.setCellValueFactory(new PropertyValueFactory("customerId"));
         customersTable.getColumns().setAll(idCol, nameCol, divCol, countryCol, apptsCol);
 
         //Add event listeners to scene elements

@@ -83,9 +83,9 @@ public class DBConnection
     public Collection<Customer> getCustomers()
     {
         var list = new LinkedHashSet<Customer>();
-        String sql = "SELECT Customer_ID AS id, Customer_Name AS name, customers.Division_ID AS divId, Country_ID as countryId " +
-                "FROM customers LEFT JOIN first_level_divisions as divs" +
-                "WHERE customers.Division_ID = divs.Division_ID " +
+        String sql = "SELECT Customer_ID AS id, Customer_Name AS name, customers.Division_ID AS divId, Country_ID AS countryId " +
+                "FROM customers LEFT JOIN first_level_divisions AS divs " +
+                "ON customers.Division_ID = divs.Division_ID " +
                 "ORDER BY name, id";
         try(var stmt = conn.prepareStatement(sql))
         {

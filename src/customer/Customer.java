@@ -121,4 +121,16 @@ public class Customer
     {
         return scheduledAppointments;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof Customer))
+            return false;
+        if(this.customerId == ((Customer)obj).getCustomerId())
+            return true;
+        return false;
+    }
 }//Customer
