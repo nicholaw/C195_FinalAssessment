@@ -48,7 +48,7 @@ public class AddEditCustomer  extends BorderPane
         addressArea			= new TextArea("");
         cityLabel			= new Label("City");
         cityField			= new TextField("");
-        countryAndDivisionsCombos = controller.getCountryCombo();
+        countryAndDivisionsCombos = new CountryAndDivisionsBox(controller.getCountries());
         postCodeLabel       = new Label("Postal Code");
         postCodeField       = new TextField("");
         nameErrorLabel		= new Label("");
@@ -63,15 +63,16 @@ public class AddEditCustomer  extends BorderPane
         submitButton.setOnAction(event -> {
             if(this.validateForm())
             {
-                //controller.addNewCustomer(new Customer(...));
-                //controller.changeScene(sceneCode.CUSTOMER_OVERVIEW);
+                Customer c = new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
+                        addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
+                        countryAndDivisionsCombos.getSelectedDivision(), postCodeField.getText());
             }
         });
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(event -> {
             //TODO: if new input, confirm navigation from page
             clearAll();
-            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW);
+            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
         });
 
         //Add key event listener to text fields and areas to prevent number of characters over maximum allowed
@@ -170,6 +171,11 @@ public class AddEditCustomer  extends BorderPane
         submitButton.setText("Update Customer");
     }//loadCustomerInfo
 
+    public void loadNewCustomer()
+    {
+        idField.setText("" + controller.getNextCustomerId());
+    }//loadNewCustomer
+
     /**
      *	Checks that the information entered into the form fields are valid. Returns true if all fields are valid and false otherwise.
      *	@return	validity of the form
@@ -263,7 +269,7 @@ public class AddEditCustomer  extends BorderPane
             default :
                 Alert unknownError = new Alert(AlertType.ERROR);
                 if(message.isBlank() || message.isEmpty() || message == null)
-                    unknownError.setContentText("An unknow validation error occurred.");
+                    unknownError.setContentText("An unknown validation error occurred.");
                 else
                     unknownError.setContentText(message);
                 unknownError.showAndWait();

@@ -59,11 +59,11 @@ public class AppointmentOverview  extends BorderPane
         //Add event listeners to buttons
         scheduleButton.setOnAction(event ->
         {
-            controller.changeScene(SceneCode.EDIT_APPOINTMENT);
+            controller.changeScene(SceneCode.EDIT_APPOINTMENT, null);
         });
         editButton.setOnAction(event ->
         {
-            controller.changeScene(SceneCode.EDIT_APPOINTMENT);
+            controller.changeScene(SceneCode.EDIT_APPOINTMENT, selectedAppointment);
         });
         deleteButton.setOnAction(event ->
         {
@@ -76,7 +76,7 @@ public class AppointmentOverview  extends BorderPane
         returnButton.setOnAction(event ->
         {
             this.clear();
-            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW);
+            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
         });
         appointmentsTable.setOnMouseClicked(event ->
         {
