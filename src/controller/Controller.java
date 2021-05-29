@@ -3,20 +3,21 @@ package controller;
 import appointment.Appointment;
 import customer.Customer;
 import database.DBConnection;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import sceneUtils.CountryAndDivisionsBox;
+import javafx.scene.control.Alert;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
 import utils.Country;
-import utils.Division;
 import utils.User;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class Controller
 {
+    //final attributes
     private final Scene appScene;
     private final HeaderPane header;
     private final LoginPage login;
@@ -25,12 +26,13 @@ public class Controller
     private final CustomerOverview custOverview;
     private final AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
-    private final CountryAndDivisionsBox countryCombo;
+
+    //non-final attributes
     private User currentUser;
-    //TODO: keep collections of customers, countries, etc. in controller, not spread out
+    private Alert confirmationAlert;
+    private int nextCustomerId;
+    private int nextAppointmentId;
     private ObservableList<Country> countries;
-    private ObservableList<Customer> customers;
-    private ObservableList<Appointment> appointments;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -46,12 +48,14 @@ public class Controller
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
-        countryCombo = new CountryAndDivisionsBox(dbConnection.getCountries());
+        countries = FXCollections.observableArrayList(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
-        apptOverview = new AppointmentOverview();
-        this.changeScene(SceneCode.LOGIN);
+        apptOverview = new AppointmentOverview(this);
+        confirmationAlert = new Alert(Alert.AlertType.NONE);
+        this.changeScene(SceneCode.LOGIN, null);
+        //TODO: check for appointments starting within fifteen minutes
 
         ///////////FOR TESTING////////////////////////////////////////////////////////////////
         //testCustomers.add(testCustomer1);
@@ -61,26 +65,41 @@ public class Controller
         //////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 
-    public void changeScene(SceneCode code)
+    public void changeScene(SceneCode code, Object participant)
     {
         switch(code)
         {
             case LOGIN:
-                loadLogin();
+                appScene.setRoot(login);
                 break;
             case CUSTOMER_OVERVIEW:
-                loadCustomerOverview();
+                appScene.setRoot(custOverview);
                 break;
             case APPOINTMENT_OVERVIEW:
-                loadAppointmentOverview(null);
+                if(participant instanceof Customer)
+                {
+                    Customer c = (Customer)participant;
+                    apptOverview.loadCustomerAppointmentInformation(c, FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId())));
+                }
+                appScene.setRoot(apptOverview);
                 break;
             case EDIT_CUSTOMER:
-                loadEditCustomer(null);
+                if(participant instanceof Customer)
+                    editCust.loadCustomerInfo((Customer)participant);
+                else
+                    editCust.loadNewCustomer();
+                appScene.setRoot(editCust);
                 break;
             case EDIT_APPOINTMENT:
-                loadEditAppointment();
+                if(participant instanceof Appointment)
+                    editAppt.loadAppointmentInfo((Appointment)participant);
+                else
+                    editAppt.loadNewAppointment();
+                appScene.setRoot(editAppt);
                 break;
             default:
+                System.out.println("ERROR: Scene code was not recognized");
+                appScene.setRoot(custOverview);
         }//switch
     }//changeScene
 
@@ -89,20 +108,55 @@ public class Controller
         //TODO: Remember to include date and time created
     }
 
-    //Returns the header used for each page
+    public void deleteAppointment(Appointment a)
+    {
+
+    }//deleteAppointment
+
+    public boolean deleteCustomer(Customer c)
+    {
+        //TODO: check customer has no scheduled appointments
+        //TODO: remove customer from database
+        //TODO: remove customer from list of customers
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     */
     public HeaderPane getHeader()
     {
         return header;
     }
 
-    public Country getCountry(int countryId)
+    /**
+     *
+     * @return
+     */
+    public Alert getConfirmationAlert()
     {
-        return countryCombo.getCountry(countryId);
+        return confirmationAlert;
+    }//getConfirmationAlert
+
+    /**
+     *
+     * @param countryId
+     * @return
+     */
+    public Country getCountryById(int countryId)
+    {
+        for(Country c : countries)
+        {
+            if(c.getCountryId() == countryId)
+                return c;
+        }
+        return null;
     }//getCountry
 
-    public CountryAndDivisionsBox getCountryCombo()
+    public ObservableList<Country> getCountries()
     {
-        return countryCombo;
+        return countries;
     }//getCountryCombo
 
     public Collection<Customer> getCustomers()
@@ -110,10 +164,25 @@ public class Controller
         return dbConnection.getCustomers();
     }//getCustomers
 
-    public Division getDivision(Country c, int divisionId)
+    public ObservableList<Appointment> getCustomerAppointments(Customer c)
     {
-        return countryCombo.getDivision(c, divisionId);
-    }//getDivision
+        return FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId()));
+    }//getCustomerAppointments
+
+    public int getNextAppointmentId()
+    {
+        return nextAppointmentId;
+    }
+
+    public int getNextCustomerId()
+    {
+        return nextCustomerId;
+    }
+
+    public User getSessionUser()
+    {
+        return currentUser;
+    }//getSessionUser
 
     //Hashes user-provided password for validation
     private static int hashPassword(CharSequence password)
@@ -125,55 +194,8 @@ public class Controller
         return sum;
     }//hashPassword
 
-    private void loadLogin()
-    {
-        appScene.setRoot(login);
-    }
-
-    private void loadAppointmentOverview(Customer c)
-    {
-
-    }
-
-    public void loadAppointmentToEdit(Appointment a)
-    {
-        if(a != null)
-            editAppt.loadAppointmentInfo(a);
-        else
-            //editAppt.loadAppointmentInfo(testAppointment1);
-        changeScene(SceneCode.EDIT_APPOINTMENT);
-    }
-
-    private void loadCustomerOverview()
-    {
-        appScene.setRoot(custOverview);
-    }
-
-    public void loadCustomerToEdit()
-    {
-        //editCust.loadCustomerInfo(testCustomer1);
-        changeScene(SceneCode.EDIT_CUSTOMER);
-    }
-
-    private void loadEditCustomer(Customer c)
-    {
-        appScene.setRoot(editCust);
-    }
-
-    private void loadEditAppointment()
-    {
-        appScene.setRoot(editAppt);
-    }
-
     private void logLoginAttempt(String username, boolean valid)
-    {
-
-    }
-
-    public String nextAppointmentId()
-    {
-        return "A1";
-    }
+    {}
 
     public void updateCustomer()
     {
@@ -200,6 +222,6 @@ public class Controller
     private void validLogin(String username)
     {
         login.clearAll();
-        changeScene(SceneCode.CUSTOMER_OVERVIEW);
+        changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
     }
-}
+}//class Controller

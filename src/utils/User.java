@@ -11,7 +11,7 @@ public class User
         this.name = name;
     }
 
-    public int getId()
+    public int getUserId()
     {
         return this.id;
     }

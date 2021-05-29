@@ -17,6 +17,12 @@ public class Country
         firstLevelDivisions = new LinkedHashSet<Division>();
     }//constructor
 
+    /**
+     * Adds a first-level division to this country.
+     *
+     * @param d the division to be added
+     * @return  whether the division was successfully added
+     */
     public boolean addDivision(Division d)
     {
         return firstLevelDivisions.add(d);

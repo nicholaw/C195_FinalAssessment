@@ -1,28 +1,25 @@
 package sceneUtils;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import utils.Country;
 import utils.Division;
-import java.util.Collection;
+
+import java.util.ArrayList;
 
 public class CountryAndDivisionsBox extends HBox
 {
     private ComboBox<Country> countryCombo;
-    private ComboBox<Division> firstDivisionCombo;
-    private ObservableList<Country> countries;
-    private ObservableList<Division> divisions;
+    private ComboBox<Division> firstLevelDivisionsCombo;
     private final Label countryLabel = new Label("Country");
     private final Label divisionLabel = new Label("First-Level Division");
 
-    public CountryAndDivisionsBox(Collection<Country> coll)
+    public CountryAndDivisionsBox(ObservableList<Country> countries)
     {
-        //Declare country combo box and add countries from db to combo box
+        //Instantiate country combo box and add countries from db to combo box
         countryCombo = new ComboBox<>();
-        countries = FXCollections.observableArrayList(coll);
         countryCombo.getItems().setAll(countries);
         if(countryCombo.getItems().size() > 0)
             countryCombo.setValue(countryCombo.getItems().get(0));
@@ -30,7 +27,7 @@ public class CountryAndDivisionsBox extends HBox
             countryCombo.setValue(null);
 
         //Declare first-level division combo box and add divisions based on the selected country
-        firstDivisionCombo = new ComboBox<>();
+        firstLevelDivisionsCombo = new ComboBox<>();
         updateFirstDivisions();
 
         //Add event handler to country combo box to update first-level division combo box when a new country is selected
@@ -39,12 +36,17 @@ public class CountryAndDivisionsBox extends HBox
         });
 
         //Add elements to this pane
-        this.getChildren().addAll(countryLabel, countryCombo, divisionLabel, firstDivisionCombo);
+        this.getChildren().addAll(countryLabel, countryCombo, divisionLabel, firstLevelDivisionsCombo);
     }//constructor
 
+    /**
+     *
+     * @param countryId
+     * @return
+     */
     public Country getCountry(int countryId)
     {
-        for(Country c : countries)
+        for(Country c : countryCombo.getItems())
         {
             //TODO: replace linear search
             if(c.getCountryId() == countryId)
@@ -53,28 +55,45 @@ public class CountryAndDivisionsBox extends HBox
         return null;
     }//getCountry
 
+    /**
+     *
+     * @param c
+     * @param divisionId
+     * @return
+     */
     public Division getDivision(Country c, int divisionId)
     {
-        for(Division d : countries.get(countries.indexOf(c)).getFirstLevelDivisions())
-        {
+        for(Division d : c.getFirstLevelDivisions())
             if(d.getDivisionId() == divisionId)
                 return d;
-        }
         return null;
     }//getDivision
 
+    public Country getSelectedCountry()
+    {
+        return countryCombo.getValue();
+    }
+
+    public Division getSelectedDivision()
+    {
+        return firstLevelDivisionsCombo.getValue();
+    }
+
+    /**
+     *
+     */
     private void updateFirstDivisions()
     {
+        //Set items to first-level divisions of the selected country
         if(countryCombo.getValue() != null)
-            divisions = FXCollections.observableArrayList(countryCombo.getValue().getFirstLevelDivisions());
+            firstLevelDivisionsCombo.getItems().setAll(countryCombo.getValue().getFirstLevelDivisions());
         else
-            divisions = FXCollections.observableArrayList();
-
-        firstDivisionCombo.getItems().setAll(divisions);
-        if(firstDivisionCombo.getItems().size() > 0)
-            firstDivisionCombo.setValue(firstDivisionCombo.getItems().get(0));
+            firstLevelDivisionsCombo.getItems().setAll(new ArrayList<>(0));
+        //Set the selected value as the first first-level division
+        if(firstLevelDivisionsCombo.getItems().size() > 0)
+            firstLevelDivisionsCombo.setValue(firstLevelDivisionsCombo.getItems().get(0));
         else
-            firstDivisionCombo.setValue(null);
+            firstLevelDivisionsCombo.setValue(null);
     }//updateFirstDivisions
 
     public void clear()
@@ -87,7 +106,7 @@ public class CountryAndDivisionsBox extends HBox
         else
         {
             countryCombo.setValue(null);
-            firstDivisionCombo.setValue(null);
+            firstLevelDivisionsCombo.setValue(null);
         }
     }//clear
 }

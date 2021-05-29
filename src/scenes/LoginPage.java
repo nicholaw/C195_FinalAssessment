@@ -41,7 +41,9 @@ public class LoginPage extends BorderPane
 
         submitButton.setOnAction(event ->
         {
-            controller.validateLoginCredentials(usernameField.getText(), passwordField.getCharacters());
+            CharSequence chars = passwordField.getCharacters();
+            passwordField.setText("");
+            this.controller.validateLoginCredentials(usernameField.getText(), chars);
         });//submitButton
     }//constructor
 
@@ -61,10 +63,5 @@ public class LoginPage extends BorderPane
     {
         clearInput();
         errorMessageLabel.setText(ERROR_MESSAGE);
-    }
-
-    public void setScene(Scene scene)
-    {
-        scene.setRoot(this);
     }
 }

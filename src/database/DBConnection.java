@@ -1,5 +1,6 @@
 package database;
 
+import appointment.Appointment;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Properties;
@@ -48,8 +50,9 @@ public class DBConnection
 
     public ResultSet getAllDivisions()
     {
-        String sql = "SELECT Division_ID AS id, Division AS name, Country_ID AS country FROM first-level divisions " +
-                "ORDER BY country, name";
+        String sql =    "SELECT Division_ID AS id, Division AS name, Country_ID AS country " +
+                        "FROM first-level divisions " +
+                        "ORDER BY country, name";
         try(var stmt = conn.prepareStatement(sql))
         {
             return stmt.executeQuery();
@@ -62,7 +65,8 @@ public class DBConnection
 
     public Collection<Country> getCountries()
     {
-        String sql = "SELECT country_id AS id, country AS name FROM countries ORDER BY name";
+        String sql =    "SELECT country_id AS id, country AS name " +
+                        "FROM countries ORDER BY name";
         try(var stmt = conn.prepareStatement(sql))
         {
             var result = stmt.executeQuery();
@@ -80,21 +84,29 @@ public class DBConnection
         }
     }//getCountries
 
+    /**
+     *
+     * @return
+     */
     public Collection<Customer> getCustomers()
     {
         var list = new LinkedHashSet<Customer>();
-        String sql = "SELECT Customer_ID AS id, Customer_Name AS name, customers.Division_ID AS divId, Country_ID AS countryId " +
-                "FROM customers LEFT JOIN first_level_divisions AS divs " +
-                "ON customers.Division_ID = divs.Division_ID " +
-                "ORDER BY name, id";
+        String sql =    "SELECT Customer_ID AS id, Customer_Name AS name, Phone AS phone, Country_ID AS country" +
+                        "FROM customers " +
+                        "LEFT JOIN (" +
+                            "SELECT Country_ID, Division_ID " +
+                            "FROM countries " +
+                            "INNER JOIN First_Level_Divisions AS divs " +
+                            "ON countries.Country_ID = divs.Country_ID) AS countrynames " +
+                        "ON customers.Division_ID = countrynames.Division_ID " +
+                        "ORDER BY name, id";
         try(var stmt = conn.prepareStatement(sql))
         {
             var result = stmt.executeQuery();
             while(result.next())
             {
-                Country customerCountry = controller.getCountry(result.getInt("countryId"));
                 list.add(new Customer(result.getInt("id"), result.getString("name"),
-                        customerCountry, controller.getDivision(customerCountry, result.getInt("divId"))));
+                        controller.getCountryById(result.getInt("country")), result.getString("phone")));
             }
         } catch(SQLException e)
         {
@@ -103,28 +115,31 @@ public class DBConnection
         return list;
     }//getCustomers
 
-    private void setCountryDivisions(Collection<Country> countries)
+    public Collection<Appointment> getCustomerAppointments(int id)
     {
-        String sql = "";
-        //TODO: batch queries to improve performance
-        for(Country c : countries)
+        var list = new LinkedHashSet<Appointment>();
+        String sql =    "SELECT appointment_id, title, description, type, start, end, contact_name, contact_id " +
+                        "FROM appointments AS appts" +
+                        "LEFT JOIN contacts AS conts" +
+                        "ON appts.contact_id = conts.contact_id " +
+                        "WHERE appts.customer_id = ? " +
+                        "ORDER BY start";
+        try(var stmt = conn.prepareStatement(sql))
         {
-            sql = "SELECT Division_ID AS id, Division AS name FROM `first_level_divisions` " +
-                    "WHERE Country_ID = ? ORDER BY name";
-            try(var stmt = conn.prepareStatement(sql))
+            stmt.setInt(1, id);
+            var result = stmt.executeQuery();
+            while(result.next())
             {
-                stmt.setInt(1, c.getCountryId());
-                var result = stmt.executeQuery();
-                while(result.next())
-                {
-                    c.addDivision(new Division(result.getInt("id"), result.getString("name")));
-                }
-            } catch(SQLException e)
-            {
-                e.printStackTrace();
+                list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
+                        result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
+                        id, controller.getSessionUser().getUserId(), result.getInt("contact_id")));
             }
+        }catch(SQLException e)
+        {
+            e.printStackTrace();
         }
-    }//setCountryDivisions
+        return list;
+    }//getCustomerAppointments
 
     private static DataSource getDataSource() {
         Properties properties = new Properties();
@@ -151,8 +166,8 @@ public class DBConnection
     public boolean insertCustomer(Customer c, String creator, String timestamp)
     {
         String sql = "INSERT INTO customers (customer_id, customer_name, address, postal_code, phone, " +
-                        "create_date, created_by, last_update, last_updated_by, division_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "create_date, created_by, last_update, last_updated_by, division_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try(var stmt = conn.prepareStatement(sql))
         {
             stmt.setInt(1, c.getCustomerId());
@@ -192,6 +207,29 @@ public class DBConnection
             e.printStackTrace();
         }
     }//printDbMetaData
+
+    private void setCountryDivisions(Collection<Country> countries)
+    {
+        String sql = "";
+        //TODO: batch queries to improve performance
+        for(Country c : countries)
+        {
+            sql =   "SELECT Division_ID AS id, Division AS name FROM `first_level_divisions` " +
+                    "WHERE Country_ID = ? ORDER BY name";
+            try(var stmt = conn.prepareStatement(sql))
+            {
+                stmt.setInt(1, c.getCountryId());
+                var result = stmt.executeQuery();
+                while(result.next())
+                {
+                    c.addDivision(new Division(result.getInt("id"), result.getString("name")));
+                }
+            } catch(SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }//setCountryDivisions
 
     public boolean updateAppointment()
     {
