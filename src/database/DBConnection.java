@@ -185,9 +185,9 @@ public class DBConnection
         return mysqlDS;
     }//getDataSource
 
-    public boolean insertAppointment()
+    public boolean insertAppointment(Appointment a)
     {
-        return false;
+		//check appointment to add does not overlap 
     }//insertAppointment
 
     public boolean insertCustomer(Customer c, String creator, String timestamp)

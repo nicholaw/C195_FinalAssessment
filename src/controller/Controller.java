@@ -105,10 +105,16 @@ public class Controller
         }//switch
     }//changeScene
 
-    public void createCustomer()
+	public boolean addAppointment(Appointment a)
+	{
+		return  false;
+	}//addAppointment
+
+    public boolean addCustomer(Customer c)
     {
-        //TODO: Remember to include date and time created
-    }
+        //TODO: Remember to include date and time created plus creator
+		return false;
+    }//addCustomer
 
     public void deleteAppointment(Appointment a)
     {
@@ -136,6 +142,16 @@ public class Controller
 			return false;
 		}
     }//deleteCustomer
+	
+	public boolean editAppointment()
+	{
+		return false;
+	}//editAppointment
+	
+	public boolean editCustomer()
+	{
+		return false;
+	}//editCusotmer
 
     /**
      *
@@ -212,6 +228,11 @@ public class Controller
 
     private void logLoginAttempt(String username, boolean valid)
     {}
+	
+	private boolean overlapsExistingAppointment(Appointment a)
+	{
+		return false;
+	}//overlapsExistingAppointmet
 
     public void updateCustomer()
     {
