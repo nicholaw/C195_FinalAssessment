@@ -11,12 +11,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class DBConnection
 {
@@ -259,17 +257,110 @@ public class DBConnection
         }
     }//setCountryDivisions
 
-    public boolean updateAppointment()
+    /**
+     * Updates information of the given appointment in the database. Returns true if at least one table row
+     * was affected and false otherwise.
+     *
+     * @param updates   Updates to be enacted
+     * @param appointmentId Id of customer to be updated
+     * @return  True if at least one table row was affected
+     */
+    public boolean updateAppointment(HashMap<String, String> updates, int appointmentId)
     {
+        if(updates != null)
+        {
+            Set<String> keys = updates.keySet();
+            String sql = "UPDATE customers SET ";
+            //Add the correct number of bind variables to sql statement
+            for(int i = 0; i < keys.size(); i++)
+            {
+                if(i == keys.size() - 1)
+                    sql += "? = ? ";
+                else
+                    sql += "? = ?, ";
+            }
+            sql += "WHERE CustomerID = ?";
+            try(var stmt = conn.prepareStatement(sql))
+            {
+                int bindIndex = 1;
+                for(String str : keys)
+                {
+                    //Contact Id column holds integers and update value must be parsed
+                    if(str.equals(DBConstants.APPOINTMENT_CONTACT_ID))
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
+                        bindIndex++;
+                    } else
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setString(bindIndex, updates.get(str));
+                        bindIndex++;
+                    }
+                }//for str:keys
+                stmt.setInt(bindIndex, appointmentId);
+                return (stmt.executeUpdate() > 0);
+            } catch(SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }//if updates!=null
         return false;
+
     }//updateAppointment
 
-    public boolean updateCustomer()
+    /**
+     * Updates information of the given customer in the database. Returns true if at least one table row
+     * was affected and false otherwise.
+     *
+     * @param updates   Updates to be enacted
+     * @param customerId Id of customer to be updated
+     * @return  true if at least one table row was affected
+     */
+    public boolean updateCustomer(HashMap<String, String> updates, int customerId)
     {
+        if(updates != null)
+        {
+            Set<String> keys = updates.keySet();
+            String sql = "UPDATE customers SET ";
+            //Add the correct number of bind variables to sql statement
+            for(int i = 0; i < keys.size(); i++)
+            {
+                if(i == keys.size() - 1)
+                    sql += "? = ? ";
+                else
+                    sql += "? = ?, ";
+            }
+            sql += "WHERE CustomerID = ?";
+            try(var stmt = conn.prepareStatement(sql))
+            {
+                int bindIndex = 1;
+                for(String str : keys)
+                {
+                    //Division id column holds integers and update value must be parsed
+                    if(str.equals(DBConstants.CUSTOMER_DIVISION_ID))
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
+                        bindIndex++;
+                    } else
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setString(bindIndex, updates.get(str));
+                        bindIndex++;
+                    }
+                }//for str:keys
+                stmt.setInt(bindIndex, customerId);
+                return (stmt.executeUpdate() > 0);
+            } catch(SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }//if updates!=null
         return false;
     }//updateCustomer
-
-    private void insertTestCustomers()
-    {
-    }
 }//DBConnection

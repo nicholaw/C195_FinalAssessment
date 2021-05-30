@@ -13,6 +13,7 @@ import scenes.*;
 import utils.Country;
 import utils.User;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Controller
 {
@@ -33,6 +34,7 @@ public class Controller
     private int nextAppointmentId;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
+	private HashMap<String, String> updates;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -48,6 +50,7 @@ public class Controller
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
 		customers = FXCollections.observableArrayList(dbConnection.getCustomers());
+		updates = new HashMap<>();
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
