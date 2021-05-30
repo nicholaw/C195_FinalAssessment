@@ -44,7 +44,7 @@ public class CustomerOverview  extends BorderPane
         customersTable.setItems(FXCollections.observableArrayList(controller.getCustomers()));
         TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
-        TableColumn<Customer, String> divCol = new TableColumn<>("First-Level Division");
+        TableColumn<Customer, String> divCol = new TableColumn<>("Phone");
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Outstanding Appointments");
         idCol.setCellValueFactory(new PropertyValueFactory("customerId"));

@@ -202,4 +202,8 @@ public class DBConnection
     {
         return false;
     }//updateCustomer
+
+    private void insertTestCustomers()
+    {
+    }
 }//DBConnection
