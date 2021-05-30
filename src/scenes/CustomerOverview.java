@@ -3,14 +3,12 @@ package scenes;
 import controller.Controller;
 import customer.Customer;
 import javafx.collections.FXCollections;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import sceneUtils.SceneCode;
 
 public class CustomerOverview  extends BorderPane
 {
@@ -25,6 +23,7 @@ public class CustomerOverview  extends BorderPane
     Button viewAppointmentsButton;
     Button deleteCustomerButton;
     Button logoutButton;
+    Customer selectedCustomer;
 
     public CustomerOverview(Controller controller)
     {
@@ -39,6 +38,7 @@ public class CustomerOverview  extends BorderPane
         viewAppointmentsButton = new Button("View Appointments");
         deleteCustomerButton = new Button("Delete Customer");
         logoutButton = new Button("Logout");
+        selectedCustomer = null;
 
         //Set initial states for scene elements
         customersTable.setItems(FXCollections.observableArrayList(controller.getCustomers()));
@@ -51,10 +51,36 @@ public class CustomerOverview  extends BorderPane
         customersTable.getColumns().setAll(idCol, nameCol, divCol, countryCol, apptsCol);
 
         //Add event listeners to scene elements
+        addCustomerButton.setOnAction(event ->
+        {
+            controller.changeScene(SceneCode.EDIT_CUSTOMER, null);
+        });
+        editCustomerButton.setOnAction(event ->
+        {
+            controller.changeScene(SceneCode.EDIT_CUSTOMER, selectedCustomer);
+        });
+        viewAppointmentsButton.setOnAction(event ->
+        {
+            controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, selectedCustomer);
+        });
+        deleteCustomerButton.setOnAction(event ->
+        {
+            Alert confirmDelete = controller.getConfirmationAlert();
+            confirmDelete.setAlertType(Alert.AlertType.CONFIRMATION);
+            confirmDelete.setContentText("Are you sure you would like to delete this customer?");
+            confirmDelete.showAndWait()
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> controller.deleteCustomer(selectedCustomer));
+        });
+        logoutButton.setOnAction(event ->
+        {
+            controller.changeScene(SceneCode.LOGIN, null);
+        });
+
         //Add scene elements to containers
         HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, logoutButton);
         this.setTop(header);
         this.setCenter(customersTable);
         this.setBottom(buttonBox);
     }//constructor
-}
+}//CustomerOverview

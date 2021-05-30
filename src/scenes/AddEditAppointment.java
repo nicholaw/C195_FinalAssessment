@@ -59,10 +59,10 @@ public class AddEditAppointment extends BorderPane
         cancelButton = new Button("Cancel");
 
         //set initial states for scene elements
-        customerContactField.setDisable(true);      //customer information fields are disabled
+        customerContactField.setDisable(true);              //customer information fields are disabled
         customerIdField.setDisable(true);
-        apptIdField.setDisable(true);               //appoint id is auto-generated
-        contactContactField.setDisable(true);       //contact info auto-filled based on selection
+        apptIdField.setDisable(true);                       //appoint id is auto-generated
+        contactContactField.setDisable(true);               //contact info auto-filled based on selection
         for(Appointment a : controller.testAppointments)    //Add employee contacts
         {
             contactIdCombo.getItems().add(a.getContactId());
@@ -72,6 +72,8 @@ public class AddEditAppointment extends BorderPane
         locationCombo.setValue(locationCombo.getItems().get(0));
         apptTypeCombo.getItems().addAll("Type 1", "Type 2", "Type 3");
         apptTypeCombo.setValue(apptTypeCombo.getItems().get(0));
+
+        //Add event handlers to scene elements
 
         //add scene elements to container
         GridPane contentPane = new GridPane();
@@ -92,8 +94,8 @@ public class AddEditAppointment extends BorderPane
 
     public void loadAppointmentInfo(Appointment a)
     {
-        customerIdField.setText(a.getCustomerId());
-        customerContactField.setText(a.getCustomerContactInfo());
+        customerIdField.setText("" + a.getCustomerId());
+        customerContactField.setText("xxx-xxx-xxxx");
         apptTitleField.setText(a.getTitle());
     }
 
@@ -101,5 +103,10 @@ public class AddEditAppointment extends BorderPane
     {
         customerIdField.setText(c.getCustomerId() + "");
         customerContactField.setText(c.getPhoneNum());
+    }
+
+    public void loadNewAppointment()
+    {
+
     }
 }

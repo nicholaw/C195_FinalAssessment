@@ -54,12 +54,12 @@ public class Customer
         customerId = generateId();
     }//Constructor: name, phoneNum, address, city, country, div, postCode
 
-    public Customer(int id, String name, Country country, Division div)
+    public Customer(int id, String name, Country country, String phoneNum)
     {
         this.customerId = id;
         this.name = name;
         this.country = country;
-        this.division = div;
+        this.phoneNum = phoneNum;
     }//Constructor: id, name, country, div
 
     private static int generateId()
