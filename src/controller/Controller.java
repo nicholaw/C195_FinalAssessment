@@ -13,7 +13,6 @@ import scenes.*;
 import utils.Country;
 import utils.User;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class Controller
 {
@@ -48,7 +47,7 @@ public class Controller
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
-		customers = FXCollections.ObservableArrayList(dbConnection.getCustomers());
+		customers = FXCollections.observableArrayList(dbConnection.getCustomers());
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
@@ -116,7 +115,7 @@ public class Controller
 		return false;
     }//addCustomer
 
-    public void deleteAppointment(Appointment a)
+    public boolean deleteAppointment(Appointment a)
     {
 		return dbConnection.deleteAppointment(a.getAppointmentId());
     }//deleteAppointment
@@ -130,14 +129,14 @@ public class Controller
 			confirmationAlert.showAndWait();
 			return false;
 		}
-		if(DBConnection.deleteCustomer(c.getCustomerId()))
+		if(dbConnection.deleteCustomer(c.getCustomerId()))
 		{
 			customers.remove(c);
 			return true;
 		} else
 		{
 			confirmationAlert.setAlertType(Alert.AlertType.ERROR);
-			confirmationAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId + ".");
+			confirmationAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId() + ".");
 			confirmationAlert.showAndWait();
 			return false;
 		}

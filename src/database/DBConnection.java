@@ -187,7 +187,8 @@ public class DBConnection
 
     public boolean insertAppointment(Appointment a)
     {
-		//check appointment to add does not overlap 
+		//check appointment to add does not overlap
+        return false;
     }//insertAppointment
 
     public boolean insertCustomer(Customer c, String creator, String timestamp)
