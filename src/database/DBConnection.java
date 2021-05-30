@@ -38,29 +38,56 @@ public class DBConnection
         }
     }//constructor
 
-    public boolean deleteAppointment()
+    public boolean deleteAppointment(int id)
     {
-        return false;
+		String sql =	"DELETE " +
+						"FROM appointments " +
+						"WHERE AppointmentID = ?";
+		try(var stmt = conn.prepareStatement(sql))
+		{
+			stmt.setInt(1, id);
+			return (stmt.executeUpdate() > 0);
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
     }//deleteAppointment
-
-    public boolean deleteCustomer()
+	
+    public boolean deleteCustomer(int id)
     {
-        return false;
+        String sql =	"DELETE " +
+						"FROM customers " +
+						"WHERE CustomerID = ?";
+		try(var stmt = conn.prepareStatement(sql))
+		{
+			stmt.setInt(1, id);
+			return (stmt.executeUpdate() > 0);
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
     }//deleteCustomer
 
-    public ResultSet getAllDivisions()
+    public Collection<Division> getAllDivisions()
     {
         String sql =    "SELECT Division_ID AS id, Division AS name, Country_ID AS country " +
-                        "FROM first-level divisions " +
+                        "FROM first_level_divisions " +
                         "ORDER BY country, name";
+		var divisions = new LinkedHashSet<Division>();
         try(var stmt = conn.prepareStatement(sql))
         {
-            return stmt.executeQuery();
+			var result = stmt.executeQuery();
+			while(result.next())
+			{
+				divisions.add(new Division(result.getInt("id"), result.getString("name")));
+			}
         } catch(SQLException e)
         {
             e.printStackTrace();
-            return null;
         }
+		return divisions;
     }//getAllDivisions
 
     public Collection<Country> getCountries()

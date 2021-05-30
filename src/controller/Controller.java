@@ -33,6 +33,7 @@ public class Controller
     private int nextCustomerId;
     private int nextAppointmentId;
     private ObservableList<Country> countries;
+	private ObservableList<Customer> customers;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -47,6 +48,7 @@ public class Controller
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
+		customers = FXCollections.ObservableArrayList(dbConnection.getCustomers());
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
@@ -110,16 +112,30 @@ public class Controller
 
     public void deleteAppointment(Appointment a)
     {
-
+		return dbConnection.deleteAppointment(a.getAppointmentId());
     }//deleteAppointment
 
     public boolean deleteCustomer(Customer c)
     {
-        //TODO: check customer has no scheduled appointments
-        //TODO: remove customer from database
-        //TODO: remove customer from list of customers
-        return true;
-    }
+		if(c.getScheduledAppointments() > 0)
+		{
+			confirmationAlert.setAlertType(Alert.AlertType.INFORMATION);
+			confirmationAlert.setContentText("Unable to delete customer " + c.getCustomerId() + " because they still have scheduled appointments.");
+			confirmationAlert.showAndWait();
+			return false;
+		}
+		if(DBConnection.deleteCustomer(c.getCustomerId()))
+		{
+			customers.remove(c);
+			return true;
+		} else
+		{
+			confirmationAlert.setAlertType(Alert.AlertType.ERROR);
+			confirmationAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId + ".");
+			confirmationAlert.showAndWait();
+			return false;
+		}
+    }//deleteCustomer
 
     /**
      *
@@ -159,9 +175,9 @@ public class Controller
         return countries;
     }//getCountryCombo
 
-    public Collection<Customer> getCustomers()
+    public ObservableList<Customer> getCustomers()
     {
-        return dbConnection.getCustomers();
+        return customers;
     }//getCustomers
 
     public ObservableList<Appointment> getCustomerAppointments(Customer c)

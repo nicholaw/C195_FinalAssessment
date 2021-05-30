@@ -41,12 +41,12 @@ public class CustomerOverview  extends BorderPane
         selectedCustomer = null;
 
         //Set initial states for scene elements
-        customersTable.setItems(FXCollections.observableArrayList(controller.getCustomers()));
+        customersTable.setItems(controller.getCustomers());
         TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
         TableColumn<Customer, String> divCol = new TableColumn<>("Phone");
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
-        TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Outstanding Appointments");
+        TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
         idCol.setCellValueFactory(new PropertyValueFactory("customerId"));
         customersTable.getColumns().setAll(idCol, nameCol, divCol, countryCol, apptsCol);
 
