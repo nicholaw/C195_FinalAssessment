@@ -130,8 +130,7 @@ public class DBConnection
             var result = stmt.executeQuery();
             while(result.next())
             {
-                list.add(new Customer(result.getInt("id"), result.getString("name"),
-                        controller.getCountryById(result.getInt("country")), result.getString("phone")));
+                list.add(new Customer(result.getInt("id"), result.getString("name"),result.getInt("country"), result.getString("phone")));
             }
         } catch(SQLException e)
         {

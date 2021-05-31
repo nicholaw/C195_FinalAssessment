@@ -70,8 +70,8 @@ public class AddEditCustomer  extends BorderPane
                 } else
                 {
                     Customer c = new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
-                            addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
-                            countryAndDivisionsCombos.getSelectedDivision(), postCodeField.getText());
+                            addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry().getCountryId(),
+                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText());
                     controller.addCustomer(c);
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);

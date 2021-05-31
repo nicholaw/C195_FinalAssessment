@@ -42,12 +42,16 @@ public class CustomerOverview  extends BorderPane
         //Set initial states for scene elements
         customersTable.setItems(controller.getCustomers());
         TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
-        TableColumn<Customer, String> divCol = new TableColumn<>("Phone");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Customer, String> phoneCol = new TableColumn<>("Phone");
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
+        countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
-        idCol.setCellValueFactory(new PropertyValueFactory("customerId"));
-        customersTable.getColumns().setAll(idCol, nameCol, divCol, countryCol, apptsCol);
+        apptsCol.setCellValueFactory(new PropertyValueFactory("scheduledAppointments"));
+        customersTable.getColumns().setAll(idCol, nameCol, phoneCol, countryCol, apptsCol);
 
         //Add event listeners to scene elements
         addCustomerButton.setOnAction(event ->
