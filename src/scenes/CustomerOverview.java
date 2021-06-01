@@ -2,7 +2,6 @@ package scenes;
 
 import controller.Controller;
 import customer.Customer;
-import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -41,14 +40,18 @@ public class CustomerOverview  extends BorderPane
         selectedCustomer = null;
 
         //Set initial states for scene elements
-        customersTable.setItems(FXCollections.observableArrayList(controller.getCustomers()));
+        customersTable.setItems(controller.getCustomers());
         TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
-        TableColumn<Customer, String> divCol = new TableColumn<>("Phone");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Customer, String> phoneCol = new TableColumn<>("Phone");
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
-        TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Outstanding Appointments");
-        idCol.setCellValueFactory(new PropertyValueFactory("customerId"));
-        customersTable.getColumns().setAll(idCol, nameCol, divCol, countryCol, apptsCol);
+        countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
+        TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
+        apptsCol.setCellValueFactory(new PropertyValueFactory("scheduledAppointments"));
+        customersTable.getColumns().setAll(idCol, nameCol, phoneCol, countryCol, apptsCol);
 
         //Add event listeners to scene elements
         addCustomerButton.setOnAction(event ->

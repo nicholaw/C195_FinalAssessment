@@ -13,7 +13,7 @@ import scenes.*;
 import utils.Country;
 import utils.User;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 
 public class Controller
 {
@@ -33,6 +33,8 @@ public class Controller
     private int nextCustomerId;
     private int nextAppointmentId;
     private ObservableList<Country> countries;
+	private ObservableList<Customer> customers;
+	private HashMap<String, String> updates;
 
     /////////////////FOR TESTING/////////////////////////////////////////////////////////////
     private final String testUsername = "test";
@@ -47,6 +49,8 @@ public class Controller
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
+		customers = FXCollections.observableArrayList(dbConnection.getCustomers());
+		updates = new HashMap<>();
         //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         editAppt = new AddEditAppointment(this);
@@ -103,23 +107,53 @@ public class Controller
         }//switch
     }//changeScene
 
-    public void createCustomer()
-    {
-        //TODO: Remember to include date and time created
-    }
+	public boolean addAppointment(Appointment a)
+	{
+		return  false;
+	}//addAppointment
 
-    public void deleteAppointment(Appointment a)
+    public boolean addCustomer(Customer c)
     {
+        //TODO: Remember to include date and time created plus creator
+		return false;
+    }//addCustomer
 
+    public boolean deleteAppointment(Appointment a)
+    {
+		return dbConnection.deleteAppointment(a.getAppointmentId());
     }//deleteAppointment
 
     public boolean deleteCustomer(Customer c)
     {
-        //TODO: check customer has no scheduled appointments
-        //TODO: remove customer from database
-        //TODO: remove customer from list of customers
-        return true;
-    }
+		if(c.getScheduledAppointments() > 0)
+		{
+			confirmationAlert.setAlertType(Alert.AlertType.INFORMATION);
+			confirmationAlert.setContentText("Unable to delete customer " + c.getCustomerId() + " because they still have scheduled appointments.");
+			confirmationAlert.showAndWait();
+			return false;
+		}
+		if(dbConnection.deleteCustomer(c.getCustomerId()))
+		{
+			customers.remove(c);
+			return true;
+		} else
+		{
+			confirmationAlert.setAlertType(Alert.AlertType.ERROR);
+			confirmationAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId() + ".");
+			confirmationAlert.showAndWait();
+			return false;
+		}
+    }//deleteCustomer
+	
+	public boolean editAppointment()
+	{
+		return false;
+	}//editAppointment
+	
+	public boolean editCustomer()
+	{
+		return false;
+	}//editCusotmer
 
     /**
      *
@@ -159,9 +193,9 @@ public class Controller
         return countries;
     }//getCountryCombo
 
-    public Collection<Customer> getCustomers()
+    public ObservableList<Customer> getCustomers()
     {
-        return dbConnection.getCustomers();
+        return customers;
     }//getCustomers
 
     public ObservableList<Appointment> getCustomerAppointments(Customer c)
@@ -196,6 +230,11 @@ public class Controller
 
     private void logLoginAttempt(String username, boolean valid)
     {}
+	
+	private boolean overlapsExistingAppointment(Appointment a)
+	{
+		return false;
+	}//overlapsExistingAppointmet
 
     public void updateCustomer()
     {

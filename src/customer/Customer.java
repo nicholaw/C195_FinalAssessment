@@ -1,17 +1,20 @@
 package customer;
 
-import utils.Country;
-import utils.Division;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class Customer
 {
     private int customerId;
+    private StringProperty idProperty;
     private String name;
+    private StringProperty nameProperty;
     private String phoneNum;
+    private StringProperty phoneProperty;
     private String address;
     private String city;
-    private Country country;
-    private Division division;
+    private int countryId;
+    private int divisionId;
     private String postCode;
     private int scheduledAppointments = 0;
 
@@ -21,8 +24,8 @@ public class Customer
             String phoneNum,
             String address,
             String city,
-            Country country,
-            Division div,
+            int country,
+            int div,
             String postCode)
     {
         customerId = id;
@@ -30,8 +33,8 @@ public class Customer
         this.phoneNum = phoneNum;
         this.address = address;
         this.city = city;
-        this.country = country;
-        this.division = div;
+        this.countryId = country;
+        this.divisionId = div;
         this.postCode = postCode;
     }//Constructor: id, name, phoneNum, address, city, country, div, postCode
 
@@ -40,27 +43,28 @@ public class Customer
             String phoneNum,
             String address,
             String city,
-            Country country,
-            Division div,
+            int country,
+            int div,
             String postCode)
     {
         this.name = name;
+        this.nameProperty.setValue(name);
         this.phoneNum = phoneNum;
         this.address = address;
         this.city = city;
-        this.country = country;
-        this.division = div;
+        this.countryId = country;
+        this.divisionId = div;
         this.postCode = postCode;
         customerId = generateId();
     }//Constructor: name, phoneNum, address, city, country, div, postCode
 
-    public Customer(int id, String name, Country country, String phoneNum)
+    public Customer(int id, String name, int country, String phoneNum)
     {
         this.customerId = id;
         this.name = name;
-        this.country = country;
+        this.countryId = country;
         this.phoneNum = phoneNum;
-    }//Constructor: id, name, country, div
+    }//Constructor: id, name, country, phone
 
     private static int generateId()
     {
@@ -72,14 +76,10 @@ public class Customer
         return address;
     }
 
-    public Country getCountry()
-    {
-        return country;
-    }
 
     public int getCountryId()
     {
-        return country.getCountryId();
+        return countryId;
     }
 
     public String getCity()
@@ -94,7 +94,15 @@ public class Customer
 
     public String getName()
     {
-        return name;
+        //return name;
+        return nameProperty.get();
+    }
+
+    public StringProperty getNameProperty()
+    {
+        var nameProperty = new SimpleStringProperty(this, "name");
+        nameProperty.setValue(this.name);
+        return nameProperty;
     }
 
     public String getPhoneNum()
@@ -107,14 +115,9 @@ public class Customer
         return postCode;
     }
 
-    public Division getFirstLevelDivision()
-    {
-        return division;
-    }
-
     public int getDivisionId()
     {
-        return division.getDivisionId();
+        return divisionId;
     }
 
     public int getScheduledAppointments()

@@ -27,8 +27,8 @@ public class AddEditCustomer  extends BorderPane
     private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
     private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
-    private CountryAndDivisionsBox countryAndDivisionsCombos;
-    private Alert confirmCancelAlert;
+    private Alert confirmCancelAlert;   private CountryAndDivisionsBox countryAndDivisionsCombos;
+    private boolean editExisting;
 
     public AddEditCustomer(Controller controller)
     {
@@ -57,15 +57,25 @@ public class AddEditCustomer  extends BorderPane
         cityErrorLabel      = new Label("");
         postCodeErrorLabel  = new Label("");
         confirmCancelAlert	= new Alert(AlertType.CONFIRMATION);
+        editExisting        = false;
 
         //Instantiate buttons and add event listeners
         submitButton = new Button("Add Customer");
         submitButton.setOnAction(event -> {
             if(this.validateForm())
             {
-                Customer c = new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
-                        addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
-                        countryAndDivisionsCombos.getSelectedDivision(), postCodeField.getText());
+                if(editExisting)
+                {
+
+                } else
+                {
+                    Customer c = new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
+                            addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry().getCountryId(),
+                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText());
+                    controller.addCustomer(c);
+                }
+                controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+                this.clearAll();
             }
         });
         cancelButton = new Button("Cancel");
@@ -169,11 +179,13 @@ public class AddEditCustomer  extends BorderPane
             //TODO: set value for country and division combo boxes
         }
         submitButton.setText("Update Customer");
+        editExisting = true;
     }//loadCustomerInfo
 
     public void loadNewCustomer()
     {
         idField.setText("" + controller.getNextCustomerId());
+        editExisting = false;
     }//loadNewCustomer
 
     /**

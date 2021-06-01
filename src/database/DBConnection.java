@@ -11,12 +11,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class DBConnection
 {
@@ -38,29 +36,56 @@ public class DBConnection
         }
     }//constructor
 
-    public boolean deleteAppointment()
+    public boolean deleteAppointment(int id)
     {
-        return false;
+		String sql =	"DELETE " +
+						"FROM appointments " +
+						"WHERE AppointmentID = ?";
+		try(var stmt = conn.prepareStatement(sql))
+		{
+			stmt.setInt(1, id);
+			return (stmt.executeUpdate() > 0);
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
     }//deleteAppointment
-
-    public boolean deleteCustomer()
+	
+    public boolean deleteCustomer(int id)
     {
-        return false;
+        String sql =	"DELETE " +
+						"FROM customers " +
+						"WHERE CustomerID = ?";
+		try(var stmt = conn.prepareStatement(sql))
+		{
+			stmt.setInt(1, id);
+			return (stmt.executeUpdate() > 0);
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
     }//deleteCustomer
 
-    public ResultSet getAllDivisions()
+    public Collection<Division> getAllDivisions()
     {
         String sql =    "SELECT Division_ID AS id, Division AS name, Country_ID AS country " +
-                        "FROM first-level divisions " +
+                        "FROM first_level_divisions " +
                         "ORDER BY country, name";
+		var divisions = new LinkedHashSet<Division>();
         try(var stmt = conn.prepareStatement(sql))
         {
-            return stmt.executeQuery();
+			var result = stmt.executeQuery();
+			while(result.next())
+			{
+				divisions.add(new Division(result.getInt("id"), result.getString("name")));
+			}
         } catch(SQLException e)
         {
             e.printStackTrace();
-            return null;
         }
+		return divisions;
     }//getAllDivisions
 
     public Collection<Country> getCountries()
@@ -105,8 +130,7 @@ public class DBConnection
             var result = stmt.executeQuery();
             while(result.next())
             {
-                list.add(new Customer(result.getInt("id"), result.getString("name"),
-                        controller.getCountryById(result.getInt("country")), result.getString("phone")));
+                list.add(new Customer(result.getInt("id"), result.getString("name"),result.getInt("country"), result.getString("phone")));
             }
         } catch(SQLException e)
         {
@@ -158,8 +182,9 @@ public class DBConnection
         return mysqlDS;
     }//getDataSource
 
-    public boolean insertAppointment()
+    public boolean insertAppointment(Appointment a)
     {
+		//check appointment to add does not overlap
         return false;
     }//insertAppointment
 
@@ -231,17 +256,110 @@ public class DBConnection
         }
     }//setCountryDivisions
 
-    public boolean updateAppointment()
+    /**
+     * Updates information of the given appointment in the database. Returns true if at least one table row
+     * was affected and false otherwise.
+     *
+     * @param updates   Updates to be enacted
+     * @param appointmentId Id of customer to be updated
+     * @return  True if at least one table row was affected
+     */
+    public boolean updateAppointment(HashMap<String, String> updates, int appointmentId)
     {
+        if(updates != null)
+        {
+            Set<String> keys = updates.keySet();
+            String sql = "UPDATE customers SET ";
+            //Add the correct number of bind variables to sql statement
+            for(int i = 0; i < keys.size(); i++)
+            {
+                if(i == keys.size() - 1)
+                    sql += "? = ? ";
+                else
+                    sql += "? = ?, ";
+            }
+            sql += "WHERE CustomerID = ?";
+            try(var stmt = conn.prepareStatement(sql))
+            {
+                int bindIndex = 1;
+                for(String str : keys)
+                {
+                    //Contact Id column holds integers and update value must be parsed
+                    if(str.equals(DBConstants.APPOINTMENT_CONTACT_ID))
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
+                        bindIndex++;
+                    } else
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setString(bindIndex, updates.get(str));
+                        bindIndex++;
+                    }
+                }//for str:keys
+                stmt.setInt(bindIndex, appointmentId);
+                return (stmt.executeUpdate() > 0);
+            } catch(SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }//if updates!=null
         return false;
+
     }//updateAppointment
 
-    public boolean updateCustomer()
+    /**
+     * Updates information of the given customer in the database. Returns true if at least one table row
+     * was affected and false otherwise.
+     *
+     * @param updates   Updates to be enacted
+     * @param customerId Id of customer to be updated
+     * @return  true if at least one table row was affected
+     */
+    public boolean updateCustomer(HashMap<String, String> updates, int customerId)
     {
+        if(updates != null)
+        {
+            Set<String> keys = updates.keySet();
+            String sql = "UPDATE customers SET ";
+            //Add the correct number of bind variables to sql statement
+            for(int i = 0; i < keys.size(); i++)
+            {
+                if(i == keys.size() - 1)
+                    sql += "? = ? ";
+                else
+                    sql += "? = ?, ";
+            }
+            sql += "WHERE CustomerID = ?";
+            try(var stmt = conn.prepareStatement(sql))
+            {
+                int bindIndex = 1;
+                for(String str : keys)
+                {
+                    //Division id column holds integers and update value must be parsed
+                    if(str.equals(DBConstants.CUSTOMER_DIVISION_ID))
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
+                        bindIndex++;
+                    } else
+                    {
+                        stmt.setString(bindIndex, str);
+                        bindIndex++;
+                        stmt.setString(bindIndex, updates.get(str));
+                        bindIndex++;
+                    }
+                }//for str:keys
+                stmt.setInt(bindIndex, customerId);
+                return (stmt.executeUpdate() > 0);
+            } catch(SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }//if updates!=null
         return false;
     }//updateCustomer
-
-    private void insertTestCustomers()
-    {
-    }
 }//DBConnection
