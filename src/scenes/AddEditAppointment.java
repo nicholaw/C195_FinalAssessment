@@ -63,15 +63,6 @@ public class AddEditAppointment extends BorderPane
         customerIdField.setDisable(true);
         apptIdField.setDisable(true);                       //appoint id is auto-generated
         contactContactField.setDisable(true);               //contact info auto-filled based on selection
-        for(Appointment a : controller.testAppointments)    //Add employee contacts
-        {
-            contactIdCombo.getItems().add(a.getContactId());
-        }
-        //contactIdCombo.setValue(contactIdCombo.getItems().get(0));
-        locationCombo.getItems().addAll(Location.LONDON, Location.NEW_YORK, Location.QUEBEC);
-        locationCombo.setValue(locationCombo.getItems().get(0));
-        apptTypeCombo.getItems().addAll("Type 1", "Type 2", "Type 3");
-        apptTypeCombo.setValue(apptTypeCombo.getItems().get(0));
 
         //Add event handlers to scene elements
 

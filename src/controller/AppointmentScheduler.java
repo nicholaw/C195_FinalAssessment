@@ -18,7 +18,7 @@ public class AppointmentScheduler extends Application
         Scene scene = new Scene(new Label("Launch Error"));
         stage.setScene(scene);
         stage.setTitle("Appointment Scheduler");
-        Controller controller = new Controller(scene);
+        new Controller(scene);
         stage.show();
     }
 

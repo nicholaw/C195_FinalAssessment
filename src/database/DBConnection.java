@@ -362,4 +362,29 @@ public class DBConnection
         }//if updates!=null
         return false;
     }//updateCustomer
+
+    /**
+     * Returns the given user's password if that user exists in the database.
+     *
+     * @param username  Username of the user in question
+     * @return  Password associated with the username if it exists and null otherwise
+     */
+    public CharSequence validateCredentials(String username)
+    {
+        String sql =    "SELECT Password " +
+                        "FROM users " +
+                        "WHERE User_Name = ?";
+        try(var stmt = conn.prepareStatement(sql))
+        {
+            stmt.setString(1, username);
+            var result = stmt.executeQuery();
+            if(result.next())
+                return (CharSequence) result.getObject("password");
+            else
+                return null;
+        } catch (SQLException e)
+        {
+            return null;
+        }
+    }//validateCredentials
 }//DBConnection

@@ -21,10 +21,10 @@ public class Controller
     private final Scene appScene;
     private final HeaderPane header;
     private final LoginPage login;
-    private final AddEditAppointment editAppt;
-    private final AddEditCustomer editCust;
-    private final CustomerOverview custOverview;
-    private final AppointmentOverview apptOverview;
+    private AddEditAppointment editAppt;
+    private AddEditCustomer editCust;
+    private CustomerOverview custOverview;
+    private AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
 
     //non-final attributes
@@ -36,37 +36,13 @@ public class Controller
 	private ObservableList<Customer> customers;
 	private HashMap<String, String> updates;
 
-    /////////////////FOR TESTING/////////////////////////////////////////////////////////////
-    private final String testUsername = "test";
-    private final int testPassword = hashPassword("test");
-    public ArrayList<Customer> testCustomers = new ArrayList<>();
-    public ArrayList<Appointment> testAppointments = new ArrayList<>();
-    /////////////////////////////////////////////////////////////////////////////////////////
-
     public Controller(Scene scn)
     {
         appScene = scn;
         header = new HeaderPane();
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
-		customers = FXCollections.observableArrayList(dbConnection.getCustomers());
-		updates = new HashMap<>();
-        //TODO: present login page but wait for credential validation before instantiating db connection and other scenes
-        countries = FXCollections.observableArrayList(dbConnection.getCountries());
-        editAppt = new AddEditAppointment(this);
-        editCust = new AddEditCustomer(this);
-        custOverview = new CustomerOverview(this);
-        apptOverview = new AppointmentOverview(this);
-        confirmationAlert = new Alert(Alert.AlertType.NONE);
         this.changeScene(SceneCode.LOGIN, null);
-        //TODO: check for appointments starting within fifteen minutes
-
-        ///////////FOR TESTING////////////////////////////////////////////////////////////////
-        //testCustomers.add(testCustomer1);
-        currentUser = new User(0, "Gary");
-        //testAppointments.add(testAppointment1);
-        //dbConnection.insertCustomer(testCustomer1, currentUser.getName(), LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        //////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 
     public void changeScene(SceneCode code, Object participant)
@@ -241,26 +217,56 @@ public class Controller
         //TODO: remember to include date and time last updated
     }
 
+    /**
+     * Driver method for validating login credentials.
+     *
+     * @param username  Username entered in the login form
+     * @param password  Password entered in the login form
+     */
     public void validateLoginCredentials(String username, CharSequence password)
     {
-        if(username.equals(testUsername))
-        {
-            int hashedPassword = hashPassword(password);
-            if(hashedPassword == testPassword)
-            {
-                hashedPassword = -1;
-                logLoginAttempt(username, true);
-                validLogin(username);
-                return;
-            }
+        if(validateCredentials(username, password)) {
+            logLoginAttempt(username, true);
+            validLogin(username);
+        } else {
+            logLoginAttempt(username, false);
+            login.invalidLogin();
         }
-        logLoginAttempt(username, false);
-        login.invalidLogin();
+    }//validateLoginCredentials
+
+    /**
+     *  Checks that the given username exists in the database and if the given password matches the associated
+     *  username in the database. Returns true if both the user exists and the password matches and false otherwise.
+     *
+     * @param username  The given username
+     * @param password  The given password
+     * @return  Whether the given username and password exist and are associated in the database.
+     */
+    private boolean validateCredentials(String username, CharSequence password)
+    {
+        CharSequence cs = dbConnection.validateCredentials(username);
+        if(cs == null) {
+            return false;
+        } else if (hashPassword(password) == hashPassword(cs)) {
+            return true;
+        } else {
+            return false;
+        }
     }//validateLoginCredentials
 
     private void validLogin(String username)
     {
         login.clearAll();
+        countries = FXCollections.observableArrayList(dbConnection.getCountries());
+        customers = FXCollections.observableArrayList(dbConnection.getCustomers());
+        updates = new HashMap<>();
+        editAppt = new AddEditAppointment(this);
+        editCust = new AddEditCustomer(this);
+        custOverview = new CustomerOverview(this);
+        apptOverview = new AppointmentOverview(this);
+        confirmationAlert = new Alert(Alert.AlertType.NONE);
+        currentUser = new User(0, username);
+        //TODO: check for appointments starting within fifteen minutes
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
     }
 }//class Controller

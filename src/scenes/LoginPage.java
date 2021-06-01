@@ -35,7 +35,7 @@ public class LoginPage extends BorderPane
         submitButton        =   new Button("Submit");
 
         VBox fieldBox = new VBox(usernameLabel, usernameField, passwordLabel, passwordField, errorMessageLabel);
-        this.setTop(controller.getHeader());
+        this.setTop(this.controller.getHeader());
         this.setCenter(fieldBox);
         this.setBottom(submitButton);
 
