@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class DBConnection
 {
@@ -88,10 +87,19 @@ public class DBConnection
 		return divisions;
     }//getAllDivisions
 
+    /**
+     * Returns a collection of all the countries in the database to be displayed in the combo box for selecting
+     * a customer's country.
+     *
+     * @return The collection of countries
+     */
     public Collection<Country> getCountries()
     {
-        String sql =    "SELECT country_id AS id, country AS name " +
-                        "FROM countries ORDER BY name";
+        String sql =    "SELECT "                   +
+                            "country_id AS id, "    +
+                            "country AS name "      +
+                        "FROM countries "           +
+                        "ORDER BY name";
         try(var stmt = conn.prepareStatement(sql))
         {
             var result = stmt.executeQuery();
@@ -110,20 +118,29 @@ public class DBConnection
     }//getCountries
 
     /**
+     * Returns a collection of all the customers in the database to be displayed on the customer overview scene.
      *
-     * @return
+     * @return The collection of customers
      */
     public Collection<Customer> getCustomers()
     {
         var list = new LinkedHashSet<Customer>();
-        String sql =    "SELECT Customer_ID AS id, Customer_Name AS name, Phone AS phone, Country_ID AS country" +
-                        "FROM customers " +
-                        "LEFT JOIN (" +
-                            "SELECT Country_ID, Division_ID " +
-                            "FROM countries " +
-                            "INNER JOIN First_Level_Divisions AS divs " +
-                            "ON countries.Country_ID = divs.Country_ID) AS countrynames " +
-                        "ON customers.Division_ID = countrynames.Division_ID " +
+        String sql =    "SELECT "                                                                   +
+                            "Customer_ID AS id, "                                                   +
+                            "Customer_Name AS name, "                                               +
+                            "Phone AS phone, "                                                      +
+                            "countrynames.Country_ID AS country "                                   +
+                        "FROM "                                                                     +
+                            "customers "                                                            +
+                            "LEFT JOIN ("                                                           +
+                                "SELECT "                                                           +
+                                    "countries.Country_ID, "                                        +
+                                    "divs.Division_ID "                                             +
+                                "FROM "                                                             +
+                                    "countries "                                                    +
+                                    "LEFT JOIN first_level_divisions AS divs "                      +
+                                    "ON countries.Country_ID = divs.Country_ID) AS countrynames "   +
+                            "ON customers.Division_ID = countrynames.Division_ID "                 +
                         "ORDER BY name, id";
         try(var stmt = conn.prepareStatement(sql))
         {
@@ -139,15 +156,33 @@ public class DBConnection
         return list;
     }//getCustomers
 
+    /**
+     * Returns a collection of all the appointments currently scheduled by the given customer.
+     *
+     * @param id    Id of the customer
+     * @return  The collection of appointments
+     */
     public Collection<Appointment> getCustomerAppointments(int id)
     {
         var list = new LinkedHashSet<Appointment>();
-        String sql =    "SELECT appointment_id, title, description, type, start, end, contact_name, contact_id " +
-                        "FROM appointments AS appts" +
-                        "LEFT JOIN contacts AS conts" +
-                        "ON appts.contact_id = conts.contact_id " +
-                        "WHERE appts.customer_id = ? " +
-                        "ORDER BY start";
+        String sql =    "SELECT "                                           +
+                            "appointment_id, "                              +
+                            "title, "                                       +
+                            "description, "                                 +
+                            "type, "                                        +
+                            "start, "                                       +
+                            "end, "                                         +
+                            "contact_name, "                                +
+                            "contact_id "                                   +
+                        "FROM "                                             +
+                            "appointments AS appts"                         +
+                            "LEFT JOIN "                                    +
+                                "contacts AS conts"                         +
+                            "ON appts.contact_id = conts.contact_id "       +
+                        "WHERE "                                            +
+                            "appts.customer_id = ? "                        +
+                        "ORDER BY "                                         +
+                            "start";
         try(var stmt = conn.prepareStatement(sql))
         {
             stmt.setInt(1, id);
