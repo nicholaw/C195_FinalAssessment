@@ -3,17 +3,20 @@ package controller;
 import appointment.Appointment;
 import customer.Customer;
 import database.DBConnection;
-import io.ApplicationWriter;
+import io.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
 import utils.Country;
 import utils.User;
-import java.util.HashMap;
 
 public class Controller
 {
@@ -26,6 +29,7 @@ public class Controller
     private CustomerOverview custOverview;
     private AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
+	private final File loginAttemptDestinaiton;
 
     //non-final attributes
     private User currentUser;
@@ -40,11 +44,10 @@ public class Controller
     {
         appScene = scn;
         header = new HeaderPane();
+		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         this.changeScene(SceneCode.LOGIN, null);
-		ApplicationWriter.writeText("Hi, Nora!!");
-		ApplicationWriter.writeText("Bye, Nora!");
     }//constructor
 
     public void changeScene(SceneCode code, Object participant)
@@ -206,8 +209,29 @@ public class Controller
         return sum;
     }//hashPassword
 
+	/**
+	 * Writes login attempt information to a text file
+	 *
+	 * @param username	username entered for the login attempt
+	 * @param valid		whether the login attempt was successful
+	 */
     private void logLoginAttempt(String username, boolean valid)
-    {}
+    {
+		try(var fw = new FileWriter(loginAttemptDestinaiton, true);
+			var bw = new BufferedWriter(fw)) {
+			LocalDateTime currentTime = LocalDateTime.now();
+			String text = currentTime.format(DateTimeFormatter.ofPattern(IOConstants.DATE_TIME_FORMAT));
+			text += (username + "\t");
+			if(valid)
+				text += IOConstants.SUCCESSFUL_LOGIN;
+			else
+				text += IOConstants.FAILED_LOGIN;
+			bw.write(text);
+			bw.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}//logLoginAttempt
 	
 	private boolean overlapsExistingAppointment(Appointment a)
 	{
