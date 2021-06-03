@@ -3,6 +3,7 @@ package controller;
 import appointment.Appointment;
 import customer.Customer;
 import database.DBConnection;
+import io.ApplicationWriter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -42,6 +43,9 @@ public class Controller
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         this.changeScene(SceneCode.LOGIN, null);
+        ApplicationWriter testWriter = new ApplicationWriter();
+        testWriter.writeText("Hello, Nora!!");
+        testWriter.writeText("Bye, Nora!!");
     }//constructor
 
     public void changeScene(SceneCode code, Object participant)
