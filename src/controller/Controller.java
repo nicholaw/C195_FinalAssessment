@@ -43,9 +43,8 @@ public class Controller
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
         this.changeScene(SceneCode.LOGIN, null);
-        ApplicationWriter testWriter = new ApplicationWriter();
-        testWriter.writeText("Hello, Nora!!");
-        testWriter.writeText("Bye, Nora!!");
+		ApplicationWriter.writeText("Hi, Nora!!");
+		ApplicationWriter.writeText("Bye, Nora!");
     }//constructor
 
     public void changeScene(SceneCode code, Object participant)

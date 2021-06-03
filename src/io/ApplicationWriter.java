@@ -4,24 +4,15 @@ import java.io.*;
 
 public class ApplicationWriter
 {
-    private File dest;
-
-    public ApplicationWriter()
+    public static void writeText(String text)
     {
-        dest = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
-    }//constructor
-
-    public void writeText(String str)
-    {
-            try(var fw = new FileWriter(dest);
-                var bw = new BufferedWriter(fw);
-                //var pw = new PrintWriter(bw)
-            ){
-                //pw.println(str);
-                bw.append(str);
-                bw.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-    }
+		try(var f = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
+			var fw = new FileWriter(f, true);
+			var bw = new BufferedWriter(fw)) {
+			bw.write(text);
+			bw.newLine();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+    }//writeText
 }
