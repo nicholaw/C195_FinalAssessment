@@ -81,23 +81,23 @@ public class AddEditAppointment extends BorderPane
         contentPane.addRow(10, scheduleButton, cancelButton);
         this.setCenter(contentPane);
         this.setTop(header);
-    }
+    }//constructor
 
     public void loadAppointmentInfo(Appointment a)
     {
         customerIdField.setText("" + a.getCustomerId());
         customerContactField.setText("xxx-xxx-xxxx");
         apptTitleField.setText(a.getTitle());
-    }
+    }//loadAppointmentInfo
 
     public void loadCustomerInfo(Customer c)
     {
         customerIdField.setText(c.getCustomerId() + "");
         customerContactField.setText(c.getPhoneNum());
-    }
+    }//loadCustomerInfo
 
     public void loadNewAppointment()
     {
 
-    }
+    }//loadNewAppointment
 }

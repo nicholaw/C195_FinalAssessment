@@ -115,15 +115,25 @@ public class AppointmentOverview  extends BorderPane
         editButton.setDisable(true);
     }//clear
 
+	public void loadOverview(Customer c, ObservableList<Appointment> appointments)
+	{
+		loadCustomerInformation(c);
+		loadAppointmentInformation(appointments);
+	}//loadOverview
+	
+	private void loadAppointmentInformation(ObservableList<Appointment> appointments)
+	{
+		if(appointments != null)
+			appointmentsTable.setItems(appointments);
+	}//loadAppointmentInformation
 
-    public void loadCustomerAppointmentInformation(Customer c, ObservableList<Appointment> list)
+    private void loadCustomerInformation(Customer c)
     {
         if(c != null)
         {
             customerIdField.setText("" + c.getCustomerId());
             customerNameField.setText(c.getName());
             customerPhoneField.setText("" + c.getPhoneNum());
-            appointmentsTable.setItems(list);
         }
     }//loadCustomerAppointmentInformation
 }//class AppointmentOverview

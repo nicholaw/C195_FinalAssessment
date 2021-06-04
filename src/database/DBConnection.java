@@ -140,7 +140,7 @@ public class DBConnection
                                     "countries "                                                    +
                                     "LEFT JOIN first_level_divisions AS divs "                      +
                                     "ON countries.Country_ID = divs.Country_ID) AS countrynames "   +
-                            "ON customers.Division_ID = countrynames.Division_ID "                 +
+                            "ON customers.Division_ID = countrynames.Division_ID "                 	+
                         "ORDER BY name, id";
         try(var stmt = conn.prepareStatement(sql))
         {

@@ -64,7 +64,7 @@ public class Controller
                 if(participant instanceof Customer)
                 {
                     Customer c = (Customer)participant;
-                    apptOverview.loadCustomerAppointmentInformation(c, FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId())));
+                    apptOverview.loadOverview(c, FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId())));
                 }
                 appScene.setRoot(apptOverview);
                 break;
