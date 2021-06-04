@@ -28,7 +28,10 @@ public class AddEditCustomer  extends BorderPane
     private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
     private Alert confirmCancelAlert;   private CountryAndDivisionsBox countryAndDivisionsCombos;
-    private boolean editExisting;
+	
+	//Scene attributes
+	private boolean newCustomer;
+	private String[] customerAttributes;
 
     public AddEditCustomer(Controller controller)
     {
@@ -57,7 +60,10 @@ public class AddEditCustomer  extends BorderPane
         cityErrorLabel      = new Label("");
         postCodeErrorLabel  = new Label("");
         confirmCancelAlert	= new Alert(AlertType.CONFIRMATION);
-        editExisting        = false;
+		
+		//Instantitate scene attributes
+		newCustomer = true;
+		customerAttributes = new String[CUSTOMER_CONSTANTS.EDITABLE_ATTRIBUTES];
 
         //Instantiate buttons and add event listeners
         submitButton = new Button("Add Customer");
@@ -152,6 +158,8 @@ public class AddEditCustomer  extends BorderPane
         postCodeField.setText("");
         countryAndDivisionsCombos.clear();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
+		newCustomer = true;
+		
     }//clearAll
 
     public void clearErrors()
@@ -171,21 +179,45 @@ public class AddEditCustomer  extends BorderPane
     {
         if(c != null)
         {
+			String tempString = "";
+			int tempInt = -1;
+			//set id
             idField.setText("" + c.getCustomerId());
-            nameField.setText(c.getName());
-            phoneField.setText(c.getPhoneNum());
-            addressArea.setText(c.getAddress());
-            cityField.setText(c.getCity());
-            //TODO: set value for country and division combo boxes
-        }
-        submitButton.setText("Update Customer");
-        editExisting = true;
+			//set name
+			temp = c.getName();
+            nameField.setText(tempString);
+			customerAttributes[CustomerConstants.NAME_INDEX] = tempString;
+			//set phone
+			temp = c.getPhone();
+            phoneField.setText(tempString);
+			customerAttributes[CustomerConstants.PHONE_INDEX] = tempString;
+			//set Address
+			temp = c.getAddress();
+            addressArea.setText(tempString);
+			customerAttributes[CustomerConstants.ADDRESS_INDEX] = tempString;
+			//set city
+			temp = c.getCity();
+            cityField.setText(tempString);
+			customerAttributes[CustomerConstants.CITY_INDEX] = tempString;
+			//set postal code
+			temp = c.getPostCode();
+			postCodeField.setText(tempString);
+			customerAttributes[CustomerConstants.POST_CODE_INDEX] = tempString;
+            //set country and first-level division
+			tempInt = c.getCountryId();
+			
+			submitButton.setText("Update Customer");
+			editExisting = true;
+        } else {
+			loadNewCustomer();
+		}
+        
     }//loadCustomerInfo
 
     public void loadNewCustomer()
     {
         idField.setText("" + controller.getNextCustomerId());
-        editExisting = false;
+		newCustomer = true;
     }//loadNewCustomer
 
     /**
