@@ -67,26 +67,6 @@ public class DBConnection
 		}
     }//deleteCustomer
 
-    public Collection<Division> getAllDivisions()
-    {
-        String sql =    "SELECT Division_ID AS id, Division AS name, Country_ID AS country " +
-                        "FROM first_level_divisions " +
-                        "ORDER BY country, name";
-		var divisions = new LinkedHashSet<Division>();
-        try(var stmt = conn.prepareStatement(sql))
-        {
-			var result = stmt.executeQuery();
-			while(result.next())
-			{
-				divisions.add(new Division(result.getInt("id"), result.getString("name")));
-			}
-        } catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-		return divisions;
-    }//getAllDivisions
-
     /**
      * Returns a collection of all the countries in the database to be displayed in the combo box for selecting
      * a customer's country.
@@ -274,15 +254,20 @@ public class DBConnection
         //TODO: batch queries to improve performance
         for(Country c : countries)
         {
-            sql =   "SELECT Division_ID AS id, Division AS name FROM `first_level_divisions` " +
-                    "WHERE Country_ID = ? ORDER BY name";
+            sql =   "SELECT "                                           +
+                        "Division_ID AS divId, "                        +
+                        "Division AS name, Country_ID AS countryId "    +
+                    "FROM `first_level_divisions` "                     +
+                    "WHERE "                                            +
+                        "Country_ID = ? ORDER BY name";
             try(var stmt = conn.prepareStatement(sql))
             {
                 stmt.setInt(1, c.getCountryId());
                 var result = stmt.executeQuery();
                 while(result.next())
                 {
-                    c.addDivision(new Division(result.getInt("id"), result.getString("name")));
+                    c.addDivision(new Division(result.getInt("divId"), result.getString("name"),
+                            result.getInt("countryId")));
                 }
             } catch(SQLException e)
             {
@@ -374,7 +359,7 @@ public class DBConnection
                 for(String str : keys)
                 {
                     //Division id column holds integers and update value must be parsed
-                    if(str.equals(DBConstants.CUSTOMER_DIVISION_ID))
+                    if(str.equals(CustomerColumns.CUSTOMER_DIVISION_ID.getColName()))
                     {
                         stmt.setString(bindIndex, str);
                         bindIndex++;

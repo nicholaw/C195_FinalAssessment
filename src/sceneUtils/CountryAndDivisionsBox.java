@@ -79,6 +79,27 @@ public class CountryAndDivisionsBox extends HBox
         return firstLevelDivisionsCombo.getValue();
     }
 
+    public void setSelectedCountry(int id)
+    {
+        for(Country c : countryCombo.getItems())
+        {
+            if(c.getCountryId() == id)
+            {
+                countryCombo.setValue(c);
+                updateFirstDivisions();
+            }
+        }
+    }//setSelectedCountry
+
+    public void setSelectedDivision(int id)
+    {
+        for(Division d : firstLevelDivisionsCombo.getItems())
+        {
+            if(d.getDivisionId() == id)
+                firstLevelDivisionsCombo.setValue(d);
+        }
+    }
+
     /**
      *
      */

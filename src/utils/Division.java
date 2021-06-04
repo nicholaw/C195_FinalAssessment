@@ -4,11 +4,13 @@ public class Division
 {
     private int divisionId;
     private String divisionName;
+    private int parentCountry;
 
-    public Division(int id, String name)
+    public Division(int id, String name, int parent)
     {
         this.divisionId = id;
         this.divisionName = name;
+        this.parentCountry = parent;
     }//constructor
 
     public int getDivisionId()
@@ -19,6 +21,11 @@ public class Division
     public String getDivisionName()
     {
         return divisionName;
+    }
+
+    public int getParentCountry()
+    {
+        return parentCountry;
     }
 
     @Override

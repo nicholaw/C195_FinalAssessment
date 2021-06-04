@@ -13,13 +13,4 @@ public class CustomerConstants
     //Varchar limits for database fields
     public static final int MAX_CHAR_DEFAULT = 50;
     public static final int MAX_CHAR_ADDRESS = 100;
-	
-	//Indexes for customer updadtes
-	public static final int EDITABLE_ATTRIBUTES	= 6;
-	public static final int NAME_INDEX 			= 0;
-	public static final int ADDRESS_INDEX 		= 1;
-	public static final int PHONE_INDEX 		= 2;
-	public static final int POSTAL_CODE_INDEX	= 3;
-	public static final int COUNTRY_INDEX 		= 4;
-	public static final int DIVISION_INDEX 		= 5;
 }

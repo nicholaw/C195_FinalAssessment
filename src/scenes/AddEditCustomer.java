@@ -2,6 +2,7 @@ package scenes;
 
 import controller.Controller;
 import customer.Customer;
+import database.CustomerColumns;
 import javafx.scene.control.*; //TODO: only what you need
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
@@ -31,7 +32,6 @@ public class AddEditCustomer  extends BorderPane
 	
 	//Scene attributes
 	private boolean newCustomer;
-	private String[] customerAttributes;
 
     public AddEditCustomer(Controller controller)
     {
@@ -41,7 +41,7 @@ public class AddEditCustomer  extends BorderPane
         //Instantiate scene elements
         sceneLabel			= new Label("Add New Customer");
         header				= controller.getHeader();
-        idLabel				= new Label("Cusotmer Id");
+        idLabel				= new Label("Customer Id");
         idField				= new TextField("");
         nameLabel			= new Label("Name");
         nameField			= new TextField("");
@@ -61,24 +61,22 @@ public class AddEditCustomer  extends BorderPane
         postCodeErrorLabel  = new Label("");
         confirmCancelAlert	= new Alert(AlertType.CONFIRMATION);
 		
-		//Instantitate scene attributes
+		//Instantiate scene attributes
 		newCustomer = true;
-		customerAttributes = new String[CUSTOMER_CONSTANTS.EDITABLE_ATTRIBUTES];
 
         //Instantiate buttons and add event listeners
         submitButton = new Button("Add Customer");
         submitButton.setOnAction(event -> {
             if(this.validateForm())
             {
-                if(editExisting)
-                {
-
-                } else
+                if(newCustomer)
                 {
                     Customer c = new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry().getCountryId(),
                             countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText());
-                    controller.addCustomer(c);
+                            controller.addCustomer(c);
+                } else {
+
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
@@ -172,7 +170,8 @@ public class AddEditCustomer  extends BorderPane
     }//clearErrors
 
     /**
-     *	Loads an existing customer's information into fields for editing.
+     *	Loads an existing customer's information into fields for editing and stores the
+     *  original value of each field in a HashMap of updates.
      *	@param	c	the customer to edit
      */
     public void loadCustomerInfo(Customer c)
@@ -184,34 +183,37 @@ public class AddEditCustomer  extends BorderPane
 			//set id
             idField.setText("" + c.getCustomerId());
 			//set name
-			temp = c.getName();
+			tempString = c.getName();
             nameField.setText(tempString);
-			customerAttributes[CustomerConstants.NAME_INDEX] = tempString;
+            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_NAME.getColName(), tempString);
 			//set phone
-			temp = c.getPhone();
+			tempString = c.getPhoneNum();
             phoneField.setText(tempString);
-			customerAttributes[CustomerConstants.PHONE_INDEX] = tempString;
+            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_PHONE.getColName(), tempString);
 			//set Address
-			temp = c.getAddress();
+			tempString = c.getAddress();
             addressArea.setText(tempString);
-			customerAttributes[CustomerConstants.ADDRESS_INDEX] = tempString;
+            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_ADDRESS.getColName(), tempString);
 			//set city
-			temp = c.getCity();
+			tempString = c.getCity();
             cityField.setText(tempString);
-			customerAttributes[CustomerConstants.CITY_INDEX] = tempString;
+            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_CITY.getColName(), tempString);
 			//set postal code
-			temp = c.getPostCode();
+			tempString = c.getPostCode();
 			postCodeField.setText(tempString);
-			customerAttributes[CustomerConstants.POST_CODE_INDEX] = tempString;
+            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_POSTAL_CODE.getColName(), tempString);
             //set country and first-level division
 			tempInt = c.getCountryId();
-			
+			countryAndDivisionsCombos.setSelectedCountry(tempInt);
+			//NOTE: customer table does not store country id
+            tempInt = c.getDivisionId();
+            countryAndDivisionsCombos.setSelectedDivision(tempInt);
+            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_DIVISION_ID.getColName(), "" + tempInt);
 			submitButton.setText("Update Customer");
-			editExisting = true;
+			newCustomer = false;
         } else {
 			loadNewCustomer();
 		}
-        
     }//loadCustomerInfo
 
     public void loadNewCustomer()

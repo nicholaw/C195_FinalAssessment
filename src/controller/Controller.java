@@ -2,6 +2,7 @@ package controller;
 
 import appointment.Appointment;
 import customer.Customer;
+import database.CustomerColumns;
 import database.DBConnection;
 import io.*;
 import javafx.collections.FXCollections;
@@ -38,7 +39,8 @@ public class Controller
     private int nextAppointmentId;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
-	private HashMap<String, String> updates;
+	private HashMap<String, String> customerUpdates;
+	private HashMap<String, String> appointmentUpdates;
 
     public Controller(Scene scn)
     {
@@ -99,6 +101,7 @@ public class Controller
 		return false;
     }//addCustomer
 
+
     public boolean deleteAppointment(Appointment a)
     {
 		return dbConnection.deleteAppointment(a.getAppointmentId());
@@ -149,6 +152,15 @@ public class Controller
      *
      * @return
      */
+    public HashMap<String, String> getAppointmentUpdates()
+    {
+        return appointmentUpdates;
+    }
+
+    /**
+     *
+     * @return
+     */
     public Alert getConfirmationAlert()
     {
         return confirmationAlert;
@@ -156,39 +168,59 @@ public class Controller
 
     /**
      *
-     * @param countryId
      * @return
      */
-    public Country getCountryById(int countryId)
-    {
-        for(Country c : countries)
-        {
-            if(c.getCountryId() == countryId)
-                return c;
-        }
-        return null;
-    }//getCountry
-
     public ObservableList<Country> getCountries()
     {
         return countries;
     }//getCountryCombo
 
+    public int getCountryIdFromDivId(int divId)
+    {
+        return 0;
+    }
+
+    /**
+     *
+     * @return
+     */
     public ObservableList<Customer> getCustomers()
     {
         return customers;
     }//getCustomers
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public ObservableList<Appointment> getCustomerAppointments(Customer c)
     {
         return FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId()));
     }//getCustomerAppointments
 
+    /**
+     *
+     * @return
+     */
+    public HashMap<String, String> getCustomerUpdates()
+    {
+        return customerUpdates;
+    }
+
+    /**
+     *
+     * @return
+     */
     public int getNextAppointmentId()
     {
         return nextAppointmentId;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNextCustomerId()
     {
         return nextCustomerId;
@@ -208,6 +240,23 @@ public class Controller
             sum += password.charAt(i);
         return sum;
     }//hashPassword
+
+    /**
+     * Initializes the HashMap for tracking changes to an existing customer
+     */
+    private void initializeCustomerUpdates() {
+        customerUpdates = new HashMap<>();
+        for(CustomerColumns col : CustomerColumns.values()) {
+            customerUpdates.put(col.getColName(), null);
+        }
+    }//initializeCustomerUpdates
+
+    /**
+     * Initializes the Hashmap for tracking changes to an existing appointment
+     */
+    private void initializeAppointmentUpdates() {
+
+    }//initializeAppointmentUpdates
 
 	/**
 	 * Writes login attempt information to a text file
@@ -238,10 +287,11 @@ public class Controller
 		return false;
 	}//overlapsExistingAppointmet
 
-    public void updateCustomer()
+    public boolean updateCustomer()
     {
+        return true;
         //TODO: remember to include date and time last updated
-    }
+    }//updateCustomer
 
     /**
      * Driver method for validating login credentials.
@@ -288,7 +338,8 @@ public class Controller
         login.clearAll();
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());
-        updates = new HashMap<>();
+        initializeCustomerUpdates();
+        initializeAppointmentUpdates();
         editAppt = new AddEditAppointment(this);
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
