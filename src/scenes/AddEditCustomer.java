@@ -9,6 +9,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import sceneUtils.CountryAndDivisionsBox;
+import sceneUtils.UpdateableField;
+import sceneUtils.UpdateableArea;
 import customer.CustomerConstants;
 import customer.CustomerFieldCode;
 import sceneUtils.HeaderPane;
@@ -22,11 +24,11 @@ public class AddEditCustomer  extends BorderPane
     //Scene elements
     private Label sceneLabel;           private HeaderPane header;
     private Label idLabel;              private TextField idField;
-    private Label nameLabel;            private TextField nameField;        private Label nameErrorLabel;
-    private Label phoneLabel;           private TextField phoneField;       private Label phoneErrorLabel;
-    private Label addressLabel;         private TextArea addressArea;       private Label addressErrorLabel;
-    private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
-    private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
+    private Label nameLabel;            private UpdateableField nameField;      private Label nameErrorLabel;
+    private Label phoneLabel;           private UpdateableField phoneField;     private Label phoneErrorLabel;
+    private Label addressLabel;         private UpdateableArea addressArea;     private Label addressErrorLabel;
+    private Label cityLabel;			private UpdateableField cityField;		private Label cityErrorLabel;
+    private Label postCodeLabel;		private UpdateableField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
     private Alert confirmCancelAlert;   private CountryAndDivisionsBox countryAndDivisionsCombos;
 	
@@ -185,7 +187,7 @@ public class AddEditCustomer  extends BorderPane
 			//set name
 			tempString = c.getName();
             nameField.setText(tempString);
-            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_NAME.getColName(), tempString);
+            nameField.setOriginalValue(tempString);
 			//set phone
 			tempString = c.getPhoneNum();
             phoneField.setText(tempString);

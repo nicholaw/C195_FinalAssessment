@@ -284,6 +284,7 @@ public class Controller
 	
 	private boolean overlapsExistingAppointment(Appointment a)
 	{
+		//check when adding appointment or updating appointment
 		return false;
 	}//overlapsExistingAppointmet
 
