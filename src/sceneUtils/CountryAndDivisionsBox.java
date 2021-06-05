@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class CountryAndDivisionsBox extends HBox
 {
-    private UpdateableComboBox<Country> countryCombo;
-    private UpdateableComboBox<Division> firstLevelDivisionsCombo;
+    private ComboBox<Country> countryCombo;
+    private ComboBox<Division> firstLevelDivisionsCombo;
     private final Label countryLabel = new Label("Country");
     private final Label divisionLabel = new Label("First-Level Division");
 
@@ -102,22 +102,6 @@ public class CountryAndDivisionsBox extends HBox
        
 		}
     }//setSelectedDivision
-	
-	public void setOriginalCountry(Country c) {
-		countryCombo.setOriginalValue(c);
-	}//setOriginalCountry
-	
-	public void setOriginalDivision(Division d) {
-		firstLevelDivisionsCombo.setOriginalValue(d);
-	}//setOriginalDivision
-	
-	public Country getOriginalCountry() {
-		return countryCombo.getOriginalValue();
-	}//getOriginalCountry
-	
-	public Division getOriginalDivision() {
-		return firstLevelDivisionsCombo.getOriginalValue();
-	}//getOriginalDivision
 
     /**
      *

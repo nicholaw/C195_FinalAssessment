@@ -2,6 +2,8 @@ package scenes;
 
 import controller.Controller;
 import customer.Customer;
+import customer.CustomerConstants;
+import customer.CustomerFieldCode;
 import database.CustomerColumns;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
@@ -11,14 +13,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import sceneUtils.CountryAndDivisionsBox;
-import sceneUtils.UpdateableField;
-import sceneUtils.UpdateableArea;
-import customer.CustomerConstants;
-import customer.CustomerFieldCode;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 
-public class AddEditCustomer  extends BorderPane
+public class AddEditCustomer extends BorderPane
 {
     //Controller
     private Controller controller;
@@ -26,16 +24,17 @@ public class AddEditCustomer  extends BorderPane
     //Scene elements
     private Label sceneLabel;           private HeaderPane header;
     private Label idLabel;              private TextField idField;
-    private Label nameLabel;            private UpdateableField nameField;      private Label nameErrorLabel;
-    private Label phoneLabel;           private UpdateableField phoneField;     private Label phoneErrorLabel;
-    private Label addressLabel;         private UpdateableArea addressArea;     private Label addressErrorLabel;
-    private Label cityLabel;			private UpdateableField cityField;		private Label cityErrorLabel;
-    private Label postCodeLabel;		private UpdateableField postCodeField;	private Label postCodeErrorLabel;
+    private Label nameLabel;            private TextField nameField;      	private Label nameErrorLabel;
+    private Label phoneLabel;           private TextField phoneField;     	private Label phoneErrorLabel;
+    private Label addressLabel;         private TextArea addressArea;     	private Label addressErrorLabel;
+    private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
+    private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
     private Alert confirmCancelAlert;   private CountryAndDivisionsBox countryAndDivisionsCombos;
 	
 	//Scene attributes
 	private boolean newCustomer;
+	private Customer customerToEdit;
 
     public AddEditCustomer(Controller controller)
     {
@@ -67,6 +66,7 @@ public class AddEditCustomer  extends BorderPane
 		
 		//Instantiate scene attributes
 		newCustomer = true;
+		customerToEdit = null;
 
         //Instantiate buttons and add event listeners
         submitButton = new Button("Add Customer");
@@ -164,6 +164,7 @@ public class AddEditCustomer  extends BorderPane
         countryAndDivisionsCombos.clear();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
 		newCustomer = true;
+		customerToEdit = null;
     }//clearAll
 
     public void clearErrors()
@@ -185,6 +186,7 @@ public class AddEditCustomer  extends BorderPane
         if(c != null)
         {
 			try {
+				customerToEdit = c;
 				String tempString = "";
 				int tempInt = -1;
 				//set id
@@ -224,6 +226,7 @@ public class AddEditCustomer  extends BorderPane
 				e.printStackTrace();
 			}
         } else {
+			clearAll();
 			loadNewCustomer();
 		}
     }//loadCustomerInfo
@@ -236,32 +239,39 @@ public class AddEditCustomer  extends BorderPane
 	
 	private void processChanges() {
 		String tempString = nameField.getText();
-		if(!nameField.getOriginalValue().equals(tempString)) {
+		if(!customerToEdit.getName().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, tempString);
+			customerToEdit.setName(tempString);
 		}
 		tempString = phoneField.getText();
-		if(!phoneField.getOriginalValue().equals(tempString)) {
+		if(!customerToEdit.getPhone().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.PHONE_FIELD, tempString);
+			customerToEdit.setPhone(tempString);
 		}
 		tempString = addressArea.getText();
-		if(!addressArea.getOriginalValue().equals(tempString)) {
+		if(!customerToEdit.getAddress().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
+			customerToEdit.setAddress(tempString);
 		}
 		tempString = cityField.getText();
-		if(!cityField.getOriginalValue().equals(tempString)) {
+		if(!customerToEdit.getCity().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
+			customerToEdit.setCity(tempString);
 		}
 		tempString = postCodeField.getText();
-		if(!postCodeField.getOriginalValue().equals(tempString)) {
+		if(!customerToEdit.getPostCode().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.POSTAL_CODE_FIELD, tempString);
+			customerToEdit.setPostCode(tempString);
 		}
-		int tempInt = countryAndDivisionsCombos.getOriginalCountry().getCountryId();
+		int tempInt = customerToEdit.getCountryId();
 		if(!(countryAndDivisionsCombos.getSelectedCountry().getCountryId == tempInt)) {
 			controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, ("" + tempInt));
+			customerToEdit.setCountry(countryAndDivisionsCombos.getSelectedCountry());
 		}
-		int tempInt = countryAndDivisionsCombos.getOriginalDivision().getDivisionId();
+		int tempInt = customerToEdit.getDivisionId();
 		if(!(countryAndDivisionsCombos.getSelectedDivision().getDivisionId == tempInt)) {
 			controller.addCustomerUpdate(CustomerFieldCode.DIVISION_BOX, ("" + tempInt));
+			customerToEdit.setDivision(countryAndDivisionsCombos.getSelectedDivision());
 		}
 	}//processChanges
 

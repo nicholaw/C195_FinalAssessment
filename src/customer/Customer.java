@@ -110,10 +110,37 @@ public class Customer
 	public void setAppointments(int i) {
 		appointments = new SimpleIntegerProperty(this, i);
 	}
+	
+	public void setAddress(String str) {
+		address = new SimpleStringProperty(this, str);
+	}
+	
+	public void setCity(String str) {
+		city = new SimpleIntegerProperty(this, str);
+	}
+	
+	public void setCountry(Country c) {
+		country = c;
+	}
+	
+	public void setDivision(Division d) {
+		division = d;
+	}
+	
+	public void setName(String str) {
+		name = new SimpleStringProperty(this, str);
+	}
+	
+	public void setPhone(String str) {
+		phone = new SimpleStringProperty(this, str);
+	}
+	
+	public void setPostCode(String str) {
+		postCode = new SimpleStringProperty(this, str);
+	}
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if(obj == null)
             return false;
         if(!(obj instanceof Customer))
@@ -122,4 +149,9 @@ public class Customer
             return true;
         return false;
     }
+	
+	@Override
+	public void toString() {
+		return this.getName();
+	}
 }//Customer
