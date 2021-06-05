@@ -1,129 +1,115 @@
 package customer;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Customer
 {
-    private int customerId;
-    private StringProperty idProperty;
-    private String name;
-    private StringProperty nameProperty;
-    private String phoneNum;
-    private StringProperty phoneProperty;
-    private String address;
-    private String city;
-    private int countryId;
-    private int divisionId;
-    private String postCode;
-    private int scheduledAppointments = 0;
+	private IntegerProperty customerId;
+    private StringProperty name;
+	private StringProperty phone;
+	private StringProperty address;
+	private StringProperty city;
+	private StringProperty postCode;
+    private Country country;
+    private Division division;
+	private IntegerProperty appointments;
 
-    public Customer(
-            int id,
-            String name,
-            String phoneNum,
-            String address,
-            String city,
-            int country,
-            int div,
-            String postCode)
-    {
-        customerId = id;
-        this.name = name;
-        this.phoneNum = phoneNum;
-        this.address = address;
-        this.city = city;
-        this.countryId = country;
-        this.divisionId = div;
-        this.postCode = postCode;
-    }//Constructor: id, name, phoneNum, address, city, country, div, postCode
-
-    public Customer(
-            String name,
-            String phoneNum,
-            String address,
-            String city,
-            int country,
-            int div,
-            String postCode)
-    {
-        this.name = name;
-        this.nameProperty.setValue(name);
-        this.phoneNum = phoneNum;
-        this.address = address;
-        this.city = city;
-        this.countryId = country;
-        this.divisionId = div;
-        this.postCode = postCode;
-        customerId = generateId();
-    }//Constructor: name, phoneNum, address, city, country, div, postCode
+    public Customer(int id, String name, String phone, String address,
+            String city, String postCode, Country country, Division div) {
+        this.customerId 	=	new SimpleIntegerProperty(this, id);
+		this.name 			= 	new SimpleStringProperty(this, name);
+		this.phone 			= 	new SimpleStringProperty(this, phone);
+		this.address		= 	new SimpleStringProperty(this, address);
+		this.city 			= 	new SimpleStringProperty(this, city);
+		this.postCode 		= 	new SimpleStringProperty(this, postCode);
+		this.country		=	country;
+		this.division		=	division;
+		this.appointments	=	new SimpleIntegerProperty(this, 0);
+    }//constructor
+	
+	public Customer(String name, String phone, String address,
+            String city, String postCode, Country country, Division div) {
+		this.name 			= 	new SimpleStringProperty(this, name);
+		this.phone 			= 	new SimpleStringProperty(this, phone);
+		this.address		= 	new SimpleStringProperty(this, address);
+		this.city 			= 	new SimpleStringProperty(this, city);
+		this.postCode 		= 	new SimpleStringProperty(this, postCode);
+		this.country		=	country;
+		this.division		=	division;
+		this.appointments	=	new SimpleIntegerProperty(this, 0);
+    }//constructor
 
     public Customer(int id, String name, int country, String phoneNum)
     {
-        this.customerId = id;
-        this.name = name;
-        this.countryId = country;
-        this.phoneNum = phoneNum;
-    }//Constructor: id, name, country, phone
+        this.customerId 	=	new SimpleIntegerProperty(this, id);
+		this.name 			= 	new SimpleStringProperty(this, name);
+		this.phone 			= 	new SimpleStringProperty(this, phone);
+        this.country		=	country;
+		this.appointments	=	new SimpleIntegerProperty(this, 0);
+    }//constructor
 
-    private static int generateId()
-    {
-        return 0;
-    }
+	public StringProperty addressProperty() {
+		return address;
+	}
+	
+	public StringProperty cityProperty() {
+		return city;
+	}
+	
+	public IntegerProperty customerIdProperty() {
+		return customerId;
+	}
 
-    public String getAddress()
-    {
-        return address;
-    }
-
-
-    public int getCountryId()
-    {
-        return countryId;
-    }
-
-    public String getCity()
-    {
-        return city;
-    }
-
-    public int getCustomerId()
-    {
-        return customerId;
-    }
-
-    public String getName()
-    {
-        //return name;
-        return nameProperty.get();
-    }
-
-    public StringProperty getNameProperty()
-    {
-        var nameProperty = new SimpleStringProperty(this, "name");
-        nameProperty.setValue(this.name);
-        return nameProperty;
-    }
-
-    public String getPhoneNum()
-    {
-        return phoneNum;
-    }
-
-    public String getPostCode()
-    {
-        return postCode;
-    }
-
-    public int getDivisionId()
-    {
-        return divisionId;
-    }
-
-    public int getScheduledAppointments()
-    {
-        return scheduledAppointments;
-    }
+	public StringProperty nameProperty() {
+		return name;
+	}
+	
+	public StringProperty phoneProperty() {
+		return phone;
+	}
+	
+	public StringProperty postCodeProperty() {
+		return  postCode;
+	}
+	
+	public int getAppointments() {
+		return appointments.intValue();
+	}
+	
+	public String getAddress()  {
+		return address.get();
+	}
+	
+	public String getCity() {
+		return city.get();
+	}
+	
+	public int getCountryId() {
+		return country.getCountryId();
+	}
+	
+	public int getCustomerId() {
+		return customerId.intValue();
+	}
+	
+	public String getName() {
+		return name.get();
+	}
+	
+	public String getPhone() {
+		return phone.get();
+	}
+	
+	public String getPostCode() {
+		return postCode.get();
+	}
+	
+	public void setAppointments(int i) {
+		appointments = new SimpleIntegerProperty(this, i);
+	}
 
     @Override
     public boolean equals(Object obj)
@@ -132,7 +118,7 @@ public class Customer
             return false;
         if(!(obj instanceof Customer))
             return false;
-        if(this.customerId == ((Customer)obj).getCustomerId())
+        if(this.id.get() == ((Customer)obj).getId())
             return true;
         return false;
     }
