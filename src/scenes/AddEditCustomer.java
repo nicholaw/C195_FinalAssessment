@@ -3,7 +3,9 @@ package scenes;
 import controller.Controller;
 import customer.Customer;
 import database.CustomerColumns;
-import javafx.scene.control.*; //TODO: only what you need
+import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -78,7 +80,7 @@ public class AddEditCustomer  extends BorderPane
                             countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText());
                             controller.addCustomer(c);
                 } else {
-
+					//TODO
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
@@ -180,39 +182,45 @@ public class AddEditCustomer  extends BorderPane
     {
         if(c != null)
         {
-			String tempString = "";
-			int tempInt = -1;
-			//set id
-            idField.setText("" + c.getCustomerId());
-			//set name
-			tempString = c.getName();
-            nameField.setText(tempString);
-            nameField.setOriginalValue(tempString);
-			//set phone
-			tempString = c.getPhoneNum();
-            phoneField.setText(tempString);
-            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_PHONE.getColName(), tempString);
-			//set Address
-			tempString = c.getAddress();
-            addressArea.setText(tempString);
-            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_ADDRESS.getColName(), tempString);
-			//set city
-			tempString = c.getCity();
-            cityField.setText(tempString);
-            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_CITY.getColName(), tempString);
-			//set postal code
-			tempString = c.getPostCode();
-			postCodeField.setText(tempString);
-            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_POSTAL_CODE.getColName(), tempString);
-            //set country and first-level division
-			tempInt = c.getCountryId();
-			countryAndDivisionsCombos.setSelectedCountry(tempInt);
-			//NOTE: customer table does not store country id
-            tempInt = c.getDivisionId();
-            countryAndDivisionsCombos.setSelectedDivision(tempInt);
-            controller.getCustomerUpdates().put(CustomerColumns.CUSTOMER_DIVISION_ID.getColName(), "" + tempInt);
-			submitButton.setText("Update Customer");
-			newCustomer = false;
+			try {
+				String tempString = "";
+				int tempInt = -1;
+				//set id
+				idField.setText("" + c.getCustomerId());
+				//set name
+				tempString = c.getName();
+				nameField.setText(tempString);
+				nameField.setOriginalValue(tempString);
+				//set phone
+				tempString = c.getPhoneNum();
+				phoneField.setText(tempString);
+				phoneField.setOriginalValue(tempString);
+				//set Address
+				tempString = c.getAddress();
+				addressArea.setText(tempString);
+				addressArea.setOriginalValue(tempString);
+				//set city
+				tempString = c.getCity();
+				cityField.setText(tempString);
+				cityField.setOriginalValue(tempString);
+				//set postal code
+				tempString = c.getPostCode();
+				postCodeField.setText(tempString);
+				postCodeField.setOriginalValue(tempString);
+				//set country and first-level division
+				tempInt = c.getCountryId();									//NOTE: customer table does not store country id
+				countryAndDivisionsCombos.setSelectedCountry(tempInt);
+				countryAndDivisionsCombos.setOriginalCountry(tempInt);
+				tempInt = c.getDivisionId();
+				countryAndDivisionsCombos.setSelectedDivision(tempInt);
+				countryAndDivisionsCombos.setOriginalDivision(tempInt);
+				submitButton.setText("Update Customer");
+				newCustomer = false;
+			} catch(NullPointerException e) {
+				clearAll();
+				controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+				e.printStackTrace();
+			}
         } else {
 			loadNewCustomer();
 		}

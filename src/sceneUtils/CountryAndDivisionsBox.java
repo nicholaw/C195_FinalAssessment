@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import utils.Country;
 import utils.Division;
-
 import java.util.ArrayList;
 
 public class CountryAndDivisionsBox extends HBox
@@ -79,6 +78,9 @@ public class CountryAndDivisionsBox extends HBox
         return firstLevelDivisionsCombo.getValue();
     }
 
+    /**
+	 * 
+	 */
     public void setSelectedCountry(int id)
     {
         for(Country c : countryCombo.getItems())
@@ -99,23 +101,23 @@ public class CountryAndDivisionsBox extends HBox
                 firstLevelDivisionsCombo.setValue(d);
        
 		}
-    }
+    }//setSelectedDivision
 	
 	public void setOriginalCountry(Country c) {
 		countryCombo.setOriginalValue(c);
-	}
+	}//setOriginalCountry
 	
 	public void setOriginalDivision(Division d) {
 		firstLevelDivisionsCombo.setOriginalValue(d);
-	}
+	}//setOriginalDivision
 	
-	public Country getOriginalValue() {
+	public Country getOriginalCountry() {
 		return countryCombo.getOriginalValue();
-	}
+	}//getOriginalCountry
 	
 	public Division getOriginalDivision() {
 		return firstLevelDivisionsCombo.getOriginalValue();
-	}
+	}//getOriginalDivision
 
     /**
      *
