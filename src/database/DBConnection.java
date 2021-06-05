@@ -280,7 +280,7 @@ public class DBConnection
      * Updates information of the given appointment in the database. Returns true if at least one table row
      * was affected and false otherwise.
      *
-     * @param updates   Updates to be enacted
+     * @param updates Updates to be enacted
      * @param appointmentId Id of customer to be updated
      * @return  True if at least one table row was affected
      */

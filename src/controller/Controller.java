@@ -2,6 +2,7 @@ package controller;
 
 import appointment.Appointment;
 import customer.Customer;
+import customer.CustomerFieldCode;
 import database.CustomerColumns;
 import database.DBConnection;
 import io.*;
@@ -94,6 +95,11 @@ public class Controller
 	{
 		return  false;
 	}//addAppointment
+	
+	public void addAppointmentUpdate()
+	{
+		
+	}//addAppointmentUpdate
 
     public boolean addCustomer(Customer c)
     {
@@ -101,6 +107,49 @@ public class Controller
 		return false;
     }//addCustomer
 
+	/**
+	 *
+	 */
+	public void addCustomerUpdate(CustomerFieldCode code, String update)
+	{
+		switch(code) {
+			case NAME_FIELD:
+				customerUpdates.put(CustomerColumns.CUSTOMER_NAME.getColName(), update);
+				break;
+			case PHONE_FIELD:
+				customerUpdates.put(CustomerColumns.CUSTOMER_PHONE.getColName(), update);
+				break;
+			case ADDRESS_FIELD:
+				customerUpdates.put(CustomerColumns.CUSTOMER_ADDRESS.getColName(), update);
+				break;
+			case CITY_FIELD:
+				customerUpdates.put(CustomerColumns.CUSTOMER_CITY.getColName(), update);
+				break;
+			case POST_CODE_FIELD:
+				customerUpdates.put(CustomerColumns.CUSTOMER_POSTAL_CODE.getColName(), update);
+				break;
+			//case COUNTRY_FIELD:
+				//customerUpdates.put(CustomerColumns.CUSTOMER_COUNTRY_ID.getColName(), update);
+				//break;
+			case DIVISION_FIELD:
+				customerUpdates.put(CustomerColumns.CUSTOMER_DIVISION_ID.getColName(), update);
+				break;
+			default:
+		}
+	}//addCustomerUpdate
+	
+	public void commitCustomerUpdates() {
+		
+	}
+	
+	public void clearAppointmentUpdates() {
+		
+	}
+	
+	public void clearCustomerUpdates() {
+		customerUpdates = null;
+		customerUpdates = new HashMap<>();
+	}
 
     public boolean deleteAppointment(Appointment a)
     {

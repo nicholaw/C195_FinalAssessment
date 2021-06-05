@@ -71,7 +71,8 @@ public class AddEditCustomer  extends BorderPane
         //Instantiate buttons and add event listeners
         submitButton = new Button("Add Customer");
         submitButton.setOnAction(event -> {
-            if(this.validateForm())
+            this.setDisable(true);
+			if(this.validateForm())
             {
                 if(newCustomer)
                 {
@@ -80,11 +81,13 @@ public class AddEditCustomer  extends BorderPane
                             countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText());
                             controller.addCustomer(c);
                 } else {
-					//TODO
+					processChanges();
+					controller.commitCustomerUpdates(Integer.parseInt(idField.getText()));
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
             }
+			this.setDisable(false);
         });
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(event -> {
@@ -161,7 +164,6 @@ public class AddEditCustomer  extends BorderPane
         countryAndDivisionsCombos.clear();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
 		newCustomer = true;
-		
     }//clearAll
 
     public void clearErrors()
@@ -231,6 +233,13 @@ public class AddEditCustomer  extends BorderPane
         idField.setText("" + controller.getNextCustomerId());
 		newCustomer = true;
     }//loadNewCustomer
+	
+	private void processChanges() {
+		if(!nameField.getOriginalValue().equals(input)) {
+			controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, input);
+		}
+		//TODO: track other changes
+	}
 
     /**
      *	Checks that the information entered into the form fields are valid. Returns true if all fields are valid and false otherwise.
