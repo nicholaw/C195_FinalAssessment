@@ -82,7 +82,7 @@ public class AddEditCustomer  extends BorderPane
                             controller.addCustomer(c);
                 } else {
 					processChanges();
-					controller.commitCustomerUpdates(Integer.parseInt(idField.getText()));
+					controller.updateCusotmer(Integer.parseInt(idField.getText())); //TODO: better way to do this?
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
@@ -235,11 +235,35 @@ public class AddEditCustomer  extends BorderPane
     }//loadNewCustomer
 	
 	private void processChanges() {
-		if(!nameField.getOriginalValue().equals(input)) {
-			controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, input);
+		String tempString = nameField.getText();
+		if(!nameField.getOriginalValue().equals(tempString)) {
+			controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, tempString);
 		}
-		//TODO: track other changes
-	}
+		tempString = phoneField.getText();
+		if(!phoneField.getOriginalValue().equals(tempString)) {
+			controller.addCustomerUpdate(CustomerFieldCode.PHONE_FIELD, tempString);
+		}
+		tempString = addressArea.getText();
+		if(!addressArea.getOriginalValue().equals(tempString)) {
+			controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
+		}
+		tempString = cityField.getText();
+		if(!cityField.getOriginalValue().equals(tempString)) {
+			controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
+		}
+		tempString = postCodeField.getText();
+		if(!postCodeField.getOriginalValue().equals(tempString)) {
+			controller.addCustomerUpdate(CustomerFieldCode.POSTAL_CODE_FIELD, tempString);
+		}
+		int tempInt = countryAndDivisionsCombos.getOriginalCountry().getCountryId();
+		if(!(countryAndDivisionsCombos.getSelectedCountry().getCountryId == tempInt)) {
+			controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, ("" + tempInt));
+		}
+		int tempInt = countryAndDivisionsCombos.getOriginalDivision().getDivisionId();
+		if(!(countryAndDivisionsCombos.getSelectedDivision().getDivisionId == tempInt)) {
+			controller.addCustomerUpdate(CustomerFieldCode.DIVISION_BOX, ("" + tempInt));
+		}
+	}//processChanges
 
     /**
      *	Checks that the information entered into the form fields are valid. Returns true if all fields are valid and false otherwise.

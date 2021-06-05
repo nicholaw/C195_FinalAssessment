@@ -138,10 +138,6 @@ public class Controller
 		}
 	}//addCustomerUpdate
 	
-	public void commitCustomerUpdates() {
-		
-	}
-	
 	public void clearAppointmentUpdates() {
 		
 	}
@@ -334,13 +330,24 @@ public class Controller
 	private boolean overlapsExistingAppointment(Appointment a)
 	{
 		//check when adding appointment or updating appointment
+		//can check in observable list from appointment overview
 		return false;
 	}//overlapsExistingAppointmet
 
-    public boolean updateCustomer()
+	/**
+	 * Updates an existing customer in the database.
+	 *
+	 * @param customerId  Id of the customer to update
+	 * @return  whether the database updated successfully
+	 */
+    public boolean updateCustomer(int customerId)
     {
-        return true;
-        //TODO: remember to include date and time last updated
+		if(customerUpdates != null) {
+			customerUpdates.put(CUSTOMER_UPDATE_BY, currentUser.getName());
+			customerUpdates.put(CUSTOMER_LAST_UPDATE, LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			return dbConnection.updateCustomer(customerUpdates, customerId);
+		}
+        return false;
     }//updateCustomer
 
     /**
