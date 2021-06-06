@@ -75,13 +75,12 @@ public class AddEditCustomer extends BorderPane
             {
                 if(newCustomer)
                 {
-                    Customer c = new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
+					controller.addCustomer(new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), cityField.getText(), countryAndDivisionsCombos.getSelectedCountry().getCountryId(),
-                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText());
-                            controller.addCustomer(c);
+                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), postCodeField.getText()));
                 } else {
 					processChanges();
-					controller.updateCusotmer(Integer.parseInt(idField.getText())); //TODO: better way to do this?
+					controller.updateCusotmer(Integer.parseInt(idField.getText()));
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();

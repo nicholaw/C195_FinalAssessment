@@ -19,7 +19,6 @@ import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
 import utils.Country;
-import utils.User;
 
 public class Controller
 {
@@ -102,10 +101,9 @@ public class Controller
 		
 	}//addAppointmentUpdate
 
-    public boolean addCustomer(Customer c)
-    {
-        //TODO: Remember to include date and time created plus creator
-		return false;
+    public boolean addCustomer(Customer c) {
+		return dbConnection.insertCustomer(c, currentUser.getName(), 
+				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
     }//addCustomer
 
 	/**
@@ -284,8 +282,7 @@ public class Controller
         return nextCustomerId;
     }
 
-    public User getSessionUser()
-    {
+    public String getCurrentUser() {
         return currentUser;
     }//getSessionUser
 
@@ -346,6 +343,13 @@ public class Controller
 		//can check in observable list from appointment overview
 		return false;
 	}//overlapsExistingAppointmet
+
+	/**
+	 *
+	 */
+	private void setCurrentUser(String username) {
+		currentUser = dbConnection.getUser(username);
+	}
 
 	/**
 	 * Updates an existing customer in the database.
@@ -415,7 +419,7 @@ public class Controller
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview(this);
         messageAlert = new Alert(Alert.AlertType.NONE);
-        currentUser = new User(0, username);
+        currentUser = setCurrentUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
     }

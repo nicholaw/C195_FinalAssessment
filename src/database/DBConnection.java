@@ -183,6 +183,9 @@ public class DBConnection
         return list;
     }//getCustomerAppointments
 
+	/**
+	 *
+	 */
     private static DataSource getDataSource() {
         Properties properties = new Properties();
         MysqlDataSource mysqlDS = null;
@@ -243,11 +246,57 @@ public class DBConnection
 		}
 		return appointments;
 	} //getUpcomingAppointments
+	
+	/**
+	 *
+	 */
+	public User getUser(String username) {
+		String sql =	"SELECT " + 
+							"User_Id, " +
+							"User_Name " + 
+						"FROM " + 
+							"users " + 
+						"WHERE " + 
+							"User_Name = ?";
+		try(var stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, username);
+			var result = stmt.executeQuery();
+			if(result.next()) {
+				return new User(result.getInt("User_ID"), result.getString("User_Name"));
+			} else {
+				return null;
+			}
+		} catch(SQLException e) {
+			e.printStackTrace;
+			return null;
+		}
+	}//getUser
 
-    public boolean insertAppointment(Appointment a)
-    {
-		//check appointment to add does not overlap
-        return false;
+    public boolean insertAppointment(Appointment a, User user, String timestamp) {
+		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Type, Start, End, Create_Date, " +
+							"Created_By, Last_Update, Last_Updated_By, Customer_Id, User_Id, Contact_Id) " + 
+						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		try(var stmt = conn.prepareStatement(sql)) {
+			stmt.setInt		(1, a.getAppointmentId());
+			stmt.setString	(2, a.getTitle());
+			stmt.setString	(3, a.getDescription());
+			stmt.setString	(4, a.getType());
+			stmt.setString	(5, a.getStartDateTime());	//TODO: change to String with format
+			stmt.setString	(6, a.getEndDateTime());	//TODO: change to String with format
+			stmt.setString	(7, timestamp);
+			stmt.setString	(8, user.getName());
+			stmt.setString	(9, timestamp);
+			stmt.setString	(10, user.getName());
+			stmt.setInt		(11, a.getCustomerId());
+			stmt.setInt		(12, user.getId());
+			stmt.setInt		(13, a.getContactId());
+			int rows = stmt.executeUpdate();
+			System.out.println("Adding customer\nRows affected: " + rows);
+			return (rows > 0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
     }//insertAppointment
 
     public boolean insertCustomer(Customer c, String creator, String timestamp)
@@ -255,22 +304,21 @@ public class DBConnection
         String sql = "INSERT INTO customers (customer_id, customer_name, address, postal_code, phone, " +
                 "create_date, created_by, last_update, last_updated_by, division_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try(var stmt = conn.prepareStatement(sql))
-        {
-            stmt.setInt(1, c.getCustomerId());
-            stmt.setString(2, c.getName());
-            stmt.setString(3, c.getAddress());
-            stmt.setString(4, c.getPostCode());
-            stmt.setString(5, c.getPhoneNum());
-            stmt.setString(6, timestamp);
-            stmt.setString(7, creator);
-            stmt.setString(8, timestamp);
-            stmt.setString(9, creator);
-            stmt.setInt(10, c.getDivisionId());
-            System.out.println("Adding customer\nRows affected: " + stmt.executeUpdate());
-            return true;
-        } catch(SQLException e)
-        {
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setInt		(1, c.getCustomerId());
+            stmt.setString	(2, c.getName());
+            stmt.setString	(3, c.getAddress());
+            stmt.setString	(4, c.getPostCode());
+            stmt.setString	(5, c.getPhoneNum());
+            stmt.setString	(6, timestamp);
+            stmt.setString	(7, creator);
+            stmt.setString	(8, timestamp);
+            stmt.setString	(9, creator);
+            stmt.setInt		(10, c.getDivisionId());
+			int rows = stmt.executeUpdate();
+            System.out.println("Adding customer\nRows affected: " + rows);
+			return (rows > 0);
+        } catch(SQLException e) {
             e.printStackTrace();
             return false;
         }

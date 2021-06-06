@@ -20,11 +20,10 @@ public class Appointment
 	private StringProperty	endDate;
 	private StringProperty	endTime;
 	private IntegerProperty	customerId;
-	private IntegerProperty	userId;
 	private IntegerProperty	contactId;
 
     public Appointment(String title, String description, String type, LocalDateTime startDateTime, 
-						LocalDateTime endDateAndTime, int customerId, int userId, int contactId)
+						LocalDateTime endDateAndTime, int customerId, int contactId)
     {
         this.title 			= 	new SimpleStringProperty(this, title);
         this.description 	= 	new SimpleStringProperty(this, description);
@@ -36,7 +35,6 @@ public class Appointment
 		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
         this.customerId 	= 	new SimpleIntegerProperty(this, customerId);
-        this.userId 		= 	new SimpleIntegerProperty(this, userId);
         this.contactId 		= 	new SimpleIntegerProperty(this, contactId);
     }//constructor
 
@@ -55,7 +53,6 @@ public class Appointment
 		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
         this.customerId 	= 	new SimpleIntegerProperty(this, customerId);
-        this.userId 		= 	new SimpleIntegerProperty(this, userId);
         this.contactId 		= 	new SimpleIntegerProperty(this, contactId);
     }//constructor
 
@@ -95,10 +92,6 @@ public class Appointment
 		return customerId;
 	}
 	
-	public IntegerProperty userIdProperty() {
-		return userId;
-	}
-	
 	public IntegerProperty contactIdProperty() {
 		return contactId;
 	}
@@ -134,8 +127,4 @@ public class Appointment
     public String getType() {
         return type.get();
     }//getType
-
-    public int getUserId() {
-        return userId.get();
-    }//getUserId
 }//class Appointment
