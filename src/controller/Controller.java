@@ -5,6 +5,7 @@ import customer.Customer;
 import customer.CustomerFieldCode;
 import database.CustomerColumns;
 import database.DBConnection;
+import database.DBConstants;
 import io.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -139,8 +140,15 @@ public class Controller
 	}//addCustomerUpdate
 	
 	private void checkForUpcomingAppointments() {
-		
-	}
+		Set<String> appointments = dbConnection.getUpcomingAppointments(LocalDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT);
+		if(appointments != null) {
+			if(!appointments.isEmpty()) {
+				for(String str : appointments) {
+					//TODO: write message for information alert
+				}
+			}
+		}
+	}//checkForUpcomingAppointments
 	
 	public void clearAppointmentUpdates() {
 		

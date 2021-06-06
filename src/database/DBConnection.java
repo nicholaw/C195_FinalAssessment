@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DBConnection
@@ -37,9 +38,10 @@ public class DBConnection
 
     public boolean deleteAppointment(int id)
     {
-		String sql =	"DELETE " +
-						"FROM appointments " +
-						"WHERE AppointmentID = ?";
+		String sql =	"DELETE FROM " 				+ 
+							"appointments " 		+
+						"WHERE " 					+ 
+							"AppointmentID = ?";
 		try(var stmt = conn.prepareStatement(sql))
 		{
 			stmt.setInt(1, id);
@@ -53,9 +55,10 @@ public class DBConnection
 	
     public boolean deleteCustomer(int id)
     {
-        String sql =	"DELETE " +
-						"FROM customers " +
-						"WHERE CustomerID = ?";
+        String sql =	"DELETE FROM " 			+ 
+							"customers " 		+
+						"WHERE " 				+ 
+							"CustomerID = ?";
 		try(var stmt = conn.prepareStatement(sql))
 		{
 			stmt.setInt(1, id);
@@ -196,6 +199,50 @@ public class DBConnection
         }
         return mysqlDS;
     }//getDataSource
+	
+	/**
+	 *	Returns a collection of Strings describing appointments in the database which start
+	 *  withing fifteen minutes of the given date and time.
+	 *
+	 *  @param date
+	 *  @param time
+	 *  return
+	 */
+	public Collection<String> getUpcomingAppointments(LocalDateTime dateTime, int interval, String units) {
+		Collection<String> appointments = new HashSet<>();
+		String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
+		String sql =	"SELECT " 													+ 
+							"Appointment_ID AS id " 								+ 
+							"Title AS title, " 										+ 
+							"Name AS customer, " 									+ 
+							"customers.Customer_ID AS cusotmerId, " 				+ 
+							"Start AS start " 										+
+						"FROM " 													+ 
+							"appointments " 										+ 
+							"LEFT JOIN customers " 									+ 
+							"ON appointments.Customer_ID = customers.Customer_ID " 	+ 
+						"WHERE " 													+
+							"start BETWEEN ? " 										+ 
+							"AND DATE_ADD(start, INTERVAL ? ?) " 					+ 
+						"ORDER BY " 												+ 
+							"start, " 												+
+							"id";
+		try(var stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, formattedDateTime);
+			stmt.setInt(2, interval);
+			stmt.setString(3, units);
+			var result = stmt.executeQuery();
+			String appointmentInfo = "";
+			while(result.next()) {
+				appointmentInfo = result.getString("id") + " " + result.getString("title") + " " + 
+					result.getString("name") + "(id: " + result.getInt("customerId") + ")";
+				appointments.add(appointmentInfo);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return appointments;
+	} //getUpcomingAppointments
 
     public boolean insertAppointment(Appointment a)
     {
