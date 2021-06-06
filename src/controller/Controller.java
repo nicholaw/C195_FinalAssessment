@@ -138,6 +138,10 @@ public class Controller
 		}
 	}//addCustomerUpdate
 	
+	private void checkForUpcomingAppointments() {
+		
+	}
+	
 	public void clearAppointmentUpdates() {
 		
 	}

@@ -41,12 +41,23 @@ public class AppointmentOverview  extends BorderPane
         selectedAppointment	=	null;
 
         //Instantiate table columns
-        TableColumn<Appointment, Integer> 		idCol 		= 	new TableColumn<>("ID");
-        TableColumn<Appointment, String> 		titleCol 	= 	new TableColumn<>("Title");
-        TableColumn<Appointment, String> 		typeCol 	= 	new TableColumn<>("Type");
-        TableColumn<Appointment, LocalDateTime>	startCol	= 	new TableColumn<>("Start");
-        TableColumn<Appointment, LocalDateTime>	endCol 		= 	new TableColumn<>("End");
-        TableColumn<Appointment, String> 		descCol 	= 	new TableColumn<>("Description");
+        TableColumn<Appointment, Integer> 	idCol 			= 	new TableColumn<>("ID");
+        TableColumn<Appointment, String> 	titleCol 		= 	new TableColumn<>("Title");
+        TableColumn<Appointment, String> 	typeCol 		= 	new TableColumn<>("Type");
+        TableColumn<Appointment, String>	startDateCol	= 	new TableColumn<>("Start Date");
+		TableColumn<Appointment, String>	endDateCol		= 	new TableColumn<>("End Date");
+		TableColumn<Appointment, String>	startTimeCol	= 	new TableColumn<>("Start Time");
+		TableColumn<Appointment, String>	endTimeCol		= 	new TableColumn<>("End Time");
+        TableColumn<Appointment, String> 	descCol 		= 	new TableColumn<>("Description");
+		idCol.setCellValueFactory		(new PropertyValueFactory<>("appointmentId"));
+		titleCol.setCellValueFactory	(new PropertyValueFactory<>("title"));
+		typeCol.setCellValueFactory		(new PropertyValueFactory<>("type"));
+		startDateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+		endDateCol.setCellValueFactory	(new PropertyValueFactory<>("endDate"));
+		startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+		endTimeCol.setCellValueFactory	(new PropertyValueFactory<>("endTime"));
+		descCol.setCellValueFactory		(new PropertyValueFactory<>("descrition"));
+		appointmentsTable.getColumns().setAll(idCol, titleCol, typeCol, startDateCol, endDateCol, startTimeCol, endTimeCol, descCol);
 
         //Set initial states for scene elements
         customerIdField.setDisable(true);
@@ -54,7 +65,6 @@ public class AppointmentOverview  extends BorderPane
         customerPhoneField.setDisable(true);
         deleteButton.setDisable(true);
         editButton.setDisable(true);
-        appointmentsTable.getColumns().setAll(idCol, titleCol, typeCol, startCol, endCol, descCol);
 
         //Add event listeners to buttons
         scheduleButton.setOnAction(event ->
