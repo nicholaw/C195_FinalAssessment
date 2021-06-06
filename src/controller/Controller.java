@@ -173,16 +173,6 @@ public class Controller
 			return false;
 		}
     }//deleteCustomer
-	
-	public boolean editAppointment()
-	{
-		return false;
-	}//editAppointment
-	
-	public boolean editCustomer()
-	{
-		return false;
-	}//editCusotmer
 
     /**
      *
