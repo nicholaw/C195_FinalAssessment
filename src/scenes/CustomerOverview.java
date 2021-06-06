@@ -68,10 +68,9 @@ public class CustomerOverview  extends BorderPane
         });
         deleteCustomerButton.setOnAction(event ->
         {
-            Alert confirmDelete = controller.getConfirmationAlert();
-            confirmDelete.setAlertType(Alert.AlertType.CONFIRMATION);
-            confirmDelete.setContentText("Are you sure you would like to delete this customer?");
-            confirmDelete.showAndWait()
+            controller.getMessageAlert().setAlertType(Alert.AlertType.CONFIRMATION);
+            controller.getMessageAlert().setContentText("Are you sure you would like to delete this customer?");
+            controller.getMessageAlert().showAndWait()
                     .filter(response -> response == ButtonType.OK)
                     .ifPresent(response -> controller.deleteCustomer(selectedCustomer));
         });

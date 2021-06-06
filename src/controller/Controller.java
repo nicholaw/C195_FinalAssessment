@@ -36,7 +36,7 @@ public class Controller
 
     //non-final attributes
     private User currentUser;
-    private Alert confirmationAlert;
+    private Alert messageAlert;
     private int nextCustomerId;
     private int nextAppointmentId;
     private ObservableList<Country> countries;
@@ -139,15 +139,26 @@ public class Controller
 		}
 	}//addCustomerUpdate
 	
+	/**
+	 * Displays an information alert that informs the users which appointments will begin within 
+	 * fifteen minutes of login if there are any.
+	 */
 	private void checkForUpcomingAppointments() {
+		messageAlert.setAlertType(Alert.AlertType.INFORMATION);
+		messageAlert.setTitle("Upcoming Appointments");
+		String message = "";
 		Set<String> appointments = dbConnection.getUpcomingAppointments(LocalDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT);
-		if(appointments != null) {
-			if(!appointments.isEmpty()) {
-				for(String str : appointments) {
-					//TODO: write message for information alert
-				}
+		if((appointments != null) && !(appointments.isEmpty())) {
+			message += "The following appointments will begin within the next fifteen minutes:";
+			message += "\n\n";
+			for(String str : appointments) {
+				message += str + "\n";
 			}
+		} else {
+			message += "There are no appointments beginning within the next fifteen minutes.";
 		}
+		messageAlert.setContentText(message);
+		messageAlert.showAndWait();
 	}//checkForUpcomingAppointments
 	
 	public void clearAppointmentUpdates() {
@@ -208,7 +219,7 @@ public class Controller
      *
      * @return
      */
-    public Alert getConfirmationAlert()
+    public Alert getMessageAlert()
     {
         return confirmationAlert;
     }//getConfirmationAlert
@@ -403,9 +414,9 @@ public class Controller
         editCust = new AddEditCustomer(this);
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview(this);
-        confirmationAlert = new Alert(Alert.AlertType.NONE);
+        messageAlert = new Alert(Alert.AlertType.NONE);
         currentUser = new User(0, username);
-        //TODO: check for appointments starting within fifteen minutes
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+		checkForUpcomingAppointments();
     }
 }//class Controller

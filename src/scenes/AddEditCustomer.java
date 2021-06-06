@@ -30,7 +30,7 @@ public class AddEditCustomer extends BorderPane
     private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
     private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
-    private Alert confirmCancelAlert;   private CountryAndDivisionsBox countryAndDivisionsCombos;
+    private CountryAndDivisionsBox countryAndDivisionsCombos;
 	
 	//Scene attributes
 	private boolean newCustomer;
@@ -62,7 +62,6 @@ public class AddEditCustomer extends BorderPane
         addressErrorLabel	= new Label("");
         cityErrorLabel      = new Label("");
         postCodeErrorLabel  = new Label("");
-        confirmCancelAlert	= new Alert(AlertType.CONFIRMATION);
 		
 		//Instantiate scene attributes
 		newCustomer = true;

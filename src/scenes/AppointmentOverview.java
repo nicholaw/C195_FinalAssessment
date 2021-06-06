@@ -20,7 +20,7 @@ public class AppointmentOverview  extends BorderPane
     private TextField customerPhoneField;	private TableView<Appointment> appointmentsTable;
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
-    private Alert confirmDelete;			private Appointment selectedAppointment;
+    private Appointment selectedAppointment;
 
     public AppointmentOverview(Controller controller)
     {
@@ -37,7 +37,6 @@ public class AppointmentOverview  extends BorderPane
         editButton 			= 	new Button("Edit Appointment");
         deleteButton 		= 	new Button("Delete Appointment");
         returnButton 		= 	new Button("Return");
-        confirmDelete		=	this.controller.getConfirmationAlert();
         selectedAppointment	=	null;
 
         //Instantiate table columns
@@ -77,9 +76,9 @@ public class AppointmentOverview  extends BorderPane
         });
         deleteButton.setOnAction(event ->
         {
-            confirmDelete.setAlertType(Alert.AlertType.CONFIRMATION);
-            confirmDelete.setContentText("Are you sure you would like to delete this appointment?");
-            confirmDelete.showAndWait()
+            controller.getMessageAlert().setAlertType(Alert.AlertType.CONFIRMATION);
+            controller.getMessageAlert().setContentText("Are you sure you would like to delete this appointment?");
+            controller.getMessageAlert().showAndWait()
                     .filter(response -> response == ButtonType.OK)
                     .ifPresent(response -> controller.deleteAppointment(selectedAppointment));
         });
