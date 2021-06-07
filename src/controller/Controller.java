@@ -15,10 +15,14 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
+import utils.Contact;
 import utils.Country;
+import utils.User;
 
 public class Controller
 {
@@ -103,7 +107,7 @@ public class Controller
 	}//addAppointmentUpdate
 
     public boolean addCustomer(Customer c) {
-		return dbConnection.insertCustomer(c, currentUser.getName(), 
+		return dbConnection.insertCustomer(c, currentUser.getUsername(),
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
     }//addCustomer
 
@@ -128,10 +132,10 @@ public class Controller
 			case POST_CODE_FIELD:
 				customerUpdates.put(CustomerColumns.CUSTOMER_POSTAL_CODE.getColName(), update);
 				break;
-			//case COUNTRY_FIELD:
+			//case COUNTRY_BOX:
 				//customerUpdates.put(CustomerColumns.CUSTOMER_COUNTRY_ID.getColName(), update);
 				//break;
-			case DIVISION_FIELD:
+			case DIVISION_BOX:
 				customerUpdates.put(CustomerColumns.CUSTOMER_DIVISION_ID.getColName(), update);
 				break;
 			default:
@@ -146,7 +150,7 @@ public class Controller
 		messageAlert.setAlertType(Alert.AlertType.INFORMATION);
 		messageAlert.setTitle("Upcoming Appointments");
 		String message = "";
-		Set<String> appointments = dbConnection.getUpcomingAppointments(LocalDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT);
+		Set<String> appointments = new HashSet<>(dbConnection.getUpcomingAppointments(LocalDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT));
 		if((appointments != null) && !(appointments.isEmpty())) {
 			message += "The following appointments will begin within the next fifteen minutes:";
 			message += "\n\n";
@@ -163,10 +167,14 @@ public class Controller
 	public void clearAppointmentUpdates() {
 		
 	}
-	
+
+    /**
+     *
+     */
 	public void clearCustomerUpdates() {
-		customerUpdates = null;
-		customerUpdates = new HashMap<>();
+		for(String str : customerUpdates.keySet()) {
+		    customerUpdates.put(str, null);
+        }
 	}
 
     public boolean deleteAppointment(Appointment a)
@@ -176,11 +184,11 @@ public class Controller
 
     public boolean deleteCustomer(Customer c)
     {
-		if(c.getScheduledAppointments() > 0)
+		if(c.getAppointments() > 0)
 		{
-			confirmationAlert.setAlertType(Alert.AlertType.INFORMATION);
-			confirmationAlert.setContentText("Unable to delete customer " + c.getCustomerId() + " because they still have scheduled appointments.");
-			confirmationAlert.showAndWait();
+			messageAlert.setAlertType(Alert.AlertType.INFORMATION);
+			messageAlert.setContentText("Unable to delete customer " + c.getCustomerId() + " because they still have scheduled appointments.");
+			messageAlert.showAndWait();
 			return false;
 		}
 		if(dbConnection.deleteCustomer(c.getCustomerId()))
@@ -189,9 +197,9 @@ public class Controller
 			return true;
 		} else
 		{
-			confirmationAlert.setAlertType(Alert.AlertType.ERROR);
-			confirmationAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId() + ".");
-			confirmationAlert.showAndWait();
+			messageAlert.setAlertType(Alert.AlertType.ERROR);
+			messageAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId() + ".");
+			messageAlert.showAndWait();
 			return false;
 		}
     }//deleteCustomer
@@ -220,8 +228,16 @@ public class Controller
      */
     public Alert getMessageAlert()
     {
-        return confirmationAlert;
-    }//getConfirmationAlert
+        return messageAlert;
+    }//getMessageAlert
+
+    public Contact getContact(int id) {
+        for(Contact c : contacts) {
+            if(c.getId() == id)
+                return c;
+        }
+        return null;
+    }//getContact
 	
 	public ObservableList<Contact> getContacts() {
 		return contacts;
@@ -234,7 +250,14 @@ public class Controller
     public ObservableList<Country> getCountries()
     {
         return countries;
-    }//getCountryCombo
+    }//getCountries
+
+    public Country getCountry(int id) {
+        for(Country c : countries) {
+            return c;
+        }
+        return null;
+    }//getCountry
 
     public int getCountryIdFromDivId(int divId)
     {
@@ -287,7 +310,7 @@ public class Controller
         return nextCustomerId;
     }
 
-    public String getCurrentUser() {
+    public User getCurrentUser() {
         return currentUser;
     }//getSessionUser
 
@@ -347,14 +370,7 @@ public class Controller
 		//check when adding appointment or updating appointment
 		//can check in observable list from appointment overview
 		return false;
-	}//overlapsExistingAppointmet
-
-	/**
-	 *
-	 */
-	private void setCurrentUser(String username) {
-		currentUser = dbConnection.getUser(username);
-	}
+	}//overlapsExistingAppointment
 
 	/**
 	 * Updates an existing customer in the database.
@@ -365,8 +381,8 @@ public class Controller
     public boolean updateCustomer(int customerId)
     {
 		if(customerUpdates != null) {
-			customerUpdates.put(CUSTOMER_UPDATE_BY, currentUser.getName());
-			customerUpdates.put(CUSTOMER_LAST_UPDATE, LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			customerUpdates.put(CustomerColumns.CUSTOMER_UPDATE_BY.getColName(), currentUser.getUsername());
+			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			return dbConnection.updateCustomer(customerUpdates, customerId);
 		}
         return false;
@@ -417,7 +433,7 @@ public class Controller
         login.clearAll();
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());
-		contacts = FXCollections.observableArrayList(dbConnection.getContacts()));
+		contacts = FXCollections.observableArrayList(dbConnection.getContacts());
         initializeCustomerUpdates();
         initializeAppointmentUpdates();
         editAppt = new AddEditAppointment(this);
@@ -425,7 +441,7 @@ public class Controller
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview(this);
         messageAlert = new Alert(Alert.AlertType.NONE);
-        currentUser = setCurrentUser(username);
+        currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
     }

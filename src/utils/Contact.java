@@ -34,7 +34,7 @@ public class Contact {
 			return false;
 		if(!(obj instanceof Contact))
 			return false;
-		if((Contact)obj.getId == this.getId)
+		if(((Contact) obj).getId() == this.getId())
 			return true;
 		return false;
 	}

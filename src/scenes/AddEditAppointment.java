@@ -1,7 +1,6 @@
 package scenes;
 
 import appointment.Appointment;
-import appointment.Location;
 import controller.Controller;
 import customer.Customer;
 import javafx.scene.control.*;
@@ -49,8 +48,6 @@ public class AddEditAppointment extends BorderPane
         endLabel = new Label("End Time");
         endDateBox = new DateBox();
         endTimeField = new TextField("22:00");
-        locationLabel = new Label("Location");
-        locationCombo = new ComboBox<Location>();
         descriptionLabel = new Label("Description");
         descriptionArea = new TextArea();
         scheduleButton = new Button("Submit");
@@ -60,7 +57,6 @@ public class AddEditAppointment extends BorderPane
         customerContactField.setDisable(true);              //customer information fields are disabled
         customerIdField.setDisable(true);
         apptIdField.setDisable(true);                       //appoint id is auto-generated
-        contactContactField.setDisable(true);               //contact info auto-filled based on selection
 
         //Add event handlers to scene elements
 
@@ -74,9 +70,8 @@ public class AddEditAppointment extends BorderPane
         contentPane.addRow(5, contactBox);
         contentPane.addRow(6, startLabel, startDateBox, startTimeField);
         contentPane.addRow(7, endLabel, endDateBox, endTimeField);
-        contentPane.addRow(8, locationLabel, locationCombo);
-        contentPane.addRow(9, descriptionLabel, descriptionArea);
-        contentPane.addRow(10, scheduleButton, cancelButton);
+        contentPane.addRow(8, descriptionLabel, descriptionArea);
+        contentPane.addRow(9, scheduleButton, cancelButton);
         this.setCenter(contentPane);
         this.setTop(header);
     }//constructor
@@ -91,7 +86,7 @@ public class AddEditAppointment extends BorderPane
     public void loadCustomerInfo(Customer c)
     {
         customerIdField.setText(c.getCustomerId() + "");
-        customerContactField.setText(c.getPhoneNum());
+        customerContactField.setText(c.getPhone());
     }//loadCustomerInfo
 
     public void loadNewAppointment()

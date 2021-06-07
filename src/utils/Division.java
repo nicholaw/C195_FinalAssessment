@@ -33,4 +33,15 @@ public class Division
     {
         return divisionName;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof Division))
+            return false;
+        if(!(((Division)obj).getDivisionId() == this.getDivisionId()))
+            return false;
+        return true;
+    }
 }//Division

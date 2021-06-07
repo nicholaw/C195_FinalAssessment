@@ -50,7 +50,7 @@ public class CustomerOverview  extends BorderPane
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
-        apptsCol.setCellValueFactory(new PropertyValueFactory<>("scheduledAppointments"));
+        apptsCol.setCellValueFactory(new PropertyValueFactory<>("appointments"));
         customersTable.getColumns().setAll(idCol, nameCol, phoneCol, countryCol, apptsCol);
 
         //Add event listeners to scene elements

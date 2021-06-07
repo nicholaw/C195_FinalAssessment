@@ -4,6 +4,8 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import utils.Country;
+import utils.Division;
 
 public class Customer
 {
@@ -19,15 +21,15 @@ public class Customer
 
     public Customer(int id, String name, String phone, String address,
             String city, String postCode, Country country, Division div) {
-        this.customerId 	=	new SimpleIntegerProperty(this, id);
+        this.customerId 	=	new SimpleIntegerProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.phone 			= 	new SimpleStringProperty(this, phone);
 		this.address		= 	new SimpleStringProperty(this, address);
 		this.city 			= 	new SimpleStringProperty(this, city);
 		this.postCode 		= 	new SimpleStringProperty(this, postCode);
 		this.country		=	country;
-		this.division		=	division;
-		this.appointments	=	new SimpleIntegerProperty(this, 0);
+		this.division		=	div;
+		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
     }//constructor
 	
 	public Customer(String name, String phone, String address,
@@ -38,17 +40,17 @@ public class Customer
 		this.city 			= 	new SimpleStringProperty(this, city);
 		this.postCode 		= 	new SimpleStringProperty(this, postCode);
 		this.country		=	country;
-		this.division		=	division;
-		this.appointments	=	new SimpleIntegerProperty(this, 0);
+		this.division		=	div;
+		this.appointments	=	new SimpleIntegerProperty(this, "appointments",0);
     }//constructor
 
-    public Customer(int id, String name, int country, String phoneNum)
+    public Customer(int id, String name, Country country, String phone)
     {
-        this.customerId 	=	new SimpleIntegerProperty(this, id);
+        this.customerId 	=	new SimpleIntegerProperty(this, "", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.phone 			= 	new SimpleStringProperty(this, phone);
         this.country		=	country;
-		this.appointments	=	new SimpleIntegerProperty(this, 0);
+		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
     }//constructor
 
 	public StringProperty addressProperty() {
@@ -76,7 +78,7 @@ public class Customer
 	}
 	
 	public int getAppointments() {
-		return appointments.intValue();
+		return appointments.get();
 	}
 	
 	public String getAddress()  {
@@ -87,12 +89,16 @@ public class Customer
 		return city.get();
 	}
 	
-	public int getCountryId() {
-		return country.getCountryId();
+	public Country getCountry() {
+		return country;
 	}
 	
 	public int getCustomerId() {
-		return customerId.intValue();
+		return customerId.get();
+	}
+
+	public Division getDivision() {
+    	return division;
 	}
 	
 	public String getName() {
@@ -108,7 +114,7 @@ public class Customer
 	}
 	
 	public void setAppointments(int i) {
-		appointments = new SimpleIntegerProperty(this, i);
+		appointments = new SimpleIntegerProperty(this, "appointments", i);
 	}
 	
 	public void setAddress(String str) {
@@ -116,7 +122,7 @@ public class Customer
 	}
 	
 	public void setCity(String str) {
-		city = new SimpleIntegerProperty(this, str);
+		city = new SimpleStringProperty(this, str);
 	}
 	
 	public void setCountry(Country c) {
@@ -145,13 +151,13 @@ public class Customer
             return false;
         if(!(obj instanceof Customer))
             return false;
-        if(this.id.get() == ((Customer)obj).getId())
+        if(this.customerId.get() == ((Customer)obj).getCustomerId())
             return true;
         return false;
     }
 	
 	@Override
-	public void toString() {
+	public String toString() {
 		return this.getName();
 	}
 }//Customer

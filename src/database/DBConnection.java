@@ -7,6 +7,7 @@ import customer.Customer;
 import utils.Contact;
 import utils.Country;
 import utils.Division;
+import utils.User;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,7 +86,7 @@ public class DBConnection
 							"Contact_Name";
 		try(var stmt = conn.prepareStatement(sql)) {
 			var result = stmt.executeQuery();
-			while(result.next() {
+			while(result.next()) {
 				contacts.add(new Contact(result.getInt("Contact_ID"), result.getString("Contact_Name"), result.getString("Email")));
 			}
 		} catch(SQLException e) {
@@ -153,7 +154,8 @@ public class DBConnection
             var result = stmt.executeQuery();
             while(result.next())
             {
-                list.add(new Customer(result.getInt("id"), result.getString("name"),result.getInt("country"), result.getString("phone")));
+                list.add(new Customer(result.getInt("id"), result.getString("name"),
+                        controller.getCountry(result.getInt("country")), result.getString("phone")));
             }
         } catch(SQLException e)
         {
@@ -197,7 +199,7 @@ public class DBConnection
             {
                 list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
-                        id, controller.getSessionUser().getUserId(), result.getInt("contact_id")));
+                        id, controller.getCurrentUser().getUserId(), controller.getContact( result.getInt("contact_id"))));
             }
         }catch(SQLException e)
         {
@@ -230,8 +232,9 @@ public class DBConnection
 	 *	Returns a collection of Strings describing appointments in the database which start
 	 *  withing fifteen minutes of the given date and time.
 	 *
-	 *  @param date
-	 *  @param time
+	 *  @param dateTime
+	 *  @param interval
+     *  @param units
 	 *  return
 	 */
 	public Collection<String> getUpcomingAppointments(LocalDateTime dateTime, int interval, String units) {
@@ -290,7 +293,7 @@ public class DBConnection
 				return null;
 			}
 		} catch(SQLException e) {
-			e.printStackTrace;
+			e.printStackTrace();
 			return null;
 		}
 	}//getUser
@@ -304,14 +307,14 @@ public class DBConnection
 			stmt.setString	(2, a.getTitle());
 			stmt.setString	(3, a.getDescription());
 			stmt.setString	(4, a.getType());
-			stmt.setString	(5, a.getStartDateTime());	//TODO: change to String with format
-			stmt.setString	(6, a.getEndDateTime());	//TODO: change to String with format
+			stmt.setString	(5, a.getStartDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			stmt.setString	(6, a.getEndDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			stmt.setString	(7, timestamp);
-			stmt.setString	(8, user.getName());
+			stmt.setString	(8, user.getUsername());
 			stmt.setString	(9, timestamp);
-			stmt.setString	(10, user.getName());
+			stmt.setString	(10, user.getUsername());
 			stmt.setInt		(11, a.getCustomerId());
-			stmt.setInt		(12, user.getId());
+			stmt.setInt		(12, user.getUserId());
 			stmt.setInt		(13, a.getContactId());
 			int rows = stmt.executeUpdate();
 			System.out.println("Adding customer\nRows affected: " + rows);
@@ -332,12 +335,12 @@ public class DBConnection
             stmt.setString	(2, c.getName());
             stmt.setString	(3, c.getAddress());
             stmt.setString	(4, c.getPostCode());
-            stmt.setString	(5, c.getPhoneNum());
+            stmt.setString	(5, c.getPhone());
             stmt.setString	(6, timestamp);
             stmt.setString	(7, creator);
             stmt.setString	(8, timestamp);
             stmt.setString	(9, creator);
-            stmt.setInt		(10, c.getDivisionId());
+            stmt.setInt		(10, c.getDivision().getDivisionId());
 			int rows = stmt.executeUpdate();
             System.out.println("Adding customer\nRows affected: " + rows);
 			return (rows > 0);
@@ -458,36 +461,34 @@ public class DBConnection
      */
     public boolean updateCustomer(HashMap<String, String> updates, int customerId)
     {
-        if(updates != null)
-        {
-            Set<String> keys = updates.keySet();
+        if(updates != null) {
             String sql = "UPDATE customers SET ";
+            Set<String> keys = updates.keySet();
             //Add the correct number of bind variables to sql statement
-            for(int i = 0; i < keys.size(); i++)
-            {
-                if(i == keys.size() - 1)
-                    sql += "? = ? ";
-                else
+            for(String str : keys) {
+                if (updates.get(str) != null) {
                     sql += "? = ?, ";
+                }
             }
-            sql += "WHERE CustomerID = ?";
+            //Remove the tailing comma
+            sql = sql.substring(0, sql.length() - 3);
+            sql += " WHERE CustomerID = ?";
             try(var stmt = conn.prepareStatement(sql))
             {
                 int bindIndex = 1;
                 for(String str : keys)
                 {
-                    //Division id column holds integers and update value must be parsed
-                    if(str.equals(CustomerColumns.CUSTOMER_DIVISION_ID.getColName()))
-                    {
-                        stmt.setString(bindIndex, str);
-                        bindIndex++;
-                        stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
-                        bindIndex++;
-                    } else
-                    {
-                        stmt.setString(bindIndex, str);
-                        bindIndex++;
-                        stmt.setString(bindIndex, updates.get(str));
+                    if(updates.get(str) != null) {
+                        //Division id column holds integers so update value must be parsed
+                        if(str.equals(CustomerColumns.CUSTOMER_DIVISION_ID.getColName())) {
+                            stmt.setString(bindIndex, str);
+                            bindIndex++;
+                            stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
+                        } else {
+                            stmt.setString(bindIndex, str);
+                            bindIndex++;
+                            stmt.setString(bindIndex, updates.get(str));
+                        }
                         bindIndex++;
                     }
                 }//for str:keys

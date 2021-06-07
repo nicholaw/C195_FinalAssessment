@@ -17,14 +17,14 @@ public class Appointment
 	private LocalDateTime	startDateTime;
 	private StringProperty	startDate;
 	private StringProperty	startTime;
-	private LocalDateTime	endDateAndTime;
+	private LocalDateTime	endDateTime;
 	private StringProperty	endDate;
 	private StringProperty	endTime;
 	private IntegerProperty	customerId;
 	private Contact			contact;
 
     public Appointment(String title, String description, String type, LocalDateTime startDateTime, 
-						LocalDateTime endDateAndTime, int customerId, Contact contact)
+						LocalDateTime endDateTime, int customerId, Contact contact)
     {
         this.title 			= 	new SimpleStringProperty(this, title);
         this.description 	= 	new SimpleStringProperty(this, description);
@@ -35,15 +35,15 @@ public class Appointment
         this.endDateTime 	= 	endDateTime;
 		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.customerId 	= 	new SimpleIntegerProperty(this, customerId);
+        this.customerId 	= 	new SimpleIntegerProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
     }//constructor
 
     public Appointment(int appointmentId, String title, String description, String type, 
-						LocalDateTime startDateTime, LocalDateTime endDateAndTime, 
+						LocalDateTime startDateTime, LocalDateTime endDateTime,
 						int customerId, int userId, Contact contact)
     {
-        this.appointmentId	=	new SimpleIntegerProperty(this, appointmentId);
+        this.appointmentId	=	new SimpleIntegerProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, title);
         this.description 	= 	new SimpleStringProperty(this, description);
         this.type 			= 	new SimpleStringProperty(this, type);
@@ -53,7 +53,7 @@ public class Appointment
         this.endDateTime 	= 	endDateTime;
 		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.customerId 	= 	new SimpleIntegerProperty(this, customerId);
+        this.customerId 	= 	new SimpleIntegerProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
     }//constructor
 
@@ -94,7 +94,7 @@ public class Appointment
 	}
 	
 	public IntegerProperty contactIdProperty() {
-		return new SimpleIntegerProperty(this, contact.getId());
+		return new SimpleIntegerProperty(this, "contactId", contact.getId());
 	}
 	
 	public StringProperty contactNameProperty() {
@@ -110,7 +110,7 @@ public class Appointment
     }//getAppointmentId
 
     public int getContactId() {
-        return contactId.get();
+        return contact.getId();
     }//getContactId
 
     public int getCustomerId() {

@@ -5,6 +5,7 @@ import controller.Controller;
 import customer.Customer;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -142,7 +143,7 @@ public class AppointmentOverview  extends BorderPane
         {
             customerIdField.setText("" + c.getCustomerId());
             customerNameField.setText(c.getName());
-            customerPhoneField.setText("" + c.getPhoneNum());
+            customerPhoneField.setText("" + c.getPhone());
         }
     }//loadCustomerAppointmentInformation
 }//class AppointmentOverview

@@ -54,4 +54,15 @@ public class Country
     {
         return countryName;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof Country))
+            return false;
+        if(!(((Country)obj).getCountryId() == this.getCountryId()))
+            return false;
+        return true;
+    }
 }//Country

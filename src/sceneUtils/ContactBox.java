@@ -1,11 +1,12 @@
 package sceneUtils;
 
-import java.utils.Collection;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import utils.Contact;
+
+import java.util.Collection;
 
 public class ContactBox extends HBox {
 	private Label contactLabel;
@@ -21,7 +22,7 @@ public class ContactBox extends HBox {
 		//Set initial values
 		contactsCombo.getItems().setAll(contacts);
 		selectFirst();
-		emailField.setDisabled(true);
+		emailField.setDisable(true);
 		
 		//Add elements to container
 		this.getChildren().addAll(contactLabel, contactsCombo, emailField);
