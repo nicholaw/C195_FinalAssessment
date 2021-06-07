@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import sceneUtils.ContactBox;
 import sceneUtils.DateBox;
 
 public class AddEditAppointment extends BorderPane
@@ -18,10 +19,9 @@ public class AddEditAppointment extends BorderPane
     private Label apptTitleLabel;   private TextField apptTitleField;
     private Label apptTypeLabel;    private ComboBox apptTypeCombo;
     private Label customerIdLabel;  private TextField customerIdField;      private TextField customerContactField;
-    private Label contactIdLabel;   private ComboBox contactIdCombo;        private TextField contactContactField;
+    private ContactBox contactBox;
     private Label startLabel;       private TextField startTimeField;       private DateBox startDateBox;
     private Label endLabel;         private TextField endTimeField;         private DateBox endDateBox;
-    private Label locationLabel;    private ComboBox locationCombo;
     private Label descriptionLabel; private TextArea descriptionArea;
     private Button scheduleButton;  private Button cancelButton;
     private Alert confirmCancel;
@@ -42,9 +42,7 @@ public class AddEditAppointment extends BorderPane
         customerIdLabel = new Label("Customer Id");
         customerIdField = new TextField("");
         customerContactField = new TextField("");
-        contactIdLabel = new Label("Contact");
-        contactIdCombo = new ComboBox<String>();
-        contactContactField = new TextField("");
+		contactBox = new ContactBox(this.controller.getContacts());
         startLabel = new Label("Start Time");
         startDateBox = new DateBox();
         startTimeField = new TextField("10:00");
@@ -73,7 +71,7 @@ public class AddEditAppointment extends BorderPane
         contentPane.addRow(2, apptIdLabel, apptIdField);
         contentPane.addRow(3, apptTitleLabel, apptTitleField);
         contentPane.addRow(4, apptTypeLabel, apptTypeCombo);
-        contentPane.addRow(5, contactIdLabel, contactIdCombo, contactContactField);
+        contentPane.addRow(5, contactBox);
         contentPane.addRow(6, startLabel, startDateBox, startTimeField);
         contentPane.addRow(7, endLabel, endDateBox, endTimeField);
         contentPane.addRow(8, locationLabel, locationCombo);

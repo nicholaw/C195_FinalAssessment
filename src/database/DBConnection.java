@@ -4,6 +4,7 @@ import appointment.Appointment;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
+import utils.Contact;
 import utils.Country;
 import utils.Division;
 import javax.sql.DataSource;
@@ -53,8 +54,7 @@ public class DBConnection
 		}
     }//deleteAppointment
 	
-    public boolean deleteCustomer(int id)
-    {
+    public boolean deleteCustomer(int id) {
         String sql =	"DELETE FROM " 			+ 
 							"customers " 		+
 						"WHERE " 				+ 
@@ -69,6 +69,30 @@ public class DBConnection
 			return false;
 		}
     }//deleteCustomer
+	
+	/**
+	 *
+	 */
+	public Collection<Contact> getContacts() {
+		var contacts = new LinkedHashSet<Contact>();
+		String sql =	"SELECT " 				+ 
+							"Contact_ID " 		+ 
+							"Contact_Name "		+ 
+							"Email " 			+ 
+						"FROM " 				+ 
+							"contacts " 		+ 
+						"ORDER BY " 			+ 
+							"Contact_Name";
+		try(var stmt = conn.prepareStatement(sql)) {
+			var result = stmt.executeQuery();
+			while(result.next() {
+				contacts.add(new Contact(result.getInt("Contact_ID"), result.getString("Contact_Name"), result.getString("Email")));
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return contacts;
+	}//getContacts
 
     /**
      * Returns a collection of all the countries in the database to be displayed in the combo box for selecting
@@ -76,8 +100,7 @@ public class DBConnection
      *
      * @return The collection of countries
      */
-    public Collection<Country> getCountries()
-    {
+    public Collection<Country> getCountries() {
         String sql =    "SELECT "                   +
                             "country_id AS id, "    +
                             "country AS name "      +

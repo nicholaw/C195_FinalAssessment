@@ -40,6 +40,7 @@ public class Controller
     private int nextAppointmentId;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
+	private ObservableList<Contact> contacts;
 	private HashMap<String, String> customerUpdates;
 	private HashMap<String, String> appointmentUpdates;
 
@@ -221,6 +222,10 @@ public class Controller
     {
         return confirmationAlert;
     }//getConfirmationAlert
+	
+	public ObservableList<Contact> getContacts() {
+		return contacts;
+	}//getContacts
 
     /**
      *
@@ -412,6 +417,7 @@ public class Controller
         login.clearAll();
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());
+		contacts = FXCollections.observableArrayList(dbConnection.getContacts()));
         initializeCustomerUpdates();
         initializeAppointmentUpdates();
         editAppt = new AddEditAppointment(this);
