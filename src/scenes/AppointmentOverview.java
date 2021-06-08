@@ -18,8 +18,7 @@ public class AppointmentOverview  extends BorderPane
 {
     private Controller controller;
     private Label sceneLabel;               private Pane header;
-    private Label customerLabel;            private TextField customerIdField;		private TextField customerNameField;
-    private TextField customerPhoneField;	private TableView<Appointment> appointmentsTable;
+    private CustomerHeader customerInfo;	private TableView<Appointment> appointmentsTable;
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
     private Appointment selectedAppointment;private ObservableList<Appointment> appointments;
