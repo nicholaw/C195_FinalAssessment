@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import sceneUtils.SceneCode;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 public class AppointmentOverview  extends BorderPane
 {
@@ -21,7 +22,7 @@ public class AppointmentOverview  extends BorderPane
     private TextField customerPhoneField;	private TableView<Appointment> appointmentsTable;
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
-    private Appointment selectedAppointment;
+    private Appointment selectedAppointment;private ObservableList<Appointment> appointments;
 
     public AppointmentOverview(Controller controller)
     {
@@ -39,6 +40,7 @@ public class AppointmentOverview  extends BorderPane
         deleteButton 		= 	new Button("Delete Appointment");
         returnButton 		= 	new Button("Return");
         selectedAppointment	=	null;
+		
 
         //Instantiate table columns
         TableColumn<Appointment, Integer> 	idCol 			= 	new TableColumn<>("ID");
@@ -112,10 +114,10 @@ public class AppointmentOverview  extends BorderPane
         this.setCenter(contentPane);
     }//constructor
 
-    /*
+    /**
+	 *
      */
-    private void clear()
-    {
+    private void clear() {
         customerIdField.setText("");
         customerNameField.setText("");
         customerPhoneField.setText("");
@@ -124,23 +126,37 @@ public class AppointmentOverview  extends BorderPane
         deleteButton.setDisable(true);
         editButton.setDisable(true);
     }//clear
+	
+	/**
+	 *
+	 */
+	public Collection<Appointment> getAppointments() {
+		return appointments;
+	}//getAppointments
 
-	public void loadOverview(Customer c, ObservableList<Appointment> appointments)
-	{
+	/**
+	 *
+	 */
+	public void loadOverview(Customer c, ObservableList<Appointment> appointments) {
 		loadCustomerInformation(c);
 		loadAppointmentInformation(appointments);
 	}//loadOverview
 	
-	private void loadAppointmentInformation(ObservableList<Appointment> appointments)
-	{
-		if(appointments != null)
-			appointmentsTable.setItems(appointments);
+	/**
+	 *
+	 */
+	private void loadAppointmentInformation(ObservableList<Appointment> appointments) {
+		if(appointments != null) {
+			this.appointments = appointments;
+			appointmentsTable.setItems(this.appointments);
+		}
 	}//loadAppointmentInformation
 
-    private void loadCustomerInformation(Customer c)
-    {
-        if(c != null)
-        {
+	/**
+	 *
+	 */
+    private void loadCustomerInformation(Customer c) {
+        if(c != null) {
             customerIdField.setText("" + c.getCustomerId());
             customerNameField.setText(c.getName());
             customerPhoneField.setText("" + c.getPhone());

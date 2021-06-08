@@ -107,8 +107,13 @@ public class Controller
 	}//addAppointmentUpdate
 
     public boolean addCustomer(Customer c) {
-		return dbConnection.insertCustomer(c, currentUser.getUsername(),
-				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
+			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
+			customers.add(c);
+			return true;
+		} else {
+			return false;
+		}
     }//addCustomer
 
 	/**
@@ -177,26 +182,20 @@ public class Controller
         }
 	}
 
-    public boolean deleteAppointment(Appointment a)
-    {
+    public boolean deleteAppointment(Appointment a) {
 		return dbConnection.deleteAppointment(a.getAppointmentId());
     }//deleteAppointment
 
-    public boolean deleteCustomer(Customer c)
-    {
-		if(c.getAppointments() > 0)
-		{
+    public boolean deleteCustomer(Customer c) {
+		if(c.getAppointments() > 0) {
 			messageAlert.setAlertType(Alert.AlertType.INFORMATION);
 			messageAlert.setContentText("Unable to delete customer " + c.getCustomerId() + " because they still have scheduled appointments.");
 			messageAlert.showAndWait();
 			return false;
-		}
-		if(dbConnection.deleteCustomer(c.getCustomerId()))
-		{
+		} else if(dbConnection.deleteCustomer(c.getCustomerId())) {
 			customers.remove(c);
 			return true;
-		} else
-		{
+		} else {
 			messageAlert.setAlertType(Alert.AlertType.ERROR);
 			messageAlert.setContentText("There was an error trying to delete customer " + c.getCustomerId() + ".");
 			messageAlert.showAndWait();
@@ -208,8 +207,7 @@ public class Controller
      *
      * @return
      */
-    public HeaderPane getHeader()
-    {
+    public HeaderPane getHeader() {
         return header;
     }
 
@@ -217,8 +215,7 @@ public class Controller
      *
      * @return
      */
-    public HashMap<String, String> getAppointmentUpdates()
-    {
+    public HashMap<String, String> getAppointmentUpdates() {
         return appointmentUpdates;
     }
 
@@ -226,8 +223,7 @@ public class Controller
      *
      * @return
      */
-    public Alert getMessageAlert()
-    {
+    public Alert getMessageAlert() {
         return messageAlert;
     }//getMessageAlert
 
@@ -287,8 +283,7 @@ public class Controller
      *
      * @return
      */
-    public HashMap<String, String> getCustomerUpdates()
-    {
+    public HashMap<String, String> getCustomerUpdates() {
         return customerUpdates;
     }
 
@@ -296,8 +291,7 @@ public class Controller
      *
      * @return
      */
-    public int getNextAppointmentId()
-    {
+    public int getNextAppointmentId() {
         return nextAppointmentId;
     }
 
@@ -305,8 +299,7 @@ public class Controller
      *
      * @return
      */
-    public int getNextCustomerId()
-    {
+    public int getNextCustomerId() {
         return nextCustomerId;
     }
 
@@ -315,8 +308,7 @@ public class Controller
     }//getSessionUser
 
     //Hashes user-provided password for validation
-    private static int hashPassword(CharSequence password)
-    {
+    private static int hashPassword(CharSequence password) {
         //TODO: Make a real hash
         int sum = 0;
         for(int i = 0; i < password.length(); i++)
@@ -347,8 +339,7 @@ public class Controller
 	 * @param username	username entered for the login attempt
 	 * @param valid		whether the login attempt was successful
 	 */
-    private void logLoginAttempt(String username, boolean valid)
-    {
+    private void logLoginAttempt(String username, boolean valid) {
 		try(var fw = new FileWriter(loginAttemptDestinaiton, true);
 			var bw = new BufferedWriter(fw)) {
 			LocalDateTime currentTime = LocalDateTime.now();
@@ -365,8 +356,7 @@ public class Controller
 		}
 	}//logLoginAttempt
 	
-	private boolean overlapsExistingAppointment(Appointment a)
-	{
+	private boolean overlapsExistingAppointment(Appointment a) {
 		//check when adding appointment or updating appointment
 		//can check in observable list from appointment overview
 		return false;
@@ -378,8 +368,7 @@ public class Controller
 	 * @param customerId  Id of the customer to update
 	 * @return  whether the database updated successfully
 	 */
-    public boolean updateCustomer(int customerId)
-    {
+    public boolean updateCustomer(int customerId) {
 		if(customerUpdates != null) {
 			customerUpdates.put(CustomerColumns.CUSTOMER_UPDATE_BY.getColName(), currentUser.getUsername());
 			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
@@ -394,8 +383,7 @@ public class Controller
      * @param username  Username entered in the login form
      * @param password  Password entered in the login form
      */
-    public void validateLoginCredentials(String username, CharSequence password)
-    {
+    public void validateLoginCredentials(String username, CharSequence password) {
         /*
         if(validateCredentials(username, password)) {
             logLoginAttempt(username, true);
@@ -416,8 +404,7 @@ public class Controller
      * @param password  The given password
      * @return  Whether the given username and password exist and are associated in the database.
      */
-    private boolean validateCredentials(String username, CharSequence password)
-    {
+    private boolean validateCredentials(String username, CharSequence password) {
         CharSequence cs = dbConnection.validateCredentials(username);
         if(cs == null) {
             return false;
@@ -428,8 +415,7 @@ public class Controller
         }
     }//validateLoginCredentials
 
-    private void validLogin(String username)
-    {
+    private void validLogin(String username) {
         login.clearAll();
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());

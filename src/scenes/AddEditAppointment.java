@@ -8,22 +8,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import sceneUtils.ContactBox;
+import sceneUtils.CustomerHeader;
 import sceneUtils.DateBox;
 
 public class AddEditAppointment extends BorderPane
 {
-    private Controller controller;
-    private Pane header;            private Label sceneLabel;
-    private Label apptIdLabel;      private TextField apptIdField;
-    private Label apptTitleLabel;   private TextField apptTitleField;
-    private Label apptTypeLabel;    private ComboBox apptTypeCombo;
-    private Label customerIdLabel;  private TextField customerIdField;      private TextField customerContactField;
-    private ContactBox contactBox;
-    private Label startLabel;       private TextField startTimeField;       private DateBox startDateBox;
-    private Label endLabel;         private TextField endTimeField;         private DateBox endDateBox;
-    private Label descriptionLabel; private TextArea descriptionArea;
-    private Button scheduleButton;  private Button cancelButton;
-    private Alert confirmCancel;
+    private Controller	controller;
+    private Pane 		header;            	private Label			sceneLabel;
+    private Label 		apptIdLabel;      	private TextField		apptIdField;
+    private Label 		apptTitleLabel;   	private TextField		apptTitleField;
+    private Label 		apptTypeLabel;    	private ComboBox		apptTypeCombo;
+    private ContactBox 	contactBox;  		private CustomerHeader	customerInfo;
+    private Label 		startLabel;       	private TextField 		startTimeField;       
+	private DateBox 	startDateBox;		private DateBox 		endDateBox;
+    private Label 		endLabel;         	private TextField 		endTimeField;
+    private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
+    private Button 		scheduleButton;		private Button 			cancelButton;
 
     public AddEditAppointment(Controller controller)
     {
@@ -76,21 +76,18 @@ public class AddEditAppointment extends BorderPane
         this.setTop(header);
     }//constructor
 
-    public void loadAppointmentInfo(Appointment a)
-    {
+    public void loadAppointmentInfo(Appointment a) {
         customerIdField.setText("" + a.getCustomerId());
         customerContactField.setText("xxx-xxx-xxxx");
         apptTitleField.setText(a.getTitle());
     }//loadAppointmentInfo
 
-    public void loadCustomerInfo(Customer c)
-    {
+    public void loadCustomerInfo(Customer c) {
         customerIdField.setText(c.getCustomerId() + "");
         customerContactField.setText(c.getPhone());
     }//loadCustomerInfo
 
-    public void loadNewAppointment()
-    {
+    public void loadNewAppointment() {
 
     }//loadNewAppointment
 }

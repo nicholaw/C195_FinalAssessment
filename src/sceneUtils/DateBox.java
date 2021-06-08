@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 import utils.Month;
-
 import java.time.LocalDate;
 
 public class DateBox extends HBox
