@@ -1,0 +1,52 @@
+package sceneUtils;
+
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+
+/**
+ * Displays customer information to inform the user which customer for
+ * which they are creating or editing an appointment
+ */
+public class CustomerHeader extends HBox {
+	private final Label label;
+	private TextField idField;
+	private TextField nameField;
+	private TextField phoneField;
+	
+	/**
+	 *
+	 */
+	public CustomerHeader() {
+		label		=	new Label("Customer: ");
+		idField		=	new TextField("");
+		nameField	=	new TextField("");
+		phoneField	=	new phoneField("");
+		idField.setDisable(true);
+		nameField.setDisable(true);
+		phoneField.setDisable(true);
+		this.addAll(label, idField, nameField, phoneField);
+	}//constructor
+
+	/**
+	 * 
+	 *
+	 * @param id	the customer's id
+	 * @param name	the customer's name
+	 * @param phone	the cusotmer's phone number
+	 */
+	public setCusomterInfo(int id, String name, String phone) {
+		idField.setText("" + id);
+		nameField.setText(name);
+		phoneField.setText(phone);
+	}//setCustomerInfo
+	
+	/**
+	 *
+	 */
+	public void clear() {
+		idField.setText("");
+		nameField.setText("");
+		phoneField.setText("");
+	}//clear
+}//CustomerHeader
