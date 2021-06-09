@@ -1,7 +1,6 @@
 package sceneUtils;
 
-public enum SceneCode
-{
+public enum SceneCode {
     LOGIN,
     CUSTOMER_OVERVIEW,
     APPOINTMENT_OVERVIEW,

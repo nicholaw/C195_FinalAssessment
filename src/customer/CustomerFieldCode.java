@@ -1,7 +1,6 @@
 package customer;
 
-public enum CustomerFieldCode
-{
+public enum CustomerFieldCode {
     NAME_FIELD,
     PHONE_FIELD,
     ADDRESS_FIELD,

@@ -93,10 +93,8 @@ public class CountryAndDivisionsBox extends HBox
         }
     }//setSelectedCountry
 
-    public void setSelectedDivision(int id)
-    {
-        for(Division d : firstLevelDivisionsCombo.getItems())
-        {
+    public void setSelectedDivision(int id) {
+        for(Division d : firstLevelDivisionsCombo.getItems()) {
             if(d.getDivisionId() == id)
                 firstLevelDivisionsCombo.setValue(d);
        
@@ -106,8 +104,7 @@ public class CountryAndDivisionsBox extends HBox
     /**
      *
      */
-    private void updateFirstDivisions()
-    {
+    private void updateFirstDivisions() {
         //Set items to first-level divisions of the selected country
         if(countryCombo.getValue() != null)
             firstLevelDivisionsCombo.getItems().setAll(countryCombo.getValue().getFirstLevelDivisions());
@@ -120,15 +117,12 @@ public class CountryAndDivisionsBox extends HBox
             firstLevelDivisionsCombo.setValue(null);
     }//updateFirstDivisions
 
-    public void clear()
-    {
-        if(countryCombo.getItems().size() > 0)
-        {
+    public void clear() {
+        if(countryCombo.getItems().size() > 0) {
             countryCombo.setValue(countryCombo.getItems().get(0));
             updateFirstDivisions();
         }
-        else
-        {
+        else {
             countryCombo.setValue(null);
             firstLevelDivisionsCombo.setValue(null);
         }

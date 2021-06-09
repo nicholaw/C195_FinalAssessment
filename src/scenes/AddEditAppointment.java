@@ -22,30 +22,29 @@ public class AddEditAppointment extends BorderPane
 	private TimeBox		startTimeBox;		private TimeBox			endTimeBox;
     private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
     private Button 		submitButton;		private Button 			cancelButton;
-	private Label		nameErrorLabel;		private Label			titleErrorLabel;
-	private Label		timeErrorLabel;
+	private Label		titleErrorLabel;	private Label			timeErrorLabel;
 
     public AddEditAppointment(Controller controller)
     {
         this.controller = controller;
 
         //Instantiate scene elements
-        header 				 = this.controller.getHeader();
-        sceneLabel 			 = new Label("Schedule Appointment");
-		customerInfo		 = controller.getCustomerInfo();
-        apptIdLabel 		 = new Label("Id");
-        apptIdField 		 = new TextField("" + controller.getNextAppointmentId());
-        apptTitleLabel 		 = new Label("Title");
-        apptTitleField 		 = new TextField("");
-        apptTypeLabel 		 = new Label("Type");
-        apptTypeCombo 	 	 = new ComboBox<String>();
-		startTimeBox		 = new TimeBox("Start:");
-		endTimeBox			 = new TimeBox("End:");
-		contactBox 			 = new ContactBox(this.controller.getContacts());
-        descriptionLabel 	 = new Label("Description");
-        descriptionArea 	 = new TextArea("");
-        submitButton 	 	 = new Button("Schedule");
-        cancelButton 		 = new Button("Cancel");
+        header 				= this.controller.getHeader();
+        sceneLabel 			= new Label("Schedule Appointment");
+		customerInfo		= controller.getCustomerInfo();
+        apptIdLabel 		= new Label("Id");
+        apptIdField 		= new TextField("" + controller.getNextAppointmentId());
+        apptTitleLabel 		= new Label("Title");
+        apptTitleField 		= new TextField("");
+        apptTypeLabel 		= new Label("Type");
+        apptTypeCombo 	 	= new ComboBox<String>();
+		startTimeBox		= new TimeBox("Start:");
+		endTimeBox			= new TimeBox("End:");
+		contactBox 			= new ContactBox(this.controller.getContacts());
+        descriptionLabel	= new Label("Description");
+        descriptionArea 	= new TextArea("");
+        submitButton 	 	= new Button("Schedule");
+        cancelButton 		= new Button("Cancel");
 
         //set initial states for scene elements
         customerContactField.setDisable(true);              //customer information fields are disabled
@@ -55,10 +54,20 @@ public class AddEditAppointment extends BorderPane
 
         //Add event handlers to scene elements
 		submitButton.setOnAction(event -> {
-			
+			if(this.validateForm()) {
+				if(newAppointment) {
+					controller.addAppointment(/**/);
+				} else {
+					processChanges();
+					controller.updateAppointment(Integer.parseInt(apptIdField.getText()));
+				}
+				clear();
+				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW);
+			}
 		});
 		cancelButton.setOnAction(event -> {
-			
+			clear();
+			controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW);
 		});
 
         //add scene elements to container
@@ -78,11 +87,46 @@ public class AddEditAppointment extends BorderPane
     }//constructor
 	
 	public void clear() {
-		
+		apptIdField.setText("");
+		apptTitleField.setText("");
+		this.clearCombo(apptTypeCombo);
 	}//clear
 	
-	private void flag() {
-		
+	/**
+	 *
+	 */
+	private void clearCombo(ComboBox box) {
+		if(box != null) {
+			if(box.getItems().size() > 0) {
+				box.setValue(box.getItems().get(0));
+				return;
+			}
+		}
+		box.setValue(null);
+	}//clearCombo
+	
+	private void clearErrors() {
+		titleErrorLabel.setText("");
+		timeErrorLabel.setText("");
+	}//clearErrors
+	
+	/**
+	 *
+	 */
+	private void flag(AppointmentFieldCode code, String message) {
+		switch(code) {
+			case TITLE_FIELD :
+				titleErrorLabel.setText(message);
+				break;
+			case DATETIME_BOX :
+				timeErrorLabel.setText(message);
+				break;
+			default :
+				controller.getMessageAlert().setAlertType(Alert.AlertType.ERROR);
+				controller.getMessageAlert().setContentText("An unknown validation error occurred");
+				controller.getMessageAlert().setTitle("Unknown Error");
+				controller.getMessageAlert().showAndWait();
+		}
 	}//flag
 
     public void loadAppointmentInfo(Appointment a) {
@@ -101,6 +145,10 @@ public class AddEditAppointment extends BorderPane
     public void loadNewAppointment() {
 
     }//loadNewAppointment
+	
+	private void processChanges() {
+		
+	}//processChanges
 	
 	private boolean validateForm() {
 		return false;
