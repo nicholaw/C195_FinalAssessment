@@ -21,11 +21,11 @@ public class CustomerHeader extends HBox {
 		label		=	new Label("Customer: ");
 		idField		=	new TextField("");
 		nameField	=	new TextField("");
-		phoneField	=	new phoneField("");
+		phoneField	=	new TextField("");
 		idField.setDisable(true);
 		nameField.setDisable(true);
 		phoneField.setDisable(true);
-		this.addAll(label, idField, nameField, phoneField);
+		this.getChildren().addAll(label, idField, nameField, phoneField);
 	}//constructor
 
 	/**
@@ -35,7 +35,7 @@ public class CustomerHeader extends HBox {
 	 * @param name	the customer's name
 	 * @param phone	the cusotmer's phone number
 	 */
-	public setCusomterInfo(int id, String name, String phone) {
+	public void setCusomterInfo(int id, String name, String phone) {
 		idField.setText("" + id);
 		nameField.setText(name);
 		phoneField.setText(phone);

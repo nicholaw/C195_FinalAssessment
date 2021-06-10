@@ -1,6 +1,7 @@
 package scenes;
 
 import appointment.Appointment;
+import appointment.AppointmentFieldCode;
 import controller.Controller;
 import customer.Customer;
 import javafx.scene.control.*;
@@ -9,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import sceneUtils.ContactBox;
 import sceneUtils.CustomerHeader;
+import sceneUtils.SceneCode;
 import sceneUtils.TimeBox;
 
 public class AddEditAppointment extends BorderPane
@@ -31,7 +33,7 @@ public class AddEditAppointment extends BorderPane
         //Instantiate scene elements
         header 				= this.controller.getHeader();
         sceneLabel 			= new Label("Schedule Appointment");
-		customerInfo		= controller.getCustomerInfo();
+		customerInfo		= new CustomerHeader();
         apptIdLabel 		= new Label("Id");
         apptIdField 		= new TextField("" + controller.getNextAppointmentId());
         apptTitleLabel 		= new Label("Title");
@@ -47,33 +49,31 @@ public class AddEditAppointment extends BorderPane
         cancelButton 		= new Button("Cancel");
 
         //set initial states for scene elements
-        customerContactField.setDisable(true);              //customer information fields are disabled
-        customerIdField.setDisable(true);
-        apptIdField.setDisable(true);                       //appoint id is auto-generated
+        apptIdField.setDisable(true);
 		newAppointment = true;
 
         //Add event handlers to scene elements
 		submitButton.setOnAction(event -> {
 			if(this.validateForm()) {
 				if(newAppointment) {
-					controller.addAppointment(/**/);
+					controller.addAppointment(null); //TODO
 				} else {
 					processChanges();
 					controller.updateAppointment(Integer.parseInt(apptIdField.getText()));
 				}
 				clear();
-				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW);
+				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
 			}
 		});
 		cancelButton.setOnAction(event -> {
 			clear();
-			controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW);
+			controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
 		});
 
         //add scene elements to container
         GridPane contentPane = new GridPane();
         contentPane.addRow(0, sceneLabel);
-        contentPane.addRow(1, customerIdLabel, customerIdField, customerContactField);
+        contentPane.addRow(1, customerInfo);
         contentPane.addRow(2, apptIdLabel, apptIdField);
         contentPane.addRow(3, apptTitleLabel, apptTitleField);
         contentPane.addRow(4, apptTypeLabel, apptTypeCombo);
@@ -81,7 +81,7 @@ public class AddEditAppointment extends BorderPane
 		contentPane.addRow(6, endTimeBox);
         contentPane.addRow(7, contactBox);
         contentPane.addRow(8, descriptionLabel, descriptionArea);
-        contentPane.addRow(9, scheduleButton, cancelButton);
+        contentPane.addRow(9, submitButton, cancelButton);
         this.setCenter(contentPane);
         this.setTop(header);
     }//constructor
@@ -139,7 +139,7 @@ public class AddEditAppointment extends BorderPane
     }//loadAppointmentInfo
 
     public void loadCustomerInfo() {
-        customerInfo = controller.getCustomerInfo();
+		customerInfo.setCusomterInfo(0, "", ""); //TODO
     }//loadCustomerInfo
 
     public void loadNewAppointment() {

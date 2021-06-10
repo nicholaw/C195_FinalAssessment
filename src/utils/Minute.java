@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 public enum Minute {
 	ZERO		("00", 0),
@@ -22,16 +22,16 @@ public enum Minute {
 		this.minuteOfHour = minuteOfHour;
 	}
 	
-	public getMinute() {
+	public String getMinute() {
 		return this.minute;
 	}
 	
-	public getMinuteOfHour() {
+	public int getMinuteOfHour() {
 		return this.minuteOfHour;
 	}
 	
 	@Override
-	public static String toString() {
+	public String toString() {
 		return this.minute;
 	}
 }

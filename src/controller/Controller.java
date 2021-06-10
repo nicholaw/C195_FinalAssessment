@@ -362,6 +362,13 @@ public class Controller
 		return false;
 	}//overlapsExistingAppointment
 
+    public boolean updateAppointment(int appointmentId) {
+        if(appointmentUpdates != null) {
+            return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
+        } else
+            return false;
+    }//updateAppointment
+
 	/**
 	 * Updates an existing customer in the database.
 	 *

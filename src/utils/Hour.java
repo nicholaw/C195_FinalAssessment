@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 public enum Hour {
 	TWENTY_FOUR	("00", 0),
@@ -34,16 +34,16 @@ public enum Hour {
 		this.hourOfDay = hourOfDay;
 	}
 	
-	public getHour() {
+	public String getHour() {
 		return this.hour;
 	}
 	
-	public getHourOfDay() {
+	public int getHourOfDay() {
 		return this.hourOfDay;
 	}
 	
 	@Override
-	public static String toString() {
+	public String toString() {
 		return this.hour;
 	}
 }

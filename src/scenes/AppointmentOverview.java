@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import sceneUtils.SceneCode;
+import sceneUtils.CustomerHeader;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -29,17 +30,13 @@ public class AppointmentOverview  extends BorderPane
         this.controller 	= 	controller;
         this.header 		= 	this.controller.getHeader();
         sceneLabel 			= 	new Label("Appointment Overview");
-        customerLabel 		= 	new Label("Customer:");
-        customerIdField 	= 	new TextField("");
-        customerNameField 	= 	new TextField("");
-        customerPhoneField	= 	new TextField("");
+        customerInfo        =   new CustomerHeader();
         appointmentsTable 	= 	new TableView<>();
         scheduleButton 		= 	new Button("Schedule Appointment");
         editButton 			= 	new Button("Edit Appointment");
         deleteButton 		= 	new Button("Delete Appointment");
         returnButton 		= 	new Button("Return");
         selectedAppointment	=	null;
-		
 
         //Instantiate table columns
         TableColumn<Appointment, Integer> 	idCol 			= 	new TableColumn<>("ID");
@@ -61,9 +58,6 @@ public class AppointmentOverview  extends BorderPane
 		appointmentsTable.getColumns().setAll(idCol, titleCol, typeCol, startDateCol, endDateCol, startTimeCol, endTimeCol, descCol);
 
         //Set initial states for scene elements
-        customerIdField.setDisable(true);
-        customerNameField.setDisable(true);
-        customerPhoneField.setDisable(true);
         deleteButton.setDisable(true);
         editButton.setDisable(true);
 
@@ -106,7 +100,7 @@ public class AppointmentOverview  extends BorderPane
         buttonPane.setRight(rightButtonPane);
         GridPane contentPane = new GridPane();
         contentPane.addRow(0, sceneLabel);
-        contentPane.addRow(1, customerLabel, customerIdField, customerNameField, customerPhoneField);
+        contentPane.addRow(1, customerInfo);
         contentPane.addRow(2, appointmentsTable);
         contentPane.addRow(3, buttonPane);
         this.setTop(header);
@@ -117,9 +111,7 @@ public class AppointmentOverview  extends BorderPane
 	 *
      */
     private void clear() {
-        customerIdField.setText("");
-        customerNameField.setText("");
-        customerPhoneField.setText("");
+        customerInfo.clear();
         selectedAppointment = null;
         appointmentsTable.getItems().removeAll(appointmentsTable.getItems());
         deleteButton.setDisable(true);
@@ -156,9 +148,7 @@ public class AppointmentOverview  extends BorderPane
 	 */
     private void loadCustomerInformation(Customer c) {
         if(c != null) {
-            customerIdField.setText("" + c.getCustomerId());
-            customerNameField.setText(c.getName());
-            customerPhoneField.setText("" + c.getPhone());
+            customerInfo.setCusomterInfo(c.getCustomerId(), c.getName(), c.getPhone());
         }
     }//loadCustomerAppointmentInformation
 }//class AppointmentOverview
