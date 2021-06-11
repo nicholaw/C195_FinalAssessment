@@ -22,11 +22,11 @@ public class Customer
     public Customer(int id, String name, String phone, String address,
             String city, String postCode, Country country, Division div) {
         this.customerId 	=	new SimpleIntegerProperty(this, "customerId", id);
-		this.name 			= 	new SimpleStringProperty(this, name);
-		this.phone 			= 	new SimpleStringProperty(this, phone);
-		this.address		= 	new SimpleStringProperty(this, address);
-		this.city 			= 	new SimpleStringProperty(this, city);
-		this.postCode 		= 	new SimpleStringProperty(this, postCode);
+		this.name 			= 	new SimpleStringProperty(this, "name", name);
+		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
+		this.address		= 	new SimpleStringProperty(this, "address", address);
+		this.city 			= 	new SimpleStringProperty(this, "city", city);
+		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	div;
 		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
@@ -35,20 +35,21 @@ public class Customer
 	public Customer(String name, String phone, String address,
             String city, String postCode, Country country, Division div) {
 		this.name 			= 	new SimpleStringProperty(this, name);
-		this.phone 			= 	new SimpleStringProperty(this, phone);
-		this.address		= 	new SimpleStringProperty(this, address);
-		this.city 			= 	new SimpleStringProperty(this, city);
-		this.postCode 		= 	new SimpleStringProperty(this, postCode);
+		this.name 			= 	new SimpleStringProperty(this, "name", name);
+		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
+		this.address		= 	new SimpleStringProperty(this, "address", address);
+		this.city 			= 	new SimpleStringProperty(this, "city", city);
+		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	div;
-		this.appointments	=	new SimpleIntegerProperty(this, "appointments",0);
+		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
     }//constructor
 
     public Customer(int id, String name, Country country, String phone)
     {
-        this.customerId 	=	new SimpleIntegerProperty(this, "", id);
-		this.name 			= 	new SimpleStringProperty(this, name);
-		this.phone 			= 	new SimpleStringProperty(this, phone);
+        this.customerId 	=	new SimpleIntegerProperty(this, "customerId", id);
+		this.name 			= 	new SimpleStringProperty(this, "name", name);
+		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
         this.country		=	country;
 		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
     }//constructor
@@ -118,11 +119,11 @@ public class Customer
 	}
 	
 	public void setAddress(String str) {
-		address = new SimpleStringProperty(this, str);
+		address = new SimpleStringProperty(this, "address", str);
 	}
 	
 	public void setCity(String str) {
-		city = new SimpleStringProperty(this, str);
+		city = new SimpleStringProperty(this, "city", str);
 	}
 	
 	public void setCountry(Country c) {
@@ -134,15 +135,15 @@ public class Customer
 	}
 	
 	public void setName(String str) {
-		name = new SimpleStringProperty(this, str);
+		name = new SimpleStringProperty(this, "name", str);
 	}
 	
 	public void setPhone(String str) {
-		phone = new SimpleStringProperty(this, str);
+		phone = new SimpleStringProperty(this, "phone", str);
 	}
 	
 	public void setPostCode(String str) {
-		postCode = new SimpleStringProperty(this, str);
+		postCode = new SimpleStringProperty(this, "postCode", str);
 	}
 
     @Override

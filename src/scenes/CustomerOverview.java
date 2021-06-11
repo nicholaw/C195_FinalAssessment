@@ -46,7 +46,7 @@ public class CustomerOverview  extends BorderPane
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Customer, String> phoneCol = new TableColumn<>("Phone");
-        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");

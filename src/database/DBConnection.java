@@ -77,9 +77,9 @@ public class DBConnection
 	public Collection<Contact> getContacts() {
 		var contacts = new LinkedHashSet<Contact>();
 		String sql =	"SELECT " 				+ 
-							"Contact_ID " 		+ 
-							"Contact_Name "		+ 
-							"Email " 			+ 
+							"Contact_ID, " 		+
+							"Contact_Name, "	+
+							"Email " 			+
 						"FROM " 				+ 
 							"contacts " 		+ 
 						"ORDER BY " 			+ 
@@ -103,17 +103,17 @@ public class DBConnection
      */
     public Collection<Country> getCountries() {
         String sql =    "SELECT "                   +
-                            "country_id AS id, "    +
-                            "country AS name "      +
+                            "Country_ID, "    +
+                            "Country "      +
                         "FROM countries "           +
-                        "ORDER BY name";
+                        "ORDER BY Country";
         try(var stmt = conn.prepareStatement(sql))
         {
             var result = stmt.executeQuery();
             var countries = new LinkedHashSet<Country>();
             while(result.next())
             {
-                countries.add(new Country(result.getInt("id"), result.getString("name")));
+                countries.add(new Country(result.getInt("Country_ID"), result.getString("Country")));
             }
             setCountryDivisions(countries);
             return countries;
@@ -183,9 +183,9 @@ public class DBConnection
                             "contact_name, "                                +
                             "contact_id "                                   +
                         "FROM "                                             +
-                            "appointments AS appts"                         +
+                            "appointments AS appts "                        +
                             "LEFT JOIN "                                    +
-                                "contacts AS conts"                         +
+                                "contacts AS conts "                        +
                             "ON appts.contact_id = conts.contact_id "       +
                         "WHERE "                                            +
                             "appts.customer_id = ? "                        +
@@ -241,9 +241,9 @@ public class DBConnection
 		Collection<String> appointments = new HashSet<>();
 		String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
 		String sql =	"SELECT " 													+ 
-							"Appointment_ID AS id " 								+ 
+							"Appointment_ID AS id, " 								+
 							"Title AS title, " 										+ 
-							"Name AS customer, " 									+ 
+							"customers.Customer_Name AS customer, " 				+
 							"customers.Customer_ID AS cusotmerId, " 				+ 
 							"Start AS start " 										+
 						"FROM " 													+ 
@@ -252,19 +252,20 @@ public class DBConnection
 							"ON appointments.Customer_ID = customers.Customer_ID " 	+ 
 						"WHERE " 													+
 							"start BETWEEN ? " 										+ 
-							"AND DATE_ADD(start, INTERVAL ? ?) " 					+ 
+							"AND DATE_ADD(?, INTERVAL ? MINUTE) " 					+
 						"ORDER BY " 												+ 
 							"start, " 												+
 							"id";
 		try(var stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, formattedDateTime);
-			stmt.setInt(2, interval);
-			stmt.setString(3, units);
+            stmt.setString(2, formattedDateTime);
+			stmt.setInt(3, interval);
+			//stmt.setString(4, units);
 			var result = stmt.executeQuery();
 			String appointmentInfo = "";
 			while(result.next()) {
 				appointmentInfo = result.getString("id") + " " + result.getString("title") + " " + 
-					result.getString("name") + "(id: " + result.getInt("customerId") + ")";
+					result.getString("customer") + "(id: " + result.getInt("customerId") + ")";
 				appointments.add(appointmentInfo);
 			}
 		} catch(SQLException e) {
@@ -376,19 +377,19 @@ public class DBConnection
         for(Country c : countries)
         {
             sql =   "SELECT "                                           +
-                        "Division_ID AS divId, "                        +
-                        "Division AS name, Country_ID AS countryId "    +
+                        "Division_ID, "                                 +
+                        "Division, Country_ID "                         +
                     "FROM `first_level_divisions` "                     +
                     "WHERE "                                            +
-                        "Country_ID = ? ORDER BY name";
+                        "Country_ID = ? ORDER BY Division";
             try(var stmt = conn.prepareStatement(sql))
             {
                 stmt.setInt(1, c.getCountryId());
                 var result = stmt.executeQuery();
                 while(result.next())
                 {
-                    c.addDivision(new Division(result.getInt("divId"), result.getString("name"),
-                            result.getInt("countryId")));
+                    c.addDivision(new Division(result.getInt("Division_ID"), result.getString("Division"),
+                            result.getInt("Country_ID")));
                 }
             } catch(SQLException e)
             {
