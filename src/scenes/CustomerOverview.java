@@ -39,45 +39,69 @@ public class CustomerOverview  extends BorderPane
         logoutButton = new Button("Logout");
         selectedCustomer = null;
 
-        //Set initial states for scene elements
+        //Set initial states for tableview
         customersTable.setItems(controller.getCustomers());
         TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Customer, String> phoneCol = new TableColumn<>("Phone");
-        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
         apptsCol.setCellValueFactory(new PropertyValueFactory<>("appointments"));
         customersTable.getColumns().setAll(idCol, nameCol, phoneCol, countryCol, apptsCol);
+		
+		//set initial states for buttons
+		editCustomerButton.setDisable(true);
+		viewAppointmentsButton.setDisable(true);
+		deleteCustomerButton.setDisable(true);
 
         //Add event listeners to scene elements
         addCustomerButton.setOnAction(event ->
         {
             controller.changeScene(SceneCode.EDIT_CUSTOMER, null);
-        });
+        });//addCustomerButton
         editCustomerButton.setOnAction(event ->
         {
             controller.changeScene(SceneCode.EDIT_CUSTOMER, selectedCustomer);
-        });
+        });//editCustomerButton
         viewAppointmentsButton.setOnAction(event ->
         {
             controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, selectedCustomer);
-        });
+        });//viewAppointmentsButton
         deleteCustomerButton.setOnAction(event ->
         {
             controller.getMessageAlert().setAlertType(Alert.AlertType.CONFIRMATION);
             controller.getMessageAlert().setContentText("Are you sure you would like to delete this customer?");
             controller.getMessageAlert().showAndWait()
                     .filter(response -> response == ButtonType.OK)
-                    .ifPresent(response -> controller.deleteCustomer(selectedCustomer));
-        });
+                    .ifPresent(response -> {
+						if(controller.deleteCustomer(selectedCustomer)) {
+							selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+							if(selectedCustomer == null) {
+								editCustomerButton.setDisable(true);
+								viewAppointmentsButton.setDisable(true);
+								deleteCustomerButton.setDisable(true);
+							}	
+						}
+					});
+        });//deleteCustomerButton
         logoutButton.setOnAction(event ->
         {
+			this.clear();
             controller.changeScene(SceneCode.LOGIN, null);
-        });
+        });//logoutButton
+		customersTable.onMouseClicked(event -> {
+			Object obj = customersTable.getSelectionModel().getSelectedItem();
+			if(obj != null) {
+				selectedCustomer = (Customer)obj;
+				editCustomerButton.setDisable(false);
+				viewAppointmentsButton.setDisable(false);
+				deleteCustomerButton.setDisable(false);
+			}
+		});//customersTable
 
         //Add scene elements to containers
         HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, logoutButton);
@@ -85,4 +109,11 @@ public class CustomerOverview  extends BorderPane
         this.setCenter(customersTable);
         this.setBottom(buttonBox);
     }//constructor
+	
+	private void clear() {
+		selectedCustomer = customersTable.getSelectionModel().getSelectedItem() = null;
+		editCustomerButton.setDisable(true);
+		viewAppointmentsButton.setDisable(true);
+		deleteCustomerButton.setDisable(true);
+	}
 }//CustomerOverview

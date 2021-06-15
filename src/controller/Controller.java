@@ -362,13 +362,6 @@ public class Controller
 		return false;
 	}//overlapsExistingAppointment
 
-    public boolean updateAppointment(int appointmentId) {
-        if(appointmentUpdates != null) {
-            return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
-        } else
-            return false;
-    }//updateAppointment
-
 	/**
 	 * Updates an existing customer in the database.
 	 *
@@ -426,7 +419,6 @@ public class Controller
         login.clearAll();
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());
-        customers.add(new Customer(216, "Nora Dahlberg", "8012312564", "300 E Lincoln Ave", "Salt Lake City", "84101", countries.get(0), null));
 		contacts = FXCollections.observableArrayList(dbConnection.getContacts());
         initializeCustomerUpdates();
         initializeAppointmentUpdates();
