@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class CountryAndDivisionsBox extends HBox
 {
+    //TODO: use observableList for items of combo boxes
     private ComboBox<Country> countryCombo;
     private ComboBox<Division> firstLevelDivisionsCombo;
     private final Label countryLabel = new Label("Country");
@@ -93,12 +94,18 @@ public class CountryAndDivisionsBox extends HBox
         }
     }//setSelectedCountry
 
-    public void setSelectedDivision(int id) {
-        for(Division d : firstLevelDivisionsCombo.getItems()) {
-            if(d.getDivisionId() == id)
-                firstLevelDivisionsCombo.setValue(d);
-       
-		}
+    public void setSelectedDivision(Division div) {
+        if(div == null) {
+            firstLevelDivisionsCombo.setValue(null);
+        } else {
+            for(Division d : firstLevelDivisionsCombo.getItems()) {
+                if(d.equals(div)) {
+                    firstLevelDivisionsCombo.setValue(d);
+                    return;
+                }
+            }
+            firstLevelDivisionsCombo.setValue(null);
+        }
     }//setSelectedDivision
 
     /**

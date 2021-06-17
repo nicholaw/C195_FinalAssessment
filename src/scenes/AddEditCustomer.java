@@ -192,7 +192,7 @@ public class AddEditCustomer extends BorderPane
 				postCodeField.setText(c.getPostCode());
 				cityField.setText(c.getCity());
 				countryAndDivisionsCombos.setSelectedCountry(c.getCountry().getCountryId());
-				countryAndDivisionsCombos.setSelectedDivision(c.getDivision().getDivisionId());
+				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
 			} catch(NullPointerException e) {
 				clearAll();
@@ -205,8 +205,7 @@ public class AddEditCustomer extends BorderPane
 		}
     }//loadCustomerInfo
 
-    public void loadNewCustomer()
-    {
+    public void loadNewCustomer() {
         idField.setText("" + controller.getNextCustomerId());
 		newCustomer = true;
     }//loadNewCustomer
@@ -253,8 +252,7 @@ public class AddEditCustomer extends BorderPane
      *	Checks that the information entered into the form fields are valid. Returns true if all fields are valid and false otherwise.
      *	@return	validity of the form
      */
-    private boolean validateForm()
-    {
+    private boolean validateForm() {
         boolean valid = true;
         String input = "";
 
@@ -320,8 +318,7 @@ public class AddEditCustomer extends BorderPane
      *	@param code		code denoting which field contained a validation error
      *	@param message	error message to be displayed
      */
-    private void flag(CustomerFieldCode code, String message)
-    {
+    private void flag(CustomerFieldCode code, String message) {
         switch(code)
         {
             case NAME_FIELD :

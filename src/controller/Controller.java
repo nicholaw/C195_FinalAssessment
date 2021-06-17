@@ -362,6 +362,15 @@ public class Controller
 		return false;
 	}//overlapsExistingAppointment
 
+    /**
+     *
+     * @param appointmentId
+     * @return
+     */
+    public boolean updateAppointment(int appointmentId) {
+        return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
+    }
+
 	/**
 	 * Updates an existing customer in the database.
 	 *
@@ -430,5 +439,9 @@ public class Controller
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
+		////////////////////////////////TESTING/////////////////////////////
+        customers.add(new Customer(177, "Nicholas Warner", "801-231-4827",
+                "130 S 1300 E  #605", "Salt Lake City", "84102", countries.get(0), null));
+        ////////////////////////////////////////////////////////////////////
     }
 }//class Controller

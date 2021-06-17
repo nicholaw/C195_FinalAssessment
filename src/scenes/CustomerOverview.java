@@ -46,7 +46,7 @@ public class CustomerOverview  extends BorderPane
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Customer, String> phoneCol = new TableColumn<>("Phone");
-        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
         TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
@@ -93,7 +93,7 @@ public class CustomerOverview  extends BorderPane
 			this.clear();
             controller.changeScene(SceneCode.LOGIN, null);
         });//logoutButton
-		customersTable.onMouseClicked(event -> {
+		customersTable.setOnMouseClicked(event -> {
 			Object obj = customersTable.getSelectionModel().getSelectedItem();
 			if(obj != null) {
 				selectedCustomer = (Customer)obj;
@@ -111,7 +111,7 @@ public class CustomerOverview  extends BorderPane
     }//constructor
 	
 	private void clear() {
-		selectedCustomer = customersTable.getSelectionModel().getSelectedItem() = null;
+		selectedCustomer = null;
 		editCustomerButton.setDisable(true);
 		viewAppointmentsButton.setDisable(true);
 		deleteCustomerButton.setDisable(true);

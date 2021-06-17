@@ -102,23 +102,20 @@ public class DBConnection
      * @return The collection of countries
      */
     public Collection<Country> getCountries() {
-        String sql =    "SELECT "                   +
-                            "Country_ID, "    +
-                            "Country "      +
-                        "FROM countries "           +
+        String sql =    "SELECT "               +
+                            "Country_ID, "      +
+                            "Country "          +
+                        "FROM countries "       +
                         "ORDER BY Country";
-        try(var stmt = conn.prepareStatement(sql))
-        {
+        try(var stmt = conn.prepareStatement(sql)) {
             var result = stmt.executeQuery();
             var countries = new LinkedHashSet<Country>();
-            while(result.next())
-            {
+            while(result.next()) {
                 countries.add(new Country(result.getInt("Country_ID"), result.getString("Country")));
             }
             setCountryDivisions(countries);
             return countries;
-        } catch(SQLException e)
-        {
+        } catch(SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -181,7 +178,7 @@ public class DBConnection
                             "start, "                                       +
                             "end, "                                         +
                             "contact_name, "                                +
-                            "contact_id "                                   +
+                            "appointments.contact_id "                      +
                         "FROM "                                             +
                             "appointments AS appts "                        +
                             "LEFT JOIN "                                    +
