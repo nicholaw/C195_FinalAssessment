@@ -70,6 +70,7 @@ public class AddEditCustomer extends BorderPane
         submitButton = new Button("Add Customer");
         submitButton.setOnAction(event -> {
             this.setDisable(true);
+			System.out.println("VALIDATING customer form..."); //FOR TESTING
 			if(this.validateForm())
             {
                 if(newCustomer)
@@ -84,7 +85,9 @@ public class AddEditCustomer extends BorderPane
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
+				system.out.println("form is VALID\n"); //FOR TESTING
             }
+			system.out.println("form is INVALID\n"); //FOR TESTING
 			this.setDisable(false);
         });
         cancelButton = new Button("Cancel");
@@ -95,24 +98,19 @@ public class AddEditCustomer extends BorderPane
         });
 
         //Add key event listener to text fields and areas to prevent number of characters over maximum allowed
-        nameField.setOnKeyReleased(event ->
-        {
+        nameField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(nameField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
-        phoneField.setOnKeyReleased(event ->
-        {
+        phoneField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(phoneField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
-        addressArea.setOnKeyReleased(event ->
-        {
+        addressArea.setOnKeyReleased(event -> {
             checkForMaximumCharacters(addressArea, CustomerConstants.MAX_CHAR_ADDRESS);
         });
-        cityField.setOnKeyReleased(event ->
-        {
+        cityField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(cityField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
-        postCodeField.setOnKeyReleased(event ->
-        {
+        postCodeField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(postCodeField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
 
@@ -123,13 +121,13 @@ public class AddEditCustomer extends BorderPane
         var buttonPane = new HBox(submitButton, cancelButton);
         var fieldsPane = new GridPane();
         fieldsPane.addRow(0, sceneLabel);
-        fieldsPane.addRow(1, idLabel, idField);
-        fieldsPane.addRow(2, nameLabel, nameField);
-        fieldsPane.addRow(3, phoneLabel, phoneField);
-        fieldsPane.addRow(4, addressLabel, addressArea);
-        fieldsPane.addRow(5, cityLabel, cityField);
+        fieldsPane.addRow(1, idLabel, 		idField);
+        fieldsPane.addRow(2, nameLabel, 	nameField,		nameErrorLabel);
+        fieldsPane.addRow(3, phoneLabel, 	phoneField,		phoneErrorLabel);
+        fieldsPane.addRow(4, addressLabel,	addressArea,	addressErrorLabel);
+        fieldsPane.addRow(5, cityLabel, 	cityField,		cityErrorLabel);
         fieldsPane.addRow(6, countryAndDivisionsCombos);
-        fieldsPane.addRow(7, postCodeLabel, postCodeField);
+        fieldsPane.addRow(7, postCodeLabel, postCodeField,	postCodeErrorLabel);
         fieldsPane.addRow(8, buttonPane);
         this.setTop(header);
         this.setCenter(fieldsPane);
@@ -258,53 +256,45 @@ public class AddEditCustomer extends BorderPane
 
         //check name is not blank
         input = nameField.getText().trim();
-        if(input.isEmpty() || input.isBlank())
-        {
+        if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.NAME_FIELD, "Name is required");
             valid = false;
         }
         //check address is not blank and only contains legal characters
         input = addressArea.getText().trim();
-        if(input.isEmpty() || input.isBlank())
-        {
+        if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.ADDRESS_FIELD, "Address is required");
             valid = false;
         }
-        if(!("^[a-zA-Z0-9\\Q" + CustomerConstants.LEGAL_ADDRESS_CHARACTERS + "\\E]*$").matches(input))
-        {
+        if(!("^[a-zA-Z0-9\\Q" + CustomerConstants.LEGAL_ADDRESS_CHARACTERS + "\\E]*$").matches(input)) {
             flag(CustomerFieldCode.ADDRESS_FIELD, "Address may only contain letters, numbers, or the symbols " +
                     CustomerConstants.LEGAL_ADDRESS_CHARACTERS);
             valid = false;
         }
         //check phone number--only numbers(after punctuation is removed)
         input = phoneField.getText().trim();
-        if(input.isEmpty() || input.isBlank())
-        {
+        if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.PHONE_FIELD, "Phone number is required");
             valid = false;
         }
-        if(!("^[0-9\\Q" + CustomerConstants.LEGAL_PHONE_CHARACTERS + "\\E]*$").matches(input))
-        {
+        if(!("^[0-9\\Q" + CustomerConstants.LEGAL_PHONE_CHARACTERS + "\\E]*$").matches(input)) {
             flag(CustomerFieldCode.ADDRESS_FIELD, "Phone number may only contain numbers or the symbols " +
                     CustomerConstants.LEGAL_PHONE_CHARACTERS); //TODO: also check pattern matches legal patterns
             valid = false;
         }
         //check city is not blank
         input = cityField.getText().trim();
-        if(input.isEmpty() || input.isBlank())
-        {
+        if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.CITY_FIELD, "City is required");
             valid = false;
         }
         //check postal code is not blank and contains only numbers
         input = postCodeField.getText().trim();
-        if(input.isEmpty() || input.isBlank())
-        {
+        if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code is required");
             valid = false;
         }
-        if(!"^[0-9]*$".matches(input))
-        {
+        if(!"^[0-9]*$".matches(input)) {
             flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code may only contain numbers");
             valid = false;
         }

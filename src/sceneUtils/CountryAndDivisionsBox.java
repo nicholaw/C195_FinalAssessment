@@ -82,22 +82,18 @@ public class CountryAndDivisionsBox extends HBox
     /**
 	 * 
 	 */
-    public void setSelectedCountry(int id)
-    {
-        for(Country c : countryCombo.getItems())
-        {
-            if(c.getCountryId() == id)
-            {
+    public void setSelectedCountry(int id) {
+        for(Country c : countryCombo.getItems()) {
+            if(c.getCountryId() == id) {
                 countryCombo.setValue(c);
                 updateFirstDivisions();
+				return;
             }
         }
     }//setSelectedCountry
 
     public void setSelectedDivision(Division div) {
-        if(div == null) {
-            firstLevelDivisionsCombo.setValue(null);
-        } else {
+        if(div != null) {
             for(Division d : firstLevelDivisionsCombo.getItems()) {
                 if(d.equals(div)) {
                     firstLevelDivisionsCombo.setValue(d);
@@ -105,7 +101,9 @@ public class CountryAndDivisionsBox extends HBox
                 }
             }
             firstLevelDivisionsCombo.setValue(null);
-        }
+        } else {
+			firstLevelDivisionsCombo.setValue(null);
+		}
     }//setSelectedDivision
 
     /**

@@ -110,8 +110,10 @@ public class Controller
 		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
 			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			customers.add(c);
+			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
 		} else {
+			System.out.printf("Customer %d(%s) added unsuccessfully.\n\n", c.getCutomserId(), c.getName()); //FOR TESTING
 			return false;
 		}
     }//addCustomer
