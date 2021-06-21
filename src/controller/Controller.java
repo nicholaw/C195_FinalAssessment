@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
@@ -41,7 +42,7 @@ public class Controller
     private User currentUser;
     private Alert messageAlert;
     private int nextCustomerId;
-    private int nextAppointmentId;
+    private long nextAppointmentId;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
 	private ObservableList<Contact> contacts;
@@ -117,7 +118,6 @@ public class Controller
 		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
 			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			customers.add(c);
-			nextCustomerId++;
 			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
 		} else {
@@ -315,7 +315,7 @@ public class Controller
      *
      * @return
      */
-    public int getNextAppointmentId() {
+    public long getNextAppointmentId() {
         return nextAppointmentId;
     }
 
@@ -323,8 +323,10 @@ public class Controller
      *
      * @return
      */
-    public int getNextCustomerId() {
-        return nextCustomerId;
+    public long getNextCustomerId() {
+        String id = "" + nextCustomerId;
+        id += LocalDateTime.now().getYear();
+        return Long.parseLong(id);
     }
 
     public User getCurrentUser() {
@@ -389,31 +391,22 @@ public class Controller
 	private void readIds() {
 		//TODO: procedure for properties.init not found or missing information
 		var f = new File(ControllerConstants.ID_DESTINATION);
-		try(var fis = new FileInputStream(f)) {
-			int in = 0;
-			if((in = fis.read()) != -1)
-				nextCustomerId = in;
-			if((in = fis.read()) != -1)
-				nextAppointmentId = in;
-		} catch (FileNotFoundException e) {
+		try(var fis = new FileInputStream(f);
+            var dis = new DataInputStream(fis)) {
+			int in;
+			try {
+                in = dis.readInt();
+            } catch(EOFException e) {
+			    return;
+            }
+		} catch(FileNotFoundException e) {
 			System.out.println("Could not find " + f.getAbsolutePath() + "\n");
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch(IOException e) {
 			System.out.println("IOException reading customer and appoinment id");
 			e.printStackTrace();
 		}
 	}//readIds
-	
-	private void saveIds() {
-		//TODO: make sure to do on app exit
-		var f = new File(ControllerConstants.ID_DESTINATION);
-		try(var fos = new FileOutputStream(f, false)) {
-			fos.write(nextCustomerId);
-			fos.write(nextAppointmentId);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
     /**
      *
@@ -496,7 +489,9 @@ public class Controller
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
-		readIds();
+		//readIds();
+        nextCustomerId = 100000;
+        nextAppointmentId = 0;
 		////////////////////////////////TESTING/////////////////////////////
         customers.add(new Customer(177, "Nicholas Warner", "801-231-4827",
                 "130 S 1300 E  #605", "Salt Lake City", "84102", countries.get(0), -1));

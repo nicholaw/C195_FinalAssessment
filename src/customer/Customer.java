@@ -19,7 +19,7 @@ public class Customer
 	private StringProperty postCode;
     private Country country;
     private Division division;
-	private IntegerProperty appointments;
+	private int appointments;
 
 	public Customer(long id, String name, String phone, String address,
             String city, String postCode, Country country, int divId) {
@@ -32,8 +32,26 @@ public class Customer
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	country.getDivision(divId);
-		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
+		this.appointments	=	0;
     }//constructor
+
+	public Customer(long id, String name, String phone, String address,
+					String city, String postCode, Country country, int divId, int appointments) {
+		this.customerId		=	new SimpleLongProperty(this, "customerId", id);
+		this.name 			= 	new SimpleStringProperty(this, name);
+		this.name 			= 	new SimpleStringProperty(this, "name", name);
+		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
+		this.address		= 	new SimpleStringProperty(this, "address", address);
+		this.city 			= 	new SimpleStringProperty(this, "city", city);
+		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
+		this.country		=	country;
+		this.division		=	country.getDivision(divId);
+		this.appointments	=	appointments;
+	}//constructor
+
+	public void addAppointment() {
+		appointments++;
+	}
 
 	public StringProperty addressProperty() {
 		return address;
@@ -58,9 +76,13 @@ public class Customer
 	public StringProperty postCodeProperty() {
 		return  postCode;
 	}
-	
+
+	public IntegerProperty appointmentsProperty() {
+		return new SimpleIntegerProperty(this, "appointments", appointments);
+	}
+
 	public int getAppointments() {
-		return appointments.get();
+		return appointments;
 	}
 	
 	public String getAddress()  {
@@ -94,9 +116,13 @@ public class Customer
 	public String getPostCode() {
 		return postCode.get();
 	}
-	
-	public void setAppointments(int i) {
-		appointments = new SimpleIntegerProperty(this, "appointments", i);
+
+	public void removeAppointment() {
+		if(appointments > 0) {
+			appointments--;
+		} else {
+			appointments = 0;
+		}
 	}
 	
 	public void setAddress(String str) {

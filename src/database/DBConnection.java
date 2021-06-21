@@ -129,27 +129,31 @@ public class DBConnection
     public Collection<Customer> getCustomers()
     {
         var list = new LinkedHashSet<Customer>();
-        String sql =    "SELECT "                                                                   +
-                            "Customer_ID AS id, "                                                   +
-                            "Customer_Name AS name, "                                               +
-                            "Phone AS phone, "                                                      +
-                            "Address AS address "                                                   +
-                            "City AS city "                                                         +
-                            "Postal_Code AS postcode "                                              +
-                            "countrynames.Country_ID AS country "                                   +
-                            "countrynames.Division_ID AS division "                                 +
-                        "FROM "                                                                     +
-                            "customers "                                                            +
-                            "LEFT JOIN ("                                                           +
-                                "SELECT "                                                           +
-                                    "countries.Country_ID, "                                        +
-                                    "divs.Division_ID "                                             +
-                                "FROM "                                                             +
-                                    "countries "                                                    +
-                                    "LEFT JOIN first_level_divisions AS divs "                      +
-                                    "ON countries.Country_ID = divs.Country_ID) AS countrynames "   +
-                            "ON customers.Division_ID = countrynames.Division_ID "                 	+
-                        "ORDER BY name, id";
+        String sql =    "SELECT "                                                                               +
+                            "Customer_ID AS id, "                                                               +
+                            "Customer_Name AS name, "                                                           +
+                            "Phone AS phone, "                                                                  +
+                            "Address AS address, "                                                              +
+                            "City AS city, "                                                                    +
+                            "Postal_Code AS postcode, "                                                         +
+                            "countrynames.Country_ID AS country, "                                              +
+                            "countrynames.Division_ID AS division, "                                            +
+                            "COUNT(appointments.Appointment_ID) AS appts "                                      +
+                        "FROM "                                                                                 +
+                            "customers LEFT JOIN ("                                                             +
+                                "SELECT "                                                                       +
+                                    "countries.Country_ID, "                                                    +
+                                    "divs.Division_ID "                                                         +
+                                "FROM "                                                                         +
+                                    "countries LEFT JOIN first_level_divisions AS divs "                        +
+                                    "ON countries.Country_ID = divs.Country_ID) AS countrynames "               +
+                            "ON customers.Division_ID = countrynames.Division_ID LEFT JOIN appointments "       +
+                            "ON appointments.Customer_ID = customers.Customer_ID "                              +
+                        "GROUP BY "                                                                             +
+                            "customers.Customer_ID "                                                            +
+                        "ORDER BY "                                                                             +
+                            "name, "                                                                            +
+                            "id";
         try(var stmt = conn.prepareStatement(sql))
         {
             var result = stmt.executeQuery();
@@ -157,7 +161,7 @@ public class DBConnection
             {
                 list.add(new Customer(result.getLong("id"), result.getString("name"), result.getString("phone"),
                         result.getString("address"), result.getString("city"), result.getString("postcode"),
-                        controller.getCountry(result.getInt("country")), result.getInt("division")));
+                        controller.getCountry(result.getInt("country")), result.getInt("division"), result.getInt("appts")));
             }
         } catch(SQLException e)
         {
@@ -183,7 +187,7 @@ public class DBConnection
                             "start, "                                       +
                             "end, "                                         +
                             "contact_name, "                                +
-                            "appointments.contact_id "                      +
+                            "appointments.Contact_ID "                      + //TODO: does this no longer exist?
                         "FROM "                                             +
                             "appointments AS appts "                        +
                             "LEFT JOIN "                                    +
