@@ -35,7 +35,7 @@ public class CustomerHeader extends HBox {
 	 * @param name	the customer's name
 	 * @param phone	the cusotmer's phone number
 	 */
-	public void setCusomterInfo(int id, String name, String phone) {
+	public void setCusomterInfo(long id, String name, String phone) {
 		idField.setText("" + id);
 		nameField.setText(name);
 		phoneField.setText(phone);

@@ -1,7 +1,9 @@
 package customer;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import utils.Country;
@@ -9,7 +11,7 @@ import utils.Division;
 
 public class Customer
 {
-	private IntegerProperty customerId;
+	private LongProperty customerId;
     private StringProperty name;
 	private StringProperty phone;
 	private StringProperty address;
@@ -19,21 +21,9 @@ public class Customer
     private Division division;
 	private IntegerProperty appointments;
 
-    public Customer(int id, String name, String phone, String address,
-            String city, String postCode, Country country, Division div) {
-        this.customerId 	=	new SimpleIntegerProperty(this, "customerId", id);
-		this.name 			= 	new SimpleStringProperty(this, "name", name);
-		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
-		this.address		= 	new SimpleStringProperty(this, "address", address);
-		this.city 			= 	new SimpleStringProperty(this, "city", city);
-		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
-		this.country		=	country;
-		this.division		=	div;
-		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
-    }//constructor
-	
-	public Customer(String name, String phone, String address,
-            String city, String postCode, Country country, Division div) {
+	public Customer(long id, String name, String phone, String address,
+            String city, String postCode, Country country, int divId) {
+    	this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
 		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
@@ -41,16 +31,7 @@ public class Customer
 		this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
-		this.division		=	div;
-		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
-    }//constructor
-
-    public Customer(int id, String name, Country country, String phone)
-    {
-        this.customerId 	=	new SimpleIntegerProperty(this, "customerId", id);
-		this.name 			= 	new SimpleStringProperty(this, "name", name);
-		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
-        this.country		=	country;
+		this.division		=	country.getDivision(divId);
 		this.appointments	=	new SimpleIntegerProperty(this, "appointments", 0);
     }//constructor
 
@@ -62,7 +43,7 @@ public class Customer
 		return city;
 	}
 	
-	public IntegerProperty customerIdProperty() {
+	public LongProperty customerIdProperty() {
 		return customerId;
 	}
 
@@ -94,7 +75,7 @@ public class Customer
 		return country;
 	}
 	
-	public int getCustomerId() {
+	public long getCustomerId() {
 		return customerId.get();
 	}
 

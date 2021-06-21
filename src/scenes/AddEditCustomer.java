@@ -77,7 +77,7 @@ public class AddEditCustomer extends BorderPane
                 {
 					controller.addCustomer(new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), cityField.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
-                            countryAndDivisionsCombos.getSelectedDivision()));
+                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId()));
                 } else {
 					processChanges();
 					controller.updateCustomer(Integer.parseInt(idField.getText()));
@@ -85,9 +85,9 @@ public class AddEditCustomer extends BorderPane
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
-				system.out.println("form is VALID\n"); //FOR TESTING
+				System.out.println("form is VALID\n"); //FOR TESTING
             }
-			system.out.println("form is INVALID\n"); //FOR TESTING
+			System.out.println("form is INVALID\n"); //FOR TESTING
 			this.setDisable(false);
         });
         cancelButton = new Button("Cancel");

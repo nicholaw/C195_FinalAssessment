@@ -121,7 +121,7 @@ public class Controller
 			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
 		} else {
-			System.out.printf("Customer %d(%s) added unsuccessfully.\n\n", c.getCutomserId(), c.getName()); //FOR TESTING
+			System.out.printf("Customer %d(%s) added unsuccessfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return false;
 		}
     }//addCustomer
@@ -499,7 +499,7 @@ public class Controller
 		readIds();
 		////////////////////////////////TESTING/////////////////////////////
         customers.add(new Customer(177, "Nicholas Warner", "801-231-4827",
-                "130 S 1300 E  #605", "Salt Lake City", "84102", countries.get(0), null));
+                "130 S 1300 E  #605", "Salt Lake City", "84102", countries.get(0), -1));
         ////////////////////////////////////////////////////////////////////
     }
 }//class Controller

@@ -1,6 +1,8 @@
 package appointment;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +22,7 @@ public class Appointment
 	private LocalDateTime	endDateTime;
 	private StringProperty	endDate;
 	private StringProperty	endTime;
-	private IntegerProperty	customerId;
+	private LongProperty	customerId;
 	private Contact			contact;
 
     public Appointment(String title, String description, String type, LocalDateTime startDateTime, 
@@ -35,13 +37,13 @@ public class Appointment
         this.endDateTime 	= 	endDateTime;
 		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.customerId 	= 	new SimpleIntegerProperty(this, "customerId", customerId);
+        this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
     }//constructor
 
     public Appointment(int appointmentId, String title, String description, String type, 
 						LocalDateTime startDateTime, LocalDateTime endDateTime,
-						int customerId, int userId, Contact contact)
+						long customerId, int userId, Contact contact)
     {
         this.appointmentId	=	new SimpleIntegerProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, title);
@@ -53,7 +55,7 @@ public class Appointment
         this.endDateTime 	= 	endDateTime;
 		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.customerId 	= 	new SimpleIntegerProperty(this, "customerId", customerId);
+        this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
     }//constructor
 
@@ -89,7 +91,7 @@ public class Appointment
 		return endTime;
 	}
 	
-	public IntegerProperty customerIdProperty() {
+	public LongProperty customerIdProperty() {
 		return customerId;
 	}
 	
@@ -113,7 +115,7 @@ public class Appointment
         return contact.getId();
     }//getContactId
 
-    public int getCustomerId() {
+    public long getCustomerId() {
         return customerId.get();
     }//getCustomerId
 

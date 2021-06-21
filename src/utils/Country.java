@@ -8,13 +8,13 @@ public class Country
 {
     private int countryId;
     private String countryName;
-    private Set firstLevelDivisions;
+    private Set<Division> firstLevelDivisions;
 
     public Country(int id, String name)
     {
         this.countryId = id;
         this.countryName = name;
-        firstLevelDivisions = new LinkedHashSet<Division>();
+        firstLevelDivisions = new LinkedHashSet<>();
     }//constructor
 
     /**
@@ -42,6 +42,15 @@ public class Country
     {
         return firstLevelDivisions;
     }
+
+    public Division getDivision(int divisionId) {
+        for(Division d : firstLevelDivisions) {
+            if(d.getDivisionId() == divisionId) {
+                return d;
+            }
+        }
+        return null;
+    }//getDivision
 
     public void setDivisions(Collection<Division> divisions)
     {

@@ -41,7 +41,7 @@ public class CustomerOverview  extends BorderPane
 
         //Set initial states for tableview
         customersTable.setItems(controller.getCustomers());
-        TableColumn<Customer, Integer> idCol = new TableColumn<>("Customer ID");
+        TableColumn<Customer, Long> idCol = new TableColumn<>("Customer ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));

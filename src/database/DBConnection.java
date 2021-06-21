@@ -55,14 +55,14 @@ public class DBConnection
 		}
     }//deleteAppointment
 	
-    public boolean deleteCustomer(int id) {
+    public boolean deleteCustomer(long id) {
         String sql =	"DELETE FROM " 			+ 
 							"customers " 		+
 						"WHERE " 				+ 
 							"CustomerID = ?";
 		try(var stmt = conn.prepareStatement(sql))
 		{
-			stmt.setInt(1, id);
+			stmt.setLong(1, id);
 			return (stmt.executeUpdate() > 0);
 		} catch(SQLException e)
 		{
@@ -133,7 +133,11 @@ public class DBConnection
                             "Customer_ID AS id, "                                                   +
                             "Customer_Name AS name, "                                               +
                             "Phone AS phone, "                                                      +
+                            "Address AS address "                                                   +
+                            "City AS city "                                                         +
+                            "Postal_Code AS postcode "                                              +
                             "countrynames.Country_ID AS country "                                   +
+                            "countrynames.Division_ID AS division "                                 +
                         "FROM "                                                                     +
                             "customers "                                                            +
                             "LEFT JOIN ("                                                           +
@@ -151,8 +155,9 @@ public class DBConnection
             var result = stmt.executeQuery();
             while(result.next())
             {
-                list.add(new Customer(result.getInt("id"), result.getString("name"),
-                        controller.getCountry(result.getInt("country")), result.getString("phone")));
+                list.add(new Customer(result.getLong("id"), result.getString("name"), result.getString("phone"),
+                        result.getString("address"), result.getString("city"), result.getString("postcode"),
+                        controller.getCountry(result.getInt("country")), result.getInt("division")));
             }
         } catch(SQLException e)
         {
@@ -167,7 +172,7 @@ public class DBConnection
      * @param id    Id of the customer
      * @return  The collection of appointments
      */
-    public Collection<Appointment> getCustomerAppointments(int id)
+    public Collection<Appointment> getCustomerAppointments(long id)
     {
         var list = new LinkedHashSet<Appointment>();
         String sql =    "SELECT "                                           +
@@ -190,7 +195,7 @@ public class DBConnection
                             "start";
         try(var stmt = conn.prepareStatement(sql))
         {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next())
             {
@@ -311,7 +316,7 @@ public class DBConnection
 			stmt.setString	(8, user.getUsername());
 			stmt.setString	(9, timestamp);
 			stmt.setString	(10, user.getUsername());
-			stmt.setInt		(11, a.getCustomerId());
+			stmt.setLong	(11, a.getCustomerId());
 			stmt.setInt		(12, user.getUserId());
 			stmt.setInt		(13, a.getContactId());
 			int rows = stmt.executeUpdate();
@@ -329,7 +334,7 @@ public class DBConnection
                 "create_date, created_by, last_update, last_updated_by, division_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try(var stmt = conn.prepareStatement(sql)) {
-            stmt.setInt		(1, c.getCustomerId());
+            stmt.setLong	(1, c.getCustomerId());
             stmt.setString	(2, c.getName());
             stmt.setString	(3, c.getAddress());
             stmt.setString	(4, c.getPostCode());
