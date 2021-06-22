@@ -98,17 +98,17 @@ public class Controller
 	/**
      *
      */
-	public boolean addAppointment(Appointment a)
-	{
+	public boolean addAppointment(Appointment a) {
 		return  false;
 	}//addAppointment
 	
 	/**
      *
      */
-	public void addAppointmentUpdate()
-	{
-		
+	public void addAppointmentUpdate(AppointmentFieldCode code, String update) {
+		switch(code) {
+			default:
+		}
 	}//addAppointmentUpdate
 
 	/**
@@ -118,6 +118,7 @@ public class Controller
 		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
 			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			customers.add(c);
+			nextCustomerId++;
 			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
 		} else {
@@ -356,7 +357,10 @@ public class Controller
      * Initializes the Hashmap for tracking changes to an existing appointment
      */
     private void initializeAppointmentUpdates() {
-
+		appointmentUpdates = new HashMap<>();
+		for(AppointmentColummns col : AppointmentColummns.values()) {
+			appointmentUpdates.put(col.getColName(), null);
+		}
     }//initializeAppointmentUpdates
 
 	/**
@@ -388,9 +392,11 @@ public class Controller
 		return false;
 	}//overlapsExistingAppointment
 	
+	/**
+	 *
+	 */
 	private void initializeIds() {
 		//YEAR-CUSTOMER-APPOINTMENT
-		//TODO: procedure for properties.init not found or missing information
 		int currentYear = LocalDateTime.now().getYear();
 		var f = new File(ControllerConstants.ID_DESTINATION);
 		try(var fis = new FileInputStream(f);
@@ -398,7 +404,7 @@ public class Controller
 			int in;
 			//check year
 			try {
-				if(currentYear > dis.readInt) {	//year has progressed; reset ids and save
+				if(currentYear > dis.readInt()) {	//year has progressed; reset ids and save
 					int id = 100000;
 					nextCustomerId = Long.parseLong("" + currentYear + id);
 					dis.readInt();
@@ -420,17 +426,41 @@ public class Controller
 		}
 	}//initializeIds
 	
-	public void storeIds() {
-		
+	/**
+	 *
+	 *
+	 * @param year	The year (YYYY) as of the storage of the id's.
+	 */
+	public void storeIds(int year) {
+		String str = "" + nextCustomerId;
+		str = str.subString(4, str.length() - 1);
+		int id = Integer.parseInt(str);
+		var f = new File(ControllerConstants.ID_DESTINATION);
+		try(var fos = new FileOutputStream(f, false);
+			var dos = new DataOutputStream(fos)) {
+			//YEAR-CUSTOMER-APPOINTMENT
+			dos.writeInt(year);
+			dos.writeInt(id);
+			dos.writeLong(nextAppointmentId);
+		} catch(IOException e) {
+			e.printStackTrace;
+		}
 	}//storeIds
 
     /**
-     *
-     * @param appointmentId
-     * @return
+     * Updates an existing appointment in the database.
+	 *
+     * @param appointmentId		Id of the appointment to update
+     * @return	Whether the database was updated successfully
      */
     public boolean updateAppointment(int appointmentId) {
-        return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
+		if(appointmentUpdates != null) {
+			//add user and date to appoinment updates for last updated by and last updated
+			appointmentUpdates.put(AppointmentColummns.APPOINTMENT_UPDATE_BY.getColName(), currentUser.getUsername());
+			appointmentUpdates.put(AppointmentColummns.APPOINTMENT_UPDATE_BY.getColName(), currentUser.getUsername());
+			return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
+		}
+        return false;
     }
 
 	/**
@@ -441,6 +471,7 @@ public class Controller
 	 */
     public boolean updateCustomer(int customerId) {
 		if(customerUpdates != null) {
+			//add user and date to customer updates for last updated by and last updated
 			customerUpdates.put(CustomerColumns.CUSTOMER_UPDATE_BY.getColName(), currentUser.getUsername());
 			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			return dbConnection.updateCustomer(customerUpdates, customerId);

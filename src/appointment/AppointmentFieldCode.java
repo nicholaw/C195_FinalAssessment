@@ -4,7 +4,8 @@ public enum AppointmentFieldCode {
 	ID_FIELD,
 	TITLE_FIELD,
 	TYPE_FIELD,
-	DATETIME_BOX,
+	START_TIME,
+	END_TIME,
 	DESC_AREA,
 	CONTACT_BOX
 }
