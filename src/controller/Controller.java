@@ -41,7 +41,7 @@ public class Controller
     //non-final attributes
     private User currentUser;
     private Alert messageAlert;
-    private int nextCustomerId;
+    private long nextCustomerId;
     private long nextAppointmentId;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
@@ -388,16 +388,28 @@ public class Controller
 		return false;
 	}//overlapsExistingAppointment
 	
-	private void readIds() {
+	private void initializeIds() {
+		//YEAR-CUSTOMER-APPOINTMENT
 		//TODO: procedure for properties.init not found or missing information
+		int currentYear = LocalDateTime.now().getYear();
 		var f = new File(ControllerConstants.ID_DESTINATION);
 		try(var fis = new FileInputStream(f);
             var dis = new DataInputStream(fis)) {
 			int in;
+			//check year
 			try {
-                in = dis.readInt();
+				if(currentYear > dis.readInt) {	//year has progressed; reset ids and save
+					int id = 100000;
+					nextCustomerId = Long.parseLong("" + currentYear + id);
+					dis.readInt();
+					nextAppointmentId = dis.readLong();
+					storeIds();
+				} else {
+					nextCustomerId = Long.parseLong("" + currentYear + dis.readInt());
+					nextAppointmentId = dis.readLong();
+				}
             } catch(EOFException e) {
-			    return;
+			    return; //TODO: not just return b/c not while loop
             }
 		} catch(FileNotFoundException e) {
 			System.out.println("Could not find " + f.getAbsolutePath() + "\n");
@@ -406,7 +418,11 @@ public class Controller
 			System.out.println("IOException reading customer and appoinment id");
 			e.printStackTrace();
 		}
-	}//readIds
+	}//initializeIds
+	
+	public void storeIds() {
+		
+	}//storeIds
 
     /**
      *
@@ -489,9 +505,7 @@ public class Controller
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
-		//readIds();
-        nextCustomerId = 100000;
-        nextAppointmentId = 0;
+        initializeIds();
 		////////////////////////////////TESTING/////////////////////////////
         customers.add(new Customer(177, "Nicholas Warner", "801-231-4827",
                 "130 S 1300 E  #605", "Salt Lake City", "84102", countries.get(0), -1));
