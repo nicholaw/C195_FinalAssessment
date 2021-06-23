@@ -134,7 +134,7 @@ public class DBConnection
                             "Customer_Name AS name, "                                                           +
                             "Phone AS phone, "                                                                  +
                             "Address AS address, "                                                              +
-                            "City AS city, "                                                                    +
+                            //"City AS city, "                                                                    +
                             "Postal_Code AS postcode, "                                                         +
                             "countrynames.Country_ID AS country, "                                              +
                             "countrynames.Division_ID AS division, "                                            +
@@ -160,7 +160,7 @@ public class DBConnection
             while(result.next())
             {
                 list.add(new Customer(result.getLong("id"), result.getString("name"), result.getString("phone"),
-                        result.getString("address"), result.getString("city"), result.getString("postcode"),
+                        result.getString("address"), result.getString("postcode"),
                         controller.getCountry(result.getInt("country")), result.getInt("division"), result.getInt("appts")));
             }
         } catch(SQLException e)
@@ -357,21 +357,20 @@ public class DBConnection
         }
     }//insertCustomer
 
-    private void printDbMetaData()
-    {
-        String sql = "SHOW TABLES";
-        try(var stmt = conn.prepareStatement(sql))
-        {
+    public void getDBMetaData(String tableName) {
+	    System.out.println("----" + tableName + "----");
+        String sql = "SHOW COLUMNS FROM " + tableName;
+        try(var stmt = conn.prepareStatement(sql)) {
+            //stmt.setString(1, tableName);
             var result = stmt.executeQuery();
-            while(result.next())
-            {
-                System.out.print("" + result.getString(1) + "\n");
+            while(result.next()) {
+                try {
+                    System.out.println(result.getString(1));
+                } catch (NullPointerException e) {
+                    System.out.println("NullPointerException thrown");
+                }
             }
-        } catch(SQLException e)
-        {
-            e.printStackTrace();
-        } catch(Exception e)
-        {
+        } catch(SQLException e) {
             e.printStackTrace();
         }
     }//printDbMetaData
@@ -433,7 +432,7 @@ public class DBConnection
                 for(String str : keys)
                 {
                     //Contact Id column holds integers and update value must be parsed
-                    if(str.equals(DBConstants.APPOINTMENT_CONTACT_ID))
+                    if(str.equals(AppointmentColumns.APPOINTMENT_CONTACT_ID.getColName()))
                     {
                         stmt.setString(bindIndex, str);
                         bindIndex++;

@@ -26,7 +26,7 @@ public class AddEditCustomer extends BorderPane
     private Label nameLabel;            private TextField nameField;      	private Label nameErrorLabel;
     private Label phoneLabel;           private TextField phoneField;     	private Label phoneErrorLabel;
     private Label addressLabel;         private TextArea addressArea;     	private Label addressErrorLabel;
-    private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
+    //private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
     private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
     private CountryAndDivisionsBox countryAndDivisionsCombos;
@@ -51,15 +51,15 @@ public class AddEditCustomer extends BorderPane
         phoneField			= new TextField("");
         addressLabel		= new Label("Address");
         addressArea			= new TextArea("");
-        cityLabel			= new Label("City");
-        cityField			= new TextField("");
+        //cityLabel			= new Label("City");
+        //cityField			= new TextField("");
         countryAndDivisionsCombos = new CountryAndDivisionsBox(controller.getCountries());
         postCodeLabel       = new Label("Postal Code");
         postCodeField       = new TextField("");
         nameErrorLabel		= new Label("");
         phoneErrorLabel		= new Label("");
         addressErrorLabel	= new Label("");
-        cityErrorLabel      = new Label("");
+        //cityErrorLabel      = new Label("");
         postCodeErrorLabel  = new Label("");
 		
 		//Instantiate scene attributes
@@ -76,7 +76,7 @@ public class AddEditCustomer extends BorderPane
                 if(newCustomer)
                 {
 					controller.addCustomer(new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
-                            addressArea.getText(), cityField.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
+                            addressArea.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
                             countryAndDivisionsCombos.getSelectedDivision().getDivisionId()));
                 } else {
 					processChanges();
@@ -107,9 +107,9 @@ public class AddEditCustomer extends BorderPane
         addressArea.setOnKeyReleased(event -> {
             checkForMaximumCharacters(addressArea, CustomerConstants.MAX_CHAR_ADDRESS);
         });
-        cityField.setOnKeyReleased(event -> {
+        /*cityField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(cityField, CustomerConstants.MAX_CHAR_DEFAULT);
-        });
+        });*/
         postCodeField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(postCodeField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
@@ -125,10 +125,10 @@ public class AddEditCustomer extends BorderPane
         fieldsPane.addRow(2, nameLabel, 	nameField,		nameErrorLabel);
         fieldsPane.addRow(3, phoneLabel, 	phoneField,		phoneErrorLabel);
         fieldsPane.addRow(4, addressLabel,	addressArea,	addressErrorLabel);
-        fieldsPane.addRow(5, cityLabel, 	cityField,		cityErrorLabel);
-        fieldsPane.addRow(6, countryAndDivisionsCombos);
-        fieldsPane.addRow(7, postCodeLabel, postCodeField,	postCodeErrorLabel);
-        fieldsPane.addRow(8, buttonPane);
+        //fieldsPane.addRow(5, cityLabel, 	cityField,		cityErrorLabel);
+        fieldsPane.addRow(5, countryAndDivisionsCombos);
+        fieldsPane.addRow(6, postCodeLabel, postCodeField,	postCodeErrorLabel);
+        fieldsPane.addRow(7, buttonPane);
         this.setTop(header);
         this.setCenter(fieldsPane);
     }//constructor
@@ -148,14 +148,14 @@ public class AddEditCustomer extends BorderPane
     public void clearAll()
     {
         nameErrorLabel.setText("");
-        cityErrorLabel.setText("");
+        //cityErrorLabel.setText("");
         phoneErrorLabel.setText("");
         addressErrorLabel.setText("");
         postCodeErrorLabel.setText("");
         nameField.setText("");
         phoneField.setText("");
         addressArea.setText("");
-        cityField.setText("");
+        //cityField.setText("");
         postCodeField.setText("");
         countryAndDivisionsCombos.clear();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
@@ -166,7 +166,7 @@ public class AddEditCustomer extends BorderPane
     public void clearErrors()
     {
         nameErrorLabel.setText("");
-        cityErrorLabel.setText("");
+        //cityErrorLabel.setText("");
         phoneErrorLabel.setText("");
         addressErrorLabel.setText("");
         postCodeErrorLabel.setText("");
@@ -188,7 +188,7 @@ public class AddEditCustomer extends BorderPane
 				phoneField.setText(c.getPhone());
 				addressArea.setText(c.getAddress());
 				postCodeField.setText(c.getPostCode());
-				cityField.setText(c.getCity());
+				//cityField.setText(c.getCity());
 				countryAndDivisionsCombos.setSelectedCountry(c.getCountry().getCountryId());
 				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
@@ -224,11 +224,11 @@ public class AddEditCustomer extends BorderPane
 			controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
 			customerToEdit.setAddress(tempString);
 		}
-		tempString = cityField.getText();
+		/*tempString = cityField.getText();
 		if(!customerToEdit.getCity().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
 			customerToEdit.setCity(tempString);
-		}
+		}*/
 		tempString = postCodeField.getText();
 		if(!customerToEdit.getPostCode().equals(tempString)) {
 			controller.addCustomerUpdate(CustomerFieldCode.POST_CODE_FIELD, tempString);
@@ -251,6 +251,7 @@ public class AddEditCustomer extends BorderPane
      *	@return	validity of the form
      */
     private boolean validateForm() {
+        clearErrors();
         boolean valid = true;
         String input = "";
 
@@ -283,11 +284,11 @@ public class AddEditCustomer extends BorderPane
             valid = false;
         }
         //check city is not blank
-        input = cityField.getText().trim();
+        /*input = cityField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.CITY_FIELD, "City is required");
             valid = false;
-        }
+        }*/
         //check postal code is not blank and contains only numbers
         input = postCodeField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
@@ -321,7 +322,7 @@ public class AddEditCustomer extends BorderPane
                 addressErrorLabel.setText(message);
                 break;
             case CITY_FIELD :
-                cityErrorLabel.setText(message);
+                //cityErrorLabel.setText(message);
                 break;
             case POST_CODE_FIELD :
                 postCodeErrorLabel.setText(message);

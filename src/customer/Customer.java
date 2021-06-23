@@ -15,34 +15,32 @@ public class Customer
     private StringProperty name;
 	private StringProperty phone;
 	private StringProperty address;
-	private StringProperty city;
+	//private StringProperty city;
 	private StringProperty postCode;
     private Country country;
     private Division division;
 	private int appointments;
 
-	public Customer(long id, String name, String phone, String address,
-            String city, String postCode, Country country, int divId) {
+	public Customer(long id, String name, String phone, String address, String postCode, Country country, int divId) {
     	this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
 		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
 		this.address		= 	new SimpleStringProperty(this, "address", address);
-		this.city 			= 	new SimpleStringProperty(this, "city", city);
+		//this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	country.getDivision(divId);
 		this.appointments	=	0;
     }//constructor
 
-	public Customer(long id, String name, String phone, String address,
-					String city, String postCode, Country country, int divId, int appointments) {
+	public Customer(long id, String name, String phone, String address, String postCode, Country country, int divId, int appointments) {
 		this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
 		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
 		this.address		= 	new SimpleStringProperty(this, "address", address);
-		this.city 			= 	new SimpleStringProperty(this, "city", city);
+		//this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	country.getDivision(divId);
@@ -57,9 +55,9 @@ public class Customer
 		return address;
 	}
 	
-	public StringProperty cityProperty() {
+	/*public StringProperty cityProperty() {
 		return city;
-	}
+	}*/
 	
 	public LongProperty customerIdProperty() {
 		return customerId;
@@ -89,9 +87,9 @@ public class Customer
 		return address.get();
 	}
 	
-	public String getCity() {
+	/*public String getCity() {
 		return city.get();
-	}
+	}*/
 	
 	public Country getCountry() {
 		return country;
@@ -129,9 +127,9 @@ public class Customer
 		address = new SimpleStringProperty(this, "address", str);
 	}
 	
-	public void setCity(String str) {
+	/*public void setCity(String str) {
 		city = new SimpleStringProperty(this, "city", str);
-	}
+	}*/
 	
 	public void setCountry(Country c) {
 		country = c;

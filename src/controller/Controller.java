@@ -8,6 +8,7 @@ import database.AppointmentColumns;
 import database.CustomerColumns;
 import database.DBConnection;
 import database.DBConstants;
+import database.DBTables;
 import io.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -532,7 +533,7 @@ public class Controller
         initializeIds();
 		////////////////////////////////TESTING/////////////////////////////
         customers.add(new Customer(177, "Nicholas Warner", "801-231-4827",
-                "130 S 1300 E  #605", "Salt Lake City", "84102", countries.get(0), -1));
+                "130 S 1300 E  #605", "84102", countries.get(0), -1));
         ////////////////////////////////////////////////////////////////////
     }
 }//class Controller
