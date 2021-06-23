@@ -35,9 +35,22 @@ public class TimeBox extends HBox {
 	}//constructor
 	
 	public LocalDateTime getSelectedDateTime() {
-		return LocalDateTime.of(2021, monthCombo.getValue().getMonthOfYear(), dayCombo.getValue(), 
+		return LocalDateTime.of(LocalDateTime.now().getYear(), monthCombo.getValue().getMonthOfYear(), dayCombo.getValue(), 
 				hourCombo.getValue().getHourOfDay(), minuteCombo.getValue().getMinuteOfHour(), 0);
 	}//getSelectedDateTime
+		
+	/**
+	 * Sets the combo boxes to match the given LocalDateTime.
+	 *
+	 * @param time	The provided LocalDateTime
+	 */
+	public void setDateTime(LocalDateTime time) {
+		switch(time.getHour()) {
+			case Hour.ONE.getHourOfDay() : 
+				hourCombo.setValue(Hour.ONE);
+				break;
+		}
+	}//setDateTime
 	
 	private void setValues() { 
 		monthCombo.setValue(Month.JAN);

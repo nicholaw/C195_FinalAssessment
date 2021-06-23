@@ -99,10 +99,10 @@ public class AddEditAppointment extends BorderPane
 		if(box != null) {
 			if(box.getItems().size() > 0) {
 				box.setValue(box.getItems().get(0));
-				return;
+			} else {
+				box.setValue(null);
 			}
 		}
-		box.setValue(null);
 	}//clearCombo
 	
 	private void clearErrors() {
