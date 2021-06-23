@@ -118,9 +118,6 @@ public class AddEditAppointment extends BorderPane
 			case TITLE_FIELD :
 				titleErrorLabel.setText(message);
 				break;
-			case DATETIME_BOX :
-				timeErrorLabel.setText(message);
-				break;
 			default :
 				controller.getMessageAlert().setAlertType(Alert.AlertType.ERROR);
 				controller.getMessageAlert().setContentText("An unknown validation error occurred");

@@ -45,11 +45,6 @@ public class TimeBox extends HBox {
 	 * @param time	The provided LocalDateTime
 	 */
 	public void setDateTime(LocalDateTime time) {
-		switch(time.getHour()) {
-			case Hour.ONE.getHourOfDay() : 
-				hourCombo.setValue(Hour.ONE);
-				break;
-		}
 	}//setDateTime
 	
 	private void setValues() { 

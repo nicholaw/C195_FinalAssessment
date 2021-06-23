@@ -1,8 +1,10 @@
 package controller;
 
 import appointment.Appointment;
+import appointment.AppointmentFieldCode;
 import customer.Customer;
 import customer.CustomerFieldCode;
+import database.AppointmentColumns;
 import database.CustomerColumns;
 import database.DBConnection;
 import database.DBConstants;
@@ -16,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
@@ -280,11 +281,6 @@ public class Controller
         return null;
     }//getCountry
 
-    public int getCountryIdFromDivId(int divId)
-    {
-        return 0;
-    }
-
     /**
      *
      * @return
@@ -325,9 +321,7 @@ public class Controller
      * @return
      */
     public long getNextCustomerId() {
-        String id = "" + nextCustomerId;
-        id += LocalDateTime.now().getYear();
-        return Long.parseLong(id);
+        return nextCustomerId;
     }
 
     public User getCurrentUser() {
@@ -358,7 +352,7 @@ public class Controller
      */
     private void initializeAppointmentUpdates() {
 		appointmentUpdates = new HashMap<>();
-		for(AppointmentColummns col : AppointmentColummns.values()) {
+		for(AppointmentColumns col : AppointmentColumns.values()) {
 			appointmentUpdates.put(col.getColName(), null);
 		}
     }//initializeAppointmentUpdates
@@ -401,15 +395,14 @@ public class Controller
 		var f = new File(ControllerConstants.ID_DESTINATION);
 		try(var fis = new FileInputStream(f);
             var dis = new DataInputStream(fis)) {
-			int in;
 			//check year
 			try {
 				if(currentYear > dis.readInt()) {	//year has progressed; reset ids and save
 					int id = 100000;
 					nextCustomerId = Long.parseLong("" + currentYear + id);
-					dis.readInt();
+					dis.readInt();					//skip the currently stored customer id
 					nextAppointmentId = dis.readLong();
-					storeIds();
+					storeIds(currentYear);
 				} else {
 					nextCustomerId = Long.parseLong("" + currentYear + dis.readInt());
 					nextAppointmentId = dis.readLong();
@@ -433,7 +426,7 @@ public class Controller
 	 */
 	public void storeIds(int year) {
 		String str = "" + nextCustomerId;
-		str = str.subString(4, str.length() - 1);
+		str = str.substring(4, str.length() - 1);
 		int id = Integer.parseInt(str);
 		var f = new File(ControllerConstants.ID_DESTINATION);
 		try(var fos = new FileOutputStream(f, false);
@@ -443,7 +436,7 @@ public class Controller
 			dos.writeInt(id);
 			dos.writeLong(nextAppointmentId);
 		} catch(IOException e) {
-			e.printStackTrace;
+			e.printStackTrace();
 		}
 	}//storeIds
 
@@ -456,8 +449,8 @@ public class Controller
     public boolean updateAppointment(int appointmentId) {
 		if(appointmentUpdates != null) {
 			//add user and date to appoinment updates for last updated by and last updated
-			appointmentUpdates.put(AppointmentColummns.APPOINTMENT_UPDATE_BY.getColName(), currentUser.getUsername());
-			appointmentUpdates.put(AppointmentColummns.APPOINTMENT_UPDATE_BY.getColName(), currentUser.getUsername());
+			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
+			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
 			return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
 		}
         return false;

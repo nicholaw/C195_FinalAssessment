@@ -130,7 +130,7 @@ public class DBConnection
     {
         var list = new LinkedHashSet<Customer>();
         String sql =    "SELECT "                                                                               +
-                            "Customer_ID AS id, "                                                               +
+                            "customers.Customer_ID AS id, "                                                     +
                             "Customer_Name AS name, "                                                           +
                             "Phone AS phone, "                                                                  +
                             "Address AS address, "                                                              +
