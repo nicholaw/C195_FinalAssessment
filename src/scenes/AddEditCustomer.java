@@ -9,6 +9,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import sceneUtils.CountryAndDivisionsBox;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
@@ -70,14 +72,13 @@ public class AddEditCustomer extends BorderPane
         submitButton = new Button("Add Customer");
         submitButton.setOnAction(event -> {
             this.setDisable(true);
-			System.out.println("VALIDATING customer form..."); //FOR TESTING
 			if(this.validateForm())
             {
                 if(newCustomer)
                 {
-					controller.addCustomer(new Customer(Integer.parseInt(idField.getText()), nameField.getText(), phoneField.getText(),
+					controller.addCustomer(new Customer(Long.parseLong(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
-                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId()));
+                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), 0));
                 } else {
 					processChanges();
 					controller.updateCustomer(Integer.parseInt(idField.getText()));
@@ -85,9 +86,7 @@ public class AddEditCustomer extends BorderPane
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 this.clearAll();
-				System.out.println("form is VALID\n"); //FOR TESTING
             }
-			System.out.println("form is INVALID\n"); //FOR TESTING
 			this.setDisable(false);
         });
         cancelButton = new Button("Cancel");
@@ -121,13 +120,13 @@ public class AddEditCustomer extends BorderPane
         var buttonPane = new HBox(submitButton, cancelButton);
         var fieldsPane = new GridPane();
         fieldsPane.addRow(0, sceneLabel);
-        fieldsPane.addRow(1, idLabel, 		idField);
-        fieldsPane.addRow(2, nameLabel, 	nameField,		nameErrorLabel);
-        fieldsPane.addRow(3, phoneLabel, 	phoneField,		phoneErrorLabel);
-        fieldsPane.addRow(4, addressLabel,	addressArea,	addressErrorLabel);
+        fieldsPane.addRow(1, idLabel,       idField);
+        fieldsPane.addRow(2, nameLabel,     nameField,      nameErrorLabel);
+        fieldsPane.addRow(3, phoneLabel,    phoneField,     phoneErrorLabel);
+        fieldsPane.addRow(4, addressLabel,  addressArea,    addressErrorLabel);
         //fieldsPane.addRow(5, cityLabel, 	cityField,		cityErrorLabel);
         fieldsPane.addRow(5, countryAndDivisionsCombos);
-        fieldsPane.addRow(6, postCodeLabel, postCodeField,	postCodeErrorLabel);
+        fieldsPane.addRow(6, postCodeLabel, postCodeField,  postCodeErrorLabel);
         fieldsPane.addRow(7, buttonPane);
         this.setTop(header);
         this.setCenter(fieldsPane);
@@ -255,52 +254,40 @@ public class AddEditCustomer extends BorderPane
         boolean valid = true;
         String input = "";
 
-        //check name is not blank
+        //check that name is not blank
         input = nameField.getText().trim();
-        if(input.isEmpty() || input.isBlank()) {
+        if(input.isBlank() || input.isEmpty()) {
+            valid = false;
             flag(CustomerFieldCode.NAME_FIELD, "Name is required");
-            valid = false;
         }
-        //check address is not blank and only contains legal characters
-        input = addressArea.getText().trim();
-        if(input.isEmpty() || input.isBlank()) {
-            flag(CustomerFieldCode.ADDRESS_FIELD, "Address is required");
-            valid = false;
-        }
-        if(!("^[a-zA-Z0-9\\Q" + CustomerConstants.LEGAL_ADDRESS_CHARACTERS + "\\E]*$").matches(input)) {
-            flag(CustomerFieldCode.ADDRESS_FIELD, "Address may only contain letters, numbers, or the symbols " +
-                    CustomerConstants.LEGAL_ADDRESS_CHARACTERS);
-            valid = false;
-        }
-        //check phone number--only numbers(after punctuation is removed)
+
+        //check phone is not blank and matches regEx
         input = phoneField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
+            valid = false;
             flag(CustomerFieldCode.PHONE_FIELD, "Phone number is required");
+        } else if (Pattern.compile("[^0-9]").matcher(input).find()) {
             valid = false;
+            flag(CustomerFieldCode.PHONE_FIELD, "Phone number should only contain digits");
         }
-        if(!("^[0-9\\Q" + CustomerConstants.LEGAL_PHONE_CHARACTERS + "\\E]*$").matches(input)) {
-            flag(CustomerFieldCode.ADDRESS_FIELD, "Phone number may only contain numbers or the symbols " +
-                    CustomerConstants.LEGAL_PHONE_CHARACTERS); //TODO: also check pattern matches legal patterns
+
+        //check that address is not blank
+        input = addressArea.getText().trim();
+        if(input.isBlank() || input.isEmpty()) {
             valid = false;
+            flag(CustomerFieldCode.ADDRESS_FIELD, "Address is required");
         }
-        //check city is not blank
-        /*input = cityField.getText().trim();
+
+        //check that postal code is not blank and only contains digits
+        input = phoneField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
-            flag(CustomerFieldCode.CITY_FIELD, "City is required");
             valid = false;
-        }*/
-        //check postal code is not blank and contains only numbers
-        input = postCodeField.getText().trim();
-        if(input.isEmpty() || input.isBlank()) {
             flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code is required");
+        } else if (Pattern.compile("[^0-9]").matcher(input).find()) {
             valid = false;
+            flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code should only contain digits");
         }
-        if(!"^[0-9]*$".matches(input)) {
-            flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code may only contain numbers");
-            valid = false;
-        }
-        //country and state are from combo box; validation not required
-        //id is auto-generated; validation not required
+
         return valid;
     }//validateForm
 

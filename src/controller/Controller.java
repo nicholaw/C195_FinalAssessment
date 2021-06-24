@@ -527,13 +527,12 @@ public class Controller
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview(this);
         messageAlert = new Alert(Alert.AlertType.NONE);
-        currentUser = dbConnection.getUser(username);
+        //currentUser = dbConnection.getUser(username);
+		currentUser = new User(101, "Jane Doe");
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
         initializeIds();
 		////////////////////////////////TESTING/////////////////////////////
-        customers.add(new Customer(177, "Nicholas Warner", "801-231-4827",
-                "130 S 1300 E  #605", "84102", countries.get(0), -1));
         ////////////////////////////////////////////////////////////////////
     }
 }//class Controller

@@ -187,7 +187,7 @@ public class DBConnection
                             "start, "                                       +
                             "end, "                                         +
                             "contact_name, "                                +
-                            "appointments.Contact_ID "                      + //TODO: does this no longer exist?
+                            "appts.Contact_ID "                             +
                         "FROM "                                             +
                             "appointments AS appts "                        +
                             "LEFT JOIN "                                    +
@@ -201,8 +201,7 @@ public class DBConnection
         {
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
-            while(result.next())
-            {
+            while(result.next()) {
                 list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
                         id, controller.getCurrentUser().getUserId(), controller.getContact( result.getInt("contact_id"))));
