@@ -39,28 +39,30 @@ public class LoginPage extends BorderPane
         this.setCenter(fieldBox);
         this.setBottom(submitButton);
 
-        submitButton.setOnAction(event ->
-        {
+        submitButton.setOnAction(event -> {
             CharSequence chars = passwordField.getCharacters();
-            passwordField.setText("");
-            this.controller.validateLoginCredentials(usernameField.getText(), chars);
+            String username = usernameField.getText();
+            System.out.printf("USERNAME:\t%s\tPASSWORD:\t%s\n", username, chars);
+            //passwordField.setText("");
+            this.controller.validateLoginCredentials(username, chars);
         });//submitButton
     }//constructor
 
-    public void clearInput()
-    {
+    public void clearInput() {
         usernameField.setText("");
         passwordField.setText("");
     }
 
-    public void clearAll()
-    {
+    public void clearAll() {
         clearInput();
         errorMessageLabel.setText("");
     }
 
-    public void invalidLogin()
-    {
+    private void clearErrorMessage() {
+        errorMessageLabel.setText("");
+    }
+
+    public void invalidLogin() {
         clearInput();
         errorMessageLabel.setText(ERROR_MESSAGE);
     }

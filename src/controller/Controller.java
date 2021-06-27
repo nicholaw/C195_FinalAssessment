@@ -56,12 +56,6 @@ public class Controller
         header = new HeaderPane();
 		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
-        ////////FOR TESTING/////////////////////////////////////////////////////////////////
-		dbConnection.addUser(1000000001, "jdoe1", "apples");
-		dbConnection.addUser(1000000002, "jdeer1", "hamburg");
-		dbConnection.addUser(1000000003, "test", "test");
-        dbConnection.printUserTable();
-		////////////////////////////////////////////////////////////////////////////////////
         login = new LoginPage(this);
         this.changeScene(SceneCode.LOGIN, null);
         currentUser = null;
@@ -336,14 +330,21 @@ public class Controller
         return currentUser;
     }//getSessionUser
 
-    //Hashes user-provided password for validation
-    private static int hashPassword(CharSequence password) {
+
+	/**
+	 *
+	 * @param password
+	 * @return
+	 */
+    public static String pseudoHashPassword(CharSequence password) {
         //TODO: Make a real hash
-        int sum = 0;
-        for(int i = 0; i < password.length(); i++)
-            sum += password.charAt(i);
-        return sum;
-    }//hashPassword
+		String hash = "";
+        for(int i = 0; i < password.length(); i++) {
+			hash += (int)password.charAt(i);
+		}
+		System.out.printf("%s\t-->\t%s\n", password, hash);
+        return hash;
+    }//pseudoHashPassword
 
     /**
      * Initializes the HashMap for tracking changes to an existing customer
@@ -487,34 +488,13 @@ public class Controller
      * @param password  Password entered in the login form
      */
     public void validateLoginCredentials(String username, CharSequence password) {
-        /*
-        if(validateCredentials(username, password)) {
+    	System.out.printf("USERNAME:\t%s\tPASSWORD:\t%s\n", username, password);
+		if(dbConnection.validateCredentials(username).equals(Controller.pseudoHashPassword(password))) {
             logLoginAttempt(username, true);
             validLogin(username);
         } else {
             logLoginAttempt(username, false);
             login.invalidLogin();
-        }
-         */
-        validLogin("Jane Doe");
-    }//validateLoginCredentials
-
-    /**
-     *  Checks that the given username exists in the database and if the given password matches the associated
-     *  username in the database. Returns true if both the user exists and the password matches and false otherwise.
-     *
-     * @param username  The given username
-     * @param password  The given password
-     * @return  Whether the given username and password exist and are associated in the database.
-     */
-    private boolean validateCredentials(String username, CharSequence password) {
-        CharSequence cs = dbConnection.validateCredentials(username);
-        if(cs == null) {
-            return false;
-        } else if (hashPassword(password) == hashPassword(cs)) {
-            return true;
-        } else {
-            return false;
         }
     }//validateLoginCredentials
 
@@ -534,12 +514,9 @@ public class Controller
         custOverview = new CustomerOverview(this);
         apptOverview = new AppointmentOverview(this);
         messageAlert = new Alert(Alert.AlertType.NONE);
-        //currentUser = dbConnection.getUser(username);
-		currentUser = new User(101, "Jane Doe");
+        currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
         initializeIds();
-		////////////////////////////////TESTING/////////////////////////////
-        ////////////////////////////////////////////////////////////////////
     }
 }//class Controller

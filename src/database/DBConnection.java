@@ -202,7 +202,7 @@ public class DBConnection
             while(result.next()) {
                 list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
-                        id, controller.getCurrentUser().getUserId(), controller.getContact( result.getInt("contact_id"))));
+                        id, controller.getContact( result.getInt("contact_id"))));
             }
         }catch(SQLException e)
         {
@@ -292,7 +292,7 @@ public class DBConnection
 			stmt.setString(1, username);
 			var result = stmt.executeQuery();
 			if(result.next()) {
-				return new User(result.getInt("User_ID"), result.getString("User_Name"));
+				return new User(result.getLong("User_ID"), result.getString("User_Name"));
 			} else {
 				return null;
 			}
@@ -318,7 +318,7 @@ public class DBConnection
 			stmt.setString	(9, timestamp);
 			stmt.setString	(10, user.getUsername());
 			stmt.setLong	(11, a.getCustomerId());
-			stmt.setInt		(12, user.getUserId());
+			stmt.setLong	(12, user.getUserId());
 			stmt.setInt		(13, a.getContactId());
 			int rows = stmt.executeUpdate();
 			System.out.println("Adding customer\nRows affected: " + rows);
@@ -372,13 +372,7 @@ public class DBConnection
         }
     }//getDbMetaData
 
-    /**
-     *
-     * @param id
-     * @param username
-     * @param password
-     * @return
-     */
+    /*
     public int addUser(long id, String username, String password) {
 	    String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
         String sql = "INSERT INTO users (user_id, user_name, password, create_date, last_update) VALUES (?, ?, ?, \'" + timeStamp + "\', \'" + timeStamp + "\')";
@@ -386,7 +380,7 @@ public class DBConnection
         try(var stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.setString(2, username);
-            stmt.setString(3, password);
+            stmt.setString(3, Controller.pseudoHashPassword(password));
             return stmt.executeUpdate();
         } catch(SQLException e) {
             e.printStackTrace();
@@ -394,9 +388,17 @@ public class DBConnection
         }
     }//addUser
 
-    /**
-     *
-     */
+    public int deleteUser(String username) {
+        String sql = "DELETE FROM users WHERE User_Name = ?";
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            return stmt.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     public void printUserTable() {
 	    String sql = "SELECT User_ID, User_Name, Password FROM users ORDER BY User_ID";
 	    try(var stmt = conn.prepareStatement(sql)) {
@@ -418,6 +420,7 @@ public class DBConnection
             e.printStackTrace();
         }
     }//printUserTable
+    */
 
     private void setCountryDivisions(Collection<Country> countries)
     {
@@ -558,21 +561,22 @@ public class DBConnection
      * @param username  Username of the user in question
      * @return  Password associated with the username if it exists and null otherwise
      */
-    public CharSequence validateCredentials(String username)
-    {
+    public String validateCredentials(String username) {
         String sql =    "SELECT Password " +
                         "FROM users " +
                         "WHERE User_Name = ?";
-        try(var stmt = conn.prepareStatement(sql))
-        {
+        try(var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             var result = stmt.executeQuery();
             if(result.next())
-                return (CharSequence) result.getObject("password");
+                return result.getString("password");
             else
                 return null;
-        } catch (SQLException e)
-        {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } catch(Exception e) {
+            e.printStackTrace();
             return null;
         }
     }//validateCredentials

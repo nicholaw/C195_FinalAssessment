@@ -43,7 +43,7 @@ public class Appointment
 
     public Appointment(int appointmentId, String title, String description, String type, 
 						LocalDateTime startDateTime, LocalDateTime endDateTime,
-						long customerId, int userId, Contact contact)
+						long customerId, Contact contact)
     {
         this.appointmentId	=	new SimpleIntegerProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, title);
