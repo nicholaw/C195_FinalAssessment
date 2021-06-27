@@ -9,9 +9,7 @@ import utils.Country;
 import utils.Division;
 import utils.User;
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -372,7 +370,54 @@ public class DBConnection
         } catch(SQLException e) {
             e.printStackTrace();
         }
-    }//printDbMetaData
+    }//getDbMetaData
+
+    /**
+     *
+     * @param id
+     * @param username
+     * @param password
+     * @return
+     */
+    public int addUser(long id, String username, String password) {
+	    String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
+        String sql = "INSERT INTO users (user_id, user_name, password, create_date, last_update) VALUES (?, ?, ?, \'" + timeStamp + "\', \'" + timeStamp + "\')";
+        System.out.println(sql);
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.setString(2, username);
+            stmt.setString(3, password);
+            return stmt.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }//addUser
+
+    /**
+     *
+     */
+    public void printUserTable() {
+	    String sql = "SELECT User_ID, User_Name, Password FROM users ORDER BY User_ID";
+	    try(var stmt = conn.prepareStatement(sql)) {
+	        var result = stmt.executeQuery();
+	        try(var fw = new FileWriter("users.txt", false);
+                var bw = new BufferedWriter(fw)) {
+	            bw.write("User_ID\t\tUser_Name\t\tPassword");
+	            bw.newLine();
+                while(result.next()) {
+                    bw.write("" + result.getInt("User_ID") + "\t\t");
+                    bw.write(result.getString("User_Name") + "\t\t");
+                    bw.write(result.getString("Password") + "\t\t");
+                    bw.newLine();
+                }
+            } catch(IOException e) {
+	            e.printStackTrace();
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }//printUserTable
 
     private void setCountryDivisions(Collection<Country> countries)
     {

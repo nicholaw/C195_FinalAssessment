@@ -56,8 +56,15 @@ public class Controller
         header = new HeaderPane();
 		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
+        ////////FOR TESTING/////////////////////////////////////////////////////////////////
+		dbConnection.addUser(1000000001, "jdoe1", "apples");
+		dbConnection.addUser(1000000002, "jdeer1", "hamburg");
+		dbConnection.addUser(1000000003, "test", "test");
+        dbConnection.printUserTable();
+		////////////////////////////////////////////////////////////////////////////////////
         login = new LoginPage(this);
         this.changeScene(SceneCode.LOGIN, null);
+        currentUser = null;
     }//constructor
 
     public void changeScene(SceneCode code, Object participant) {

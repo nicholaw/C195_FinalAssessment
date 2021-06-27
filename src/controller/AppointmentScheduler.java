@@ -23,7 +23,8 @@ public class AppointmentScheduler extends Application
 
     @Override
     public void stop() {
-        controller.storeIds(LocalDateTime.now().getYear());
+        if(controller.getCurrentUser() != null)
+            controller.storeIds(LocalDateTime.now().getYear());
     }
 
     public static void main(String[] args)

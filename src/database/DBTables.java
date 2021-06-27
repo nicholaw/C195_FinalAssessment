@@ -1,6 +1,6 @@
 package database;
 
-import java.util.Set;
+//import java.util.Set;
 
 public enum DBTables {
     APPOINTMENT_TABLE("appointments"),
@@ -13,8 +13,9 @@ public enum DBTables {
     private final String tableName;
     //private final Set<String> columns;
 
-    DBTables(String tableName) {
+    DBTables(String tableName/*, Collection<String> coll*/) {
         this.tableName = tableName;
+        //this.columns = new HashSet<>(coll);
     }
 
     public String getTableName() {
