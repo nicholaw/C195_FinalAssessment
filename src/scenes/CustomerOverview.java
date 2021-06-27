@@ -104,7 +104,7 @@ public class CustomerOverview  extends BorderPane
 		});//customersTable
 
         //Add scene elements to containers
-        HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, logoutButton);
+        HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, deleteCustomerButton, viewAppointmentsButton, logoutButton);
         this.setTop(header);
         this.setCenter(customersTable);
         this.setBottom(buttonBox);

@@ -4,13 +4,12 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class AppointmentScheduler extends Application
 {
     private final static String STYLE_URL = "styles\\style.css";
+    private Controller controller;
 
     @Override
     public void start(Stage stage)
@@ -18,8 +17,13 @@ public class AppointmentScheduler extends Application
         Scene scene = new Scene(new Label("Launch Error"));
         stage.setScene(scene);
         stage.setTitle("Appointment Scheduler");
-        new Controller(scene);
+        controller = new Controller(scene);
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        controller.storeIds(LocalDateTime.now().getYear());
     }
 
     public static void main(String[] args)

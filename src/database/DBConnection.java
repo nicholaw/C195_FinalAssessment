@@ -43,7 +43,7 @@ public class DBConnection
 		String sql =	"DELETE FROM " 				+ 
 							"appointments " 		+
 						"WHERE " 					+ 
-							"AppointmentID = ?";
+							"Appointment_ID = ?";
 		try(var stmt = conn.prepareStatement(sql))
 		{
 			stmt.setInt(1, id);
@@ -59,7 +59,7 @@ public class DBConnection
         String sql =	"DELETE FROM " 			+ 
 							"customers " 		+
 						"WHERE " 				+ 
-							"CustomerID = ?";
+							"Customer_ID = ?";
 		try(var stmt = conn.prepareStatement(sql))
 		{
 			stmt.setLong(1, id);
@@ -476,7 +476,7 @@ public class DBConnection
                 }
             }
             //Remove the tailing comma
-            sql = sql.substring(0, sql.length() - 3);
+            sql = sql.substring(0, sql.length() - 2);
             sql += " WHERE CustomerID = ?";
             try(var stmt = conn.prepareStatement(sql))
             {

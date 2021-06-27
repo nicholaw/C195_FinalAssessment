@@ -191,6 +191,7 @@ public class AddEditCustomer extends BorderPane
 				countryAndDivisionsCombos.setSelectedCountry(c.getCountry().getCountryId());
 				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
+				submitButton.setText("Update Customer");
 			} catch(NullPointerException e) {
 				clearAll();
 				controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
