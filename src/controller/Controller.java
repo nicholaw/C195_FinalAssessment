@@ -336,14 +336,13 @@ public class Controller
 	 * @param password
 	 * @return
 	 */
-    public static String pseudoHashPassword(CharSequence password) {
+    public static CharSequence pseudoHashPassword(CharSequence password) {
         //TODO: Make a real hash
 		String hash = "";
         for(int i = 0; i < password.length(); i++) {
 			hash += (int)password.charAt(i);
 		}
-		System.out.printf("%s\t-->\t%s\n", password, hash);
-        return hash;
+        return hash.subSequence(0, hash.length());
     }//pseudoHashPassword
 
     /**
@@ -488,7 +487,6 @@ public class Controller
      * @param password  Password entered in the login form
      */
     public void validateLoginCredentials(String username, CharSequence password) {
-    	System.out.printf("USERNAME:\t%s\tPASSWORD:\t%s\n", username, password);
 		if(dbConnection.validateCredentials(username).equals(Controller.pseudoHashPassword(password))) {
             logLoginAttempt(username, true);
             validLogin(username);

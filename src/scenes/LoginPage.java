@@ -42,8 +42,6 @@ public class LoginPage extends BorderPane
         submitButton.setOnAction(event -> {
             CharSequence chars = passwordField.getCharacters();
             String username = usernameField.getText();
-            System.out.printf("USERNAME:\t%s\tPASSWORD:\t%s\n", username, chars);
-            //passwordField.setText("");
             this.controller.validateLoginCredentials(username, chars);
         });//submitButton
     }//constructor
