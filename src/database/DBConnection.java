@@ -104,6 +104,7 @@ public class DBConnection
                             "Country_ID, "      +
                             "Country "          +
                         "FROM countries "       +
+                        "WHERE Country IN(\'United States\', \'United Kingdom\', \'Canada\') " +
                         "ORDER BY Country";
         try(var stmt = conn.prepareStatement(sql)) {
             var result = stmt.executeQuery();
@@ -152,17 +153,19 @@ public class DBConnection
                         "ORDER BY "                                                                             +
                             "name, "                                                                            +
                             "id";
-        try(var stmt = conn.prepareStatement(sql))
-        {
+        try(var stmt = conn.prepareStatement(sql)) {
             var result = stmt.executeQuery();
-            while(result.next())
-            {
+            Country parentCountry = null;
+            Division customerDivision = null;
+            while(result.next()) {
+                if ((parentCountry = controller.getCountry(result.getInt("country"))) != null) {
+                    customerDivision = parentCountry.getDivision(result.getInt("division"));
+                }
                 list.add(new Customer(result.getLong("id"), result.getString("name"), result.getString("phone"),
                         result.getString("address"), result.getString("postcode"),
-                        controller.getCountry(result.getInt("country")), result.getInt("division"), result.getInt("appts")));
+                        parentCountry, customerDivision, result.getInt("appts")));
             }
-        } catch(SQLException e)
-        {
+        } catch(SQLException e) {
             e.printStackTrace();
         }
         return list;
@@ -371,56 +374,6 @@ public class DBConnection
             e.printStackTrace();
         }
     }//getDbMetaData
-
-    /*
-    public int addUser(long id, String username, String password) {
-	    String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
-        String sql = "INSERT INTO users (user_id, user_name, password, create_date, last_update) VALUES (?, ?, ?, \'" + timeStamp + "\', \'" + timeStamp + "\')";
-        System.out.println(sql);
-        try(var stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.setString(2, username);
-            stmt.setString(3, Controller.pseudoHashPassword(password));
-            return stmt.executeUpdate();
-        } catch(SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }//addUser
-
-    public int deleteUser(String username) {
-        String sql = "DELETE FROM users WHERE User_Name = ?";
-        try(var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            return stmt.executeUpdate();
-        } catch(SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    public void printUserTable() {
-	    String sql = "SELECT User_ID, User_Name, Password FROM users ORDER BY User_ID";
-	    try(var stmt = conn.prepareStatement(sql)) {
-	        var result = stmt.executeQuery();
-	        try(var fw = new FileWriter("users.txt", false);
-                var bw = new BufferedWriter(fw)) {
-	            bw.write("User_ID\t\tUser_Name\t\tPassword");
-	            bw.newLine();
-                while(result.next()) {
-                    bw.write("" + result.getInt("User_ID") + "\t\t");
-                    bw.write(result.getString("User_Name") + "\t\t");
-                    bw.write(result.getString("Password") + "\t\t");
-                    bw.newLine();
-                }
-            } catch(IOException e) {
-	            e.printStackTrace();
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
-    }//printUserTable
-    */
 
     private void setCountryDivisions(Collection<Country> countries)
     {

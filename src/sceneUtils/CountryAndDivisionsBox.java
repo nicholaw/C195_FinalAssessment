@@ -1,12 +1,12 @@
 package sceneUtils;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import utils.Country;
 import utils.Division;
-import java.util.ArrayList;
 
 public class CountryAndDivisionsBox extends HBox
 {
@@ -39,36 +39,6 @@ public class CountryAndDivisionsBox extends HBox
         this.getChildren().addAll(countryLabel, countryCombo, divisionLabel, firstLevelDivisionsCombo);
     }//constructor
 
-    /**
-     *
-     * @param countryId
-     * @return
-     */
-    public Country getCountry(int countryId)
-    {
-        for(Country c : countryCombo.getItems())
-        {
-            //TODO: replace linear search
-            if(c.getCountryId() == countryId)
-                return c;
-        }
-        return null;
-    }//getCountry
-
-    /**
-     *
-     * @param c
-     * @param divisionId
-     * @return
-     */
-    public Division getDivision(Country c, int divisionId)
-    {
-        for(Division d : c.getFirstLevelDivisions())
-            if(d.getDivisionId() == divisionId)
-                return d;
-        return null;
-    }//getDivision
-
     public Country getSelectedCountry()
     {
         return countryCombo.getValue();
@@ -80,27 +50,33 @@ public class CountryAndDivisionsBox extends HBox
     }
 
     /**
-	 * 
-	 */
-    public void setSelectedCountry(int id) {
-        for(Country c : countryCombo.getItems()) {
-            if(c.getCountryId() == id) {
+     *
+     * @param c
+     */
+    public void setSelectedCountry(Country c) {
+        if(c != null) {
+            if(countryCombo.getItems().contains(c)) {
                 countryCombo.setValue(c);
-                updateFirstDivisions();
-				return;
+            } else {
+                countryCombo.setValue(null);
             }
+        } else {
+            countryCombo.setValue(null);
         }
+        updateFirstDivisions();
     }//setSelectedCountry
 
+    /**
+     *
+     * @param div
+     */
     public void setSelectedDivision(Division div) {
         if(div != null) {
-            for(Division d : firstLevelDivisionsCombo.getItems()) {
-                if(d.equals(div)) {
-                    firstLevelDivisionsCombo.setValue(d);
-                    return;
-                }
+            if(firstLevelDivisionsCombo.getItems().contains(div)) {
+                firstLevelDivisionsCombo.setValue(div);
+            } else {
+                firstLevelDivisionsCombo.setValue(null);
             }
-            firstLevelDivisionsCombo.setValue(null);
         } else {
 			firstLevelDivisionsCombo.setValue(null);
 		}
@@ -111,15 +87,17 @@ public class CountryAndDivisionsBox extends HBox
      */
     private void updateFirstDivisions() {
         //Set items to first-level divisions of the selected country
-        if(countryCombo.getValue() != null)
-            firstLevelDivisionsCombo.getItems().setAll(countryCombo.getValue().getFirstLevelDivisions());
-        else
-            firstLevelDivisionsCombo.getItems().setAll(new ArrayList<>(0));
-        //Set the selected value as the first first-level division
-        if(firstLevelDivisionsCombo.getItems().size() > 0)
-            firstLevelDivisionsCombo.setValue(firstLevelDivisionsCombo.getItems().get(0));
-        else
+        if(countryCombo.getValue() != null) {
+            firstLevelDivisionsCombo.setItems(FXCollections.observableArrayList(countryCombo.getValue().getFirstLevelDivisions()));
+            if(firstLevelDivisionsCombo.getItems().size() > 0) {
+                firstLevelDivisionsCombo.setValue(firstLevelDivisionsCombo.getItems().get(0));
+            } else {
+                firstLevelDivisionsCombo.setValue(null);
+            }
+        } else {
+            firstLevelDivisionsCombo.setItems(null);
             firstLevelDivisionsCombo.setValue(null);
+        }
     }//updateFirstDivisions
 
     public void clear() {

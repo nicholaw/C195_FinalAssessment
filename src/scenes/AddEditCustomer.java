@@ -74,13 +74,12 @@ public class AddEditCustomer extends BorderPane
             this.setDisable(true);
 			if(this.validateForm())
             {
-                if(newCustomer)
-                {
+                if(newCustomer) {
 					controller.addCustomer(new Customer(Long.parseLong(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
-                            countryAndDivisionsCombos.getSelectedDivision().getDivisionId(), 0));
+                            countryAndDivisionsCombos.getSelectedDivision()));
                 } else {
-					processChanges();
+					processChanges(true);
 					controller.updateCustomer(Integer.parseInt(idField.getText()));
 					controller.clearCustomerUpdates();
                 }
@@ -91,9 +90,18 @@ public class AddEditCustomer extends BorderPane
         });
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(event -> {
-            //TODO: if new input, confirm navigation from page
-            clearAll();
-            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+            if(processChanges(false)) {
+                controller.getMessageAlert().setAlertType(AlertType.CONFIRMATION);
+                controller.getMessageAlert().setTitle("Confirm Navigation");
+                controller.getMessageAlert().setContentText("You have made changes to this customer. Are you sure " +
+                        "you would like to cancel without saving these changes?");
+                controller.getMessageAlert().showAndWait()
+                        .filter(response -> response == ButtonType.OK)
+                        .ifPresent(response -> {
+                            clearAll();
+                            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+                        });
+            }
         });
 
         //Add key event listener to text fields and areas to prevent number of characters over maximum allowed
@@ -188,7 +196,7 @@ public class AddEditCustomer extends BorderPane
 				addressArea.setText(c.getAddress());
 				postCodeField.setText(c.getPostCode());
 				//cityField.setText(c.getCity());
-				countryAndDivisionsCombos.setSelectedCountry(c.getCountry().getCountryId());
+				countryAndDivisionsCombos.setSelectedCountry(c.getCountry());
 				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
 				submitButton.setText("Update Customer");
@@ -207,43 +215,83 @@ public class AddEditCustomer extends BorderPane
         idField.setText("" + controller.getNextCustomerId());
 		newCustomer = true;
     }//loadNewCustomer
-	
-	private void processChanges() {
+
+    /**
+     *
+     * @param commitChanges
+     * @return
+     */
+	private boolean processChanges(boolean commitChanges) {
+        boolean changesMade = false;
 		String tempString = nameField.getText();
+
+		//Check name
 		if(!customerToEdit.getName().equals(tempString)) {
-			controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, tempString);
-			customerToEdit.setName(tempString);
-		}
+			changesMade = true;
+		} if(commitChanges) {
+            controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, tempString);
+            customerToEdit.setName(tempString);
+        }
+
+		//Check phone
 		tempString = phoneField.getText();
 		if(!customerToEdit.getPhone().equals(tempString)) {
-			controller.addCustomerUpdate(CustomerFieldCode.PHONE_FIELD, tempString);
-			customerToEdit.setPhone(tempString);
-		}
+            changesMade = true;
+		} if(commitChanges) {
+            controller.addCustomerUpdate(CustomerFieldCode.PHONE_FIELD, tempString);
+            customerToEdit.setPhone(tempString);
+        }
+
+		//Check address
 		tempString = addressArea.getText();
 		if(!customerToEdit.getAddress().equals(tempString)) {
-			controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
-			customerToEdit.setAddress(tempString);
-		}
+            changesMade = true;
+		} if(commitChanges) {
+            controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
+            customerToEdit.setAddress(tempString);
+        }
+
+		//Check city
 		/*tempString = cityField.getText();
 		if(!customerToEdit.getCity().equals(tempString)) {
-			controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
+
+		} if(commitChanges) {
+            controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
 			customerToEdit.setCity(tempString);
-		}*/
+        }*/
+
+        //Check postal code
 		tempString = postCodeField.getText();
 		if(!customerToEdit.getPostCode().equals(tempString)) {
-			controller.addCustomerUpdate(CustomerFieldCode.POST_CODE_FIELD, tempString);
-			customerToEdit.setPostCode(tempString);
-		}
-		Country tempCountry = countryAndDivisionsCombos.getSelectedCountry();
+            changesMade = true;
+		} if(commitChanges) {
+            controller.addCustomerUpdate(CustomerFieldCode.POST_CODE_FIELD, tempString);
+            customerToEdit.setPostCode(tempString);
+        }
+
+		//Check country
+		/* Country tempCountry = countryAndDivisionsCombos.getSelectedCountry();
 		if(!customerToEdit.getCountry().equals(tempCountry)) {
-			controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, "" + tempCountry.getCountryId());
-			customerToEdit.setCountry(tempCountry);
-		}
-		Division tempDivision = countryAndDivisionsCombos.getSelectedDivision();
-		if(!(customerToEdit.getDivision().equals(tempDivision))) {
-			controller.addCustomerUpdate(CustomerFieldCode.DIVISION_BOX, ("" + tempDivision.getDivisionId()));
-			customerToEdit.setDivision(tempDivision);
-		}
+            changesMade = true;
+		} if(commitChanges) {
+            controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, "" + tempCountry.getCountryId());
+            customerToEdit.setCountry(tempCountry);
+        } */
+
+		//Check division
+        try {
+            Division tempDivision = countryAndDivisionsCombos.getSelectedDivision();
+            if(!(customerToEdit.getDivision().equals(tempDivision))) {
+                changesMade = true;
+            } if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.DIVISION_BOX, ("" + tempDivision.getDivisionId()));
+                customerToEdit.setDivision(tempDivision);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("There was a NullPointerException testing the customer division.");
+        }
+
+		return changesMade;
 	}//processChanges
 
     /**

@@ -21,7 +21,7 @@ public class Customer
     private Division division;
 	private int appointments;
 
-	public Customer(long id, String name, String phone, String address, String postCode, Country country, int divId) {
+	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div) {
     	this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
@@ -30,11 +30,11 @@ public class Customer
 		//this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
-		this.division		=	country.getDivision(divId);
+		this.division		=	div;
 		this.appointments	=	0;
     }//constructor
 
-	public Customer(long id, String name, String phone, String address, String postCode, Country country, int divId, int appointments) {
+	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div, int appointments) {
 		this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
@@ -43,7 +43,7 @@ public class Customer
 		//this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
-		this.division		=	country.getDivision(divId);
+		this.division		=	div;
 		this.appointments	=	appointments;
 	}//constructor
 
@@ -73,6 +73,15 @@ public class Customer
 	
 	public StringProperty postCodeProperty() {
 		return  postCode;
+	}
+
+	public StringProperty countryProperty() {
+		//System.out.printf("%d\t%s\t%s\t%s", customerId, name, country.getCountryName(), division.getDivisionName());
+		return new SimpleStringProperty(this, "country", this.country.getCountryName());
+	}
+
+	public StringProperty divisionProperty() {
+		return new SimpleStringProperty(this, "division", this.division.getDivisionName());
 	}
 
 	public IntegerProperty appointmentsProperty() {
