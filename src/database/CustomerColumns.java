@@ -22,6 +22,21 @@ public enum CustomerColumns {
         this.colName = colName;
     }
 
+    /**
+     * Returns true if there is a customer column whose name equals the given string. Used for
+     * sanitizing prepared statements.
+     *
+     * @param str
+     * @return
+     */
+    public static boolean contains(String str) {
+        for(CustomerColumns col : CustomerColumns.values()) {
+            if(col.getColName().equals(str))
+                return true;
+        }
+        return false;
+    }//contains
+
     public String getColName() {
         return this.colName;
     }

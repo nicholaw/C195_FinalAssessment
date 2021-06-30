@@ -246,69 +246,77 @@ public class AddEditCustomer extends BorderPane
      */
 	private boolean processChanges(boolean commitChanges) {
         boolean changesMade = false;
-		String tempString = nameField.getText();
+		String tempString;
 
 		//Check name
+        tempString = nameField.getText();
 		if(!customerToEdit.getName().equals(tempString)) {
 			changesMade = true;
-		} if(commitChanges) {
-            controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, tempString);
-            customerToEdit.setName(tempString);
-        }
+            if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.NAME_FIELD, tempString);
+                customerToEdit.setName(tempString);
+            }
+		}
 
 		//Check phone
 		tempString = phoneField.getText();
 		if(!customerToEdit.getPhone().equals(tempString)) {
             changesMade = true;
-		} if(commitChanges) {
-            controller.addCustomerUpdate(CustomerFieldCode.PHONE_FIELD, tempString);
-            customerToEdit.setPhone(tempString);
-        }
+            if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.PHONE_FIELD, tempString);
+                customerToEdit.setPhone(tempString);
+            }
+		}
 
 		//Check address
 		tempString = addressArea.getText();
 		if(!customerToEdit.getAddress().equals(tempString)) {
             changesMade = true;
-		} if(commitChanges) {
-            controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
-            customerToEdit.setAddress(tempString);
-        }
+            if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.ADDRESS_FIELD, tempString);
+                customerToEdit.setAddress(tempString);
+            }
+		}
 
 		//Check city
 		/*tempString = cityField.getText();
 		if(!customerToEdit.getCity().equals(tempString)) {
-
-		} if(commitChanges) {
-            controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
-			customerToEdit.setCity(tempString);
-        }*/
+            changesMade = true;
+            if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
+			    customerToEdit.setCity(tempString);
+            }
+		}*/
 
         //Check postal code
 		tempString = postCodeField.getText();
 		if(!customerToEdit.getPostCode().equals(tempString)) {
             changesMade = true;
-		} if(commitChanges) {
-            controller.addCustomerUpdate(CustomerFieldCode.POST_CODE_FIELD, tempString);
-            customerToEdit.setPostCode(tempString);
-        }
+            if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.POST_CODE_FIELD, tempString);
+                customerToEdit.setPostCode(tempString);
+            }
+		}
 
 		//Check country
 		/* Country tempCountry = countryAndDivisionsCombos.getSelectedCountry();
 		if(!customerToEdit.getCountry().equals(tempCountry)) {
             changesMade = true;
-		} if(commitChanges) {
-            controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, "" + tempCountry.getCountryId());
-            customerToEdit.setCountry(tempCountry);
-        } */
+            if(commitChanges) {
+                controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, "" + tempCountry.getCountryId());
+                customerToEdit.setCountry(tempCountry);
+            }
+		} */
 
 		//Check division
         try {
             Division tempDivision = countryAndDivisionsCombos.getSelectedDivision();
             if(!(customerToEdit.getDivision().equals(tempDivision))) {
                 changesMade = true;
-            } if(commitChanges) {
-                controller.addCustomerUpdate(CustomerFieldCode.DIVISION_BOX, ("" + tempDivision.getDivisionId()));
-                customerToEdit.setDivision(tempDivision);
+                if(commitChanges) {
+                    controller.addCustomerUpdate(CustomerFieldCode.DIVISION_BOX, ("" + tempDivision.getDivisionId()));
+                    customerToEdit.setDivision(tempDivision);
+                }
             }
         } catch (NullPointerException e) {
             System.out.println("There was a NullPointerException testing the customer division.");

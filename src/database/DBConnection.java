@@ -133,7 +133,7 @@ public class DBConnection
                             "Customer_Name AS name, "                                                           +
                             "Phone AS phone, "                                                                  +
                             "Address AS address, "                                                              +
-                            //"City AS city, "                                                                    +
+                            //"City AS city, "                                                                  +
                             "Postal_Code AS postcode, "                                                         +
                             "countrynames.Country_ID AS country, "                                              +
                             "countrynames.Division_ID AS division, "                                            +
@@ -465,39 +465,32 @@ public class DBConnection
      * @param customerId Id of customer to be updated
      * @return  true if at least one table row was affected
      */
-    public boolean updateCustomer(HashMap<String, String> updates, int customerId)
-    {
+    public boolean updateCustomer(HashMap<String, String> updates, int customerId) {
         if(updates != null) {
             String sql = "UPDATE customers SET ";
-            Set<String> keys = updates.keySet();
+            var keys = updates.keySet();
+            var values = new ArrayList<String>();
             //Add the correct number of bind variables to sql statement
             for(String str : keys) {
-                if (updates.get(str) != null) {
-                    sql += "? = ?, ";
+                if ((updates.get(str) != null) && (CustomerColumns.contains(str))) {
+                    sql += (str + " = ?, ");
+                    values.add(updates.get(str));
                 }
             }
             //Remove the tailing comma
             sql = sql.substring(0, sql.length() - 2);
-            sql += " WHERE CustomerID = ?";
-            try(var stmt = conn.prepareStatement(sql))
-            {
+            sql += " WHERE Customer_ID = ?";
+            System.out.println(sql);
+            try(var stmt = conn.prepareStatement(sql)) {
                 int bindIndex = 1;
-                for(String str : keys)
-                {
-                    if(updates.get(str) != null) {
-                        //Division id column holds integers so update value must be parsed
-                        if(str.equals(CustomerColumns.CUSTOMER_DIVISION_ID.getColName())) {
-                            stmt.setString(bindIndex, str);
-                            bindIndex++;
-                            stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
-                        } else {
-                            stmt.setString(bindIndex, str);
-                            bindIndex++;
-                            stmt.setString(bindIndex, updates.get(str));
-                        }
-                        bindIndex++;
+                for(String str : values) {
+                    try {
+                       stmt.setInt(bindIndex, Integer.parseInt(str));
+                    } catch(NumberFormatException e) {
+                        stmt.setString(bindIndex, str);
                     }
-                }//for str:keys
+                    bindIndex++;
+                }//for str:values
                 stmt.setInt(bindIndex, customerId);
                 return (stmt.executeUpdate() > 0);
             } catch(SQLException e) {
