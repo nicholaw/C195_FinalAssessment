@@ -6,8 +6,7 @@ public class Division
     private String divisionName;
     private Country parentCountry;
 
-    public Division(int id, String name, Country parent)
-    {
+    public Division(int id, String name, Country parent) {
         this.divisionId = id;
         this.divisionName = name;
         this.parentCountry = parent;

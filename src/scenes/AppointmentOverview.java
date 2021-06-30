@@ -23,6 +23,7 @@ public class AppointmentOverview  extends BorderPane
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
     private Appointment selectedAppointment;private ObservableList<Appointment> appointments;
+    private Customer customerToDisplay;
 
     public AppointmentOverview(Controller controller)
     {
@@ -62,31 +63,25 @@ public class AppointmentOverview  extends BorderPane
         editButton.setDisable(true);
 
         //Add event listeners to buttons
-        scheduleButton.setOnAction(event ->
-        {
+        scheduleButton.setOnAction(event -> {
             controller.changeScene(SceneCode.EDIT_APPOINTMENT, null);
         });
-        editButton.setOnAction(event ->
-        {
+        editButton.setOnAction(event -> {
             controller.changeScene(SceneCode.EDIT_APPOINTMENT, selectedAppointment);
         });
-        deleteButton.setOnAction(event ->
-        {
+        deleteButton.setOnAction(event -> {
             controller.getMessageAlert().setAlertType(Alert.AlertType.CONFIRMATION);
             controller.getMessageAlert().setContentText("Are you sure you would like to delete this appointment?");
             controller.getMessageAlert().showAndWait()
                     .filter(response -> response == ButtonType.OK)
                     .ifPresent(response -> controller.deleteAppointment(selectedAppointment));
         });
-        returnButton.setOnAction(event ->
-        {
+        returnButton.setOnAction(event -> {
             this.clear();
             controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
         });
-        appointmentsTable.setOnMouseClicked(event ->
-        {
-            if(selectedAppointment != null)
-            {
+        appointmentsTable.setOnMouseClicked(event -> {
+            if(selectedAppointment != null) {
                 deleteButton.setDisable(false);
                 editButton.setDisable(false);
             }
@@ -148,7 +143,12 @@ public class AppointmentOverview  extends BorderPane
 	 */
     private void loadCustomerInformation(Customer c) {
         if(c != null) {
+            customerToDisplay = c;
             customerInfo.setCusomterInfo(c.getCustomerId(), c.getName(), c.getPhone());
         }
     }//loadCustomerAppointmentInformation
+
+    public Customer getCustomerToDisplay() {
+        return customerToDisplay;
+    }//getCustomerToDisplay
 }//class AppointmentOverview

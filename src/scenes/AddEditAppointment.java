@@ -12,6 +12,7 @@ import sceneUtils.ContactBox;
 import sceneUtils.CustomerHeader;
 import sceneUtils.SceneCode;
 import sceneUtils.TimeBox;
+import utils.Location;
 
 public class AddEditAppointment extends BorderPane
 {
@@ -20,6 +21,7 @@ public class AddEditAppointment extends BorderPane
     private Label 		apptIdLabel;      	private TextField		apptIdField;
     private Label 		apptTitleLabel;   	private TextField		apptTitleField;
     private Label 		apptTypeLabel;    	private ComboBox		apptTypeCombo;
+    private Label		locationLabel;		private ComboBox		locationBox;
     private ContactBox 	contactBox;  		private CustomerHeader	customerInfo;
 	private TimeBox		startTimeBox;		private TimeBox			endTimeBox;
     private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
@@ -40,6 +42,8 @@ public class AddEditAppointment extends BorderPane
         apptTitleField 		= new TextField("");
         apptTypeLabel 		= new Label("Type");
         apptTypeCombo 	 	= new ComboBox<String>();
+        locationLabel		= new Label("Location");
+        locationBox			= new ComboBox<Location>(this.controller.getLocations());
 		startTimeBox		= new TimeBox("Start:");
 		endTimeBox			= new TimeBox("End:");
 		contactBox 			= new ContactBox(this.controller.getContacts());
@@ -76,7 +80,7 @@ public class AddEditAppointment extends BorderPane
         contentPane.addRow(1, customerInfo);
         contentPane.addRow(2, apptIdLabel, apptIdField);
         contentPane.addRow(3, apptTitleLabel, apptTitleField);
-        contentPane.addRow(4, apptTypeLabel, apptTypeCombo);
+        contentPane.addRow(4, apptTypeLabel, apptTypeCombo, locationLabel, locationBox);
 		contentPane.addRow(5, startTimeBox);
 		contentPane.addRow(6, endTimeBox);
         contentPane.addRow(7, contactBox);
@@ -85,10 +89,18 @@ public class AddEditAppointment extends BorderPane
         this.setCenter(contentPane);
         this.setTop(header);
     }//constructor
-	
+
+	/**
+	 *
+	 */
 	public void clear() {
 		apptIdField.setText("");
 		apptTitleField.setText("");
+		descriptionArea.setText("");
+		contactBox.reset();
+		startTimeBox.resetValues();
+		endTimeBox.resetValues();
+		customerInfo.clear();
 		this.clearCombo(apptTypeCombo);
 	}//clear
 	
@@ -104,7 +116,10 @@ public class AddEditAppointment extends BorderPane
 			}
 		}
 	}//clearCombo
-	
+
+	/**
+	 *
+	 */
 	private void clearErrors() {
 		titleErrorLabel.setText("");
 		timeErrorLabel.setText("");
@@ -135,8 +150,10 @@ public class AddEditAppointment extends BorderPane
 		}
     }//loadAppointmentInfo
 
-    public void loadCustomerInfo() {
-		customerInfo.setCusomterInfo(0, "", ""); //TODO
+    public void loadCustomerInfo(Customer c) {
+		if(c != null) {
+			customerInfo.setCusomterInfo(c.getCustomerId(), c.getName(), c.getPhone());
+		}
     }//loadCustomerInfo
 
     public void loadNewAppointment() {

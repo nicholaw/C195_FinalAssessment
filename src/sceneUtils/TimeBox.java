@@ -27,7 +27,7 @@ public class TimeBox extends HBox {
 		minuteCombo =	new ComboBox<>(FXCollections.observableArrayList(Minute.values()));
 		monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
 		dayCombo	=	new ComboBox<>(days);
-		setValues(); //TODO: use today as initially selected day
+		resetValues(); //TODO: use today as initially selected day
 		monthCombo.setOnAction(event -> {
 			updateDays();
 		});
@@ -47,7 +47,7 @@ public class TimeBox extends HBox {
 	public void setDateTime(LocalDateTime time) {
 	}//setDateTime
 	
-	private void setValues() { 
+	public void resetValues() {
 		monthCombo.setValue(Month.JAN);
 		hourCombo.setValue(Hour.TWELVE);
 		minuteCombo.setValue(Minute.ZERO);

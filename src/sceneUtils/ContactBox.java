@@ -27,6 +27,10 @@ public class ContactBox extends HBox {
 		//Add elements to container
 		this.getChildren().addAll(contactLabel, contactsCombo, emailField);
 	}//constructor
+
+	public void reset() {
+		selectFirst();
+	}
 	
 	private void selectFirst() {
 		if(contactsCombo.getItems().size() > 0) {

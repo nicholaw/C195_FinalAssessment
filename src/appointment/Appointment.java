@@ -95,8 +95,8 @@ public class Appointment
 		return customerId;
 	}
 	
-	public IntegerProperty contactIdProperty() {
-		return new SimpleIntegerProperty(this, "contactId", contact.getId());
+	public LongProperty contactIdProperty() {
+		return new SimpleLongProperty(this, "contactId", contact.getId());
 	}
 	
 	public StringProperty contactNameProperty() {
@@ -111,7 +111,7 @@ public class Appointment
         return appointmentId.get();
     }//getAppointmentId
 
-    public int getContactId() {
+    public long getContactId() {
         return contact.getId();
     }//getContactId
 

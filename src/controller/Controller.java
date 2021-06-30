@@ -24,6 +24,7 @@ import sceneUtils.SceneCode;
 import scenes.*;
 import utils.Contact;
 import utils.Country;
+import utils.Location;
 import utils.User;
 
 public class Controller
@@ -91,6 +92,7 @@ public class Controller
                     editAppt.loadAppointmentInfo((Appointment)participant);
                 else
                     editAppt.loadNewAppointment();
+                editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
                 appScene.setRoot(editAppt);
                 break;
             default:
@@ -260,6 +262,14 @@ public class Controller
     public HashMap<String, String> getAppointmentUpdates() {
         return appointmentUpdates;
     }
+
+	/**
+	 *
+	 * @return
+	 */
+	public ObservableList<Location> getLocations() {
+    	return FXCollections.observableArrayList(Location.values());
+	}
 
     /**
      *
@@ -522,6 +532,10 @@ public class Controller
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());
 		contacts = FXCollections.observableArrayList(dbConnection.getContacts());
+		System.out.printf("ID\t\t\tNAME\t\tEMAIL\n");
+		for(Contact c : contacts) {
+			System.out.printf("%d\t%s\t%s\n", c.getId(), c.getName(), c.getEmail());
+		}
         initializeCustomerUpdates();
         initializeAppointmentUpdates();
         editAppt = new AddEditAppointment(this);

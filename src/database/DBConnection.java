@@ -302,6 +302,13 @@ public class DBConnection
 		}
 	}//getUser
 
+    /**
+     *
+     * @param a
+     * @param user
+     * @param timestamp
+     * @return
+     */
     public boolean insertAppointment(Appointment a, User user, String timestamp) {
 		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Type, Start, End, Create_Date, " +
 							"Created_By, Last_Update, Last_Updated_By, Customer_Id, User_Id, Contact_Id) " + 
@@ -319,7 +326,7 @@ public class DBConnection
 			stmt.setString	(10, user.getUsername());
 			stmt.setLong	(11, a.getCustomerId());
 			stmt.setLong	(12, user.getUserId());
-			stmt.setInt		(13, a.getContactId());
+			stmt.setLong	(13, a.getContactId());
 			int rows = stmt.executeUpdate();
 			System.out.println("Adding customer\nRows affected: " + rows);
 			return (rows > 0);
@@ -329,6 +336,33 @@ public class DBConnection
 		}
     }//insertAppointment
 
+    /**
+     *
+     * @param id
+     * @param name
+     * @param email
+     * @return
+     */
+    private boolean insertContact(long id, String name, String email) {
+        String sql = "INSERT INTO contacts (Contact_ID, Contact_Name, Email) VALUES (?, ?, ?)";
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.setString(2, name);
+            stmt.setString(3, email);
+            return (stmt.executeUpdate() > 0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param c
+     * @param creator
+     * @param timestamp
+     * @return
+     */
     public boolean insertCustomer(Customer c, String creator, String timestamp)
     {
         String sql = "INSERT INTO customers (customer_id, customer_name, address, postal_code, phone, " +
@@ -353,6 +387,10 @@ public class DBConnection
         }
     }//insertCustomer
 
+    /**
+     *
+     * @param tableName
+     */
     public void getDBMetaData(String tableName) {
 	    System.out.println("----" + tableName + "----");
         String sql = "SHOW COLUMNS FROM " + tableName;
@@ -371,6 +409,10 @@ public class DBConnection
         }
     }//getDbMetaData
 
+    /**
+     *
+     * @param countries
+     */
     private void setCountryDivisions(Collection<Country> countries)
     {
         String sql = "";

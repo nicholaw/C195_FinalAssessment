@@ -1,9 +1,12 @@
 package appointment;
 
 public enum AppointmentType {
-    CONSULTATION("Consultaiton"),
 	BRIEFING("Briefing"),
+    CONSULTATION("Consultation"),
+	DEBRIEFING("Debriefing"),
 	ORIENTATION("Orientation"),
+	PLANNING("Planning"),
+	UPDATE("Update"),
     OTHER("Other");
 	
 	private final String type;
