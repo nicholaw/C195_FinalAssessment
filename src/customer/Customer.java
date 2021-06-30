@@ -17,9 +17,11 @@ public class Customer
 	private StringProperty address;
 	//private StringProperty city;
 	private StringProperty postCode;
+	private StringProperty countryName;
+	private StringProperty divisionName;
+	private IntegerProperty scheduledAppointments;
     private Country country;
     private Division division;
-	private int appointments;
 
 	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div) {
     	this.customerId		=	new SimpleLongProperty(this, "customerId", id);
@@ -31,7 +33,15 @@ public class Customer
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	div;
-		this.appointments	=	0;
+		try {
+			countryName = new SimpleStringProperty(this, "country", country.getCountryName());
+			divisionName = new SimpleStringProperty(this, "division", division.getDivisionName());
+		} catch(NullPointerException e) {
+			countryName = new SimpleStringProperty(this, "country", "NULL");
+			divisionName = new SimpleStringProperty(this, "division", "NULL");
+			e.printStackTrace();
+		}
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", 0);
     }//constructor
 
 	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div, int appointments) {
@@ -44,11 +54,20 @@ public class Customer
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	div;
-		this.appointments	=	appointments;
+		try {
+			countryName = new SimpleStringProperty(this, "country", country.getCountryName());
+			divisionName = new SimpleStringProperty(this, "division", division.getDivisionName());
+		} catch(NullPointerException e) {
+			countryName = new SimpleStringProperty(this, "country", "NULL");
+			divisionName = new SimpleStringProperty(this, "division", "NULL");
+			e.printStackTrace();
+		}
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments);
 	}//constructor
 
 	public void addAppointment() {
-		appointments++;
+		int i = scheduledAppointments.get() + 1;
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", i);
 	}
 
 	public StringProperty addressProperty() {
@@ -76,20 +95,19 @@ public class Customer
 	}
 
 	public StringProperty countryProperty() {
-		//System.out.printf("%d\t%s\t%s\t%s", customerId, name, country.getCountryName(), division.getDivisionName());
-		return new SimpleStringProperty(this, "country", this.country.getCountryName());
+		return countryName;
 	}
 
 	public StringProperty divisionProperty() {
-		return new SimpleStringProperty(this, "division", this.division.getDivisionName());
+		return divisionName;
 	}
 
 	public IntegerProperty appointmentsProperty() {
-		return new SimpleIntegerProperty(this, "appointments", appointments);
+		return scheduledAppointments;
 	}
 
 	public int getAppointments() {
-		return appointments;
+		return scheduledAppointments.get();
 	}
 	
 	public String getAddress()  {
@@ -125,10 +143,11 @@ public class Customer
 	}
 
 	public void removeAppointment() {
-		if(appointments > 0) {
-			appointments--;
+		int i = scheduledAppointments.get();
+		if(i > 0) {
+			i--;
 		} else {
-			appointments = 0;
+			i = 0;
 		}
 	}
 	
@@ -140,12 +159,15 @@ public class Customer
 		city = new SimpleStringProperty(this, "city", str);
 	}*/
 	
-	public void setCountry(Country c) {
+	private void setCountry(Country c) {
 		country = c;
+		countryName = new SimpleStringProperty(this, "country", c.getCountryName());
 	}
 	
 	public void setDivision(Division d) {
 		division = d;
+		divisionName = new SimpleStringProperty(this, "division", d.getDivisionName());
+		this.setCountry(d.getParentCountry());
 	}
 	
 	public void setName(String str) {

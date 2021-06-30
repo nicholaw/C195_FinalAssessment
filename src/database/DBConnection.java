@@ -387,10 +387,8 @@ public class DBConnection
             {
                 stmt.setInt(1, c.getCountryId());
                 var result = stmt.executeQuery();
-                while(result.next())
-                {
-                    c.addDivision(new Division(result.getInt("Division_ID"), result.getString("Division"),
-                            result.getInt("Country_ID")));
+                while(result.next()) {
+                    c.addDivision(new Division(result.getInt("Division_ID"), result.getString("Division"), c));
                 }
             } catch(SQLException e)
             {

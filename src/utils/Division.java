@@ -4,9 +4,9 @@ public class Division
 {
     private int divisionId;
     private String divisionName;
-    private int parentCountry;
+    private Country parentCountry;
 
-    public Division(int id, String name, int parent)
+    public Division(int id, String name, Country parent)
     {
         this.divisionId = id;
         this.divisionName = name;
@@ -23,7 +23,7 @@ public class Division
         return divisionName;
     }
 
-    public int getParentCountry()
+    public Country getParentCountry()
     {
         return parentCountry;
     }
