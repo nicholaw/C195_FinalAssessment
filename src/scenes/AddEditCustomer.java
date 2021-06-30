@@ -90,17 +90,24 @@ public class AddEditCustomer extends BorderPane
         });
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(event -> {
-            if(processChanges(false)) {
-                controller.getMessageAlert().setAlertType(AlertType.CONFIRMATION);
-                controller.getMessageAlert().setTitle("Confirm Navigation");
-                controller.getMessageAlert().setContentText("You have made changes to this customer. Are you sure " +
-                        "you would like to cancel without saving these changes?");
-                controller.getMessageAlert().showAndWait()
-                        .filter(response -> response == ButtonType.OK)
-                        .ifPresent(response -> {
-                            clearAll();
-                            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
-                        });
+            if(newCustomer) {
+                if(checkForInput()) {
+                    if(controller.displayConfirmationAlert("Confirm Navigation", "You have not finished " +
+                            "this customer. Are you sure you would like to cancel without saving?")) {
+                        clearAll();
+                        controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+                    }
+                } else {
+                    controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+                }
+            } else if(processChanges(false)) {
+                if(controller.displayConfirmationAlert("Confirm Navigation", "You have made changes to " +
+                        "this customer. Are you sure you would like to cancel without saving these changes?")) {
+                    clearAll();
+                    controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+                }
+            } else {
+                controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
             }
         });
 
@@ -139,6 +146,23 @@ public class AddEditCustomer extends BorderPane
         this.setTop(header);
         this.setCenter(fieldsPane);
     }//constructor
+
+    /**
+     *
+     * @return
+     */
+    private boolean checkForInput() {
+       if(!nameField.getText().isBlank())
+           return true;
+       else if(!phoneField.getText().isBlank())
+           return true;
+       else if(!addressArea.getText().isBlank())
+           return true;
+       else if(!postCodeField.getText().isBlank())
+           return true;
+       else
+           return false;
+    }
 
     private void checkForMaximumCharacters(TextInputControl inputElement, int maximum)
     {
@@ -184,8 +208,7 @@ public class AddEditCustomer extends BorderPane
      *  original value of each field in a HashMap of updates.
      *	@param	c	the customer to edit
      */
-    public void loadCustomerInfo(Customer c)
-    {
+    public void loadCustomerInfo(Customer c) {
         if(c != null)
         {
 			try {

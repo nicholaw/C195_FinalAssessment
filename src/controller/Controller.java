@@ -2,6 +2,7 @@ package controller;
 
 import appointment.Appointment;
 import appointment.AppointmentFieldCode;
+import com.sun.javafx.scene.control.inputmap.KeyBinding;
 import customer.Customer;
 import customer.CustomerFieldCode;
 import database.AppointmentColumns;
@@ -17,9 +18,9 @@ import javafx.scene.control.Alert;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import javafx.scene.control.ButtonType;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
@@ -227,6 +228,22 @@ public class Controller
 			return false;
 		}
     }//deleteCustomer
+
+	/**
+	 * Displays a confirmation alert with the provided title and message. Returns true if the user selects the 'OK'
+	 * button and false otherwise.
+	 *
+	 * @param title
+	 * @param message
+	 * @return
+	 */
+	public boolean displayConfirmationAlert(String title, String message) {
+    	messageAlert.setAlertType(Alert.AlertType.CONFIRMATION);
+    	messageAlert.setTitle(title);
+    	messageAlert.setContentText(message);
+		var result = messageAlert.showAndWait();
+		return (result.isPresent() && result.get() == ButtonType.OK);
+	}
 
     /**
      *
@@ -514,6 +531,10 @@ public class Controller
         messageAlert = new Alert(Alert.AlertType.NONE);
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+        for(Customer c : customers) {
+        	System.out.print(c.getCustomerId() + "\t");
+        	System.out.print(c.getName() + "\t");
+		}
 		checkForUpcomingAppointments();
         initializeIds();
     }
