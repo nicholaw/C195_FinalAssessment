@@ -68,6 +68,7 @@ public class Controller
                 break;
             case CUSTOMER_OVERVIEW:
             	this.clearCustomerUpdates();
+            	custOverview.refreshCustomersTable();
                 appScene.setRoot(custOverview);
                 break;
             case APPOINTMENT_OVERVIEW:

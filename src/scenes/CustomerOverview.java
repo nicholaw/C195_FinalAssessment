@@ -116,4 +116,8 @@ public class CustomerOverview  extends BorderPane
 		viewAppointmentsButton.setDisable(true);
 		deleteCustomerButton.setDisable(true);
 	}
+
+	public void refreshCustomersTable() {
+        customersTable.refresh();
+    }
 }//CustomerOverview
