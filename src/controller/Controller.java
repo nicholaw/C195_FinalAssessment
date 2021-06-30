@@ -2,7 +2,6 @@ package controller;
 
 import appointment.Appointment;
 import appointment.AppointmentFieldCode;
-import com.sun.javafx.scene.control.inputmap.KeyBinding;
 import customer.Customer;
 import customer.CustomerFieldCode;
 import database.AppointmentColumns;
@@ -19,7 +18,6 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import javafx.scene.control.ButtonType;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
@@ -288,14 +286,14 @@ public class Controller
      *
      * @return
      */
-    public ObservableList<Country> getCountries()
-    {
+    public ObservableList<Country> getCountries() {
         return countries;
     }//getCountries
 
     public Country getCountry(int id) {
         for(Country c : countries) {
-            return c;
+            if(c.getCountryId() == id)
+            	return c;
         }
         return null;
     }//getCountry
@@ -531,10 +529,6 @@ public class Controller
         messageAlert = new Alert(Alert.AlertType.NONE);
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
-        for(Customer c : customers) {
-        	System.out.print(c.getCustomerId() + "\t");
-        	System.out.print(c.getName() + "\t");
-		}
 		checkForUpcomingAppointments();
         initializeIds();
     }

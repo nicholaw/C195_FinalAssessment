@@ -155,7 +155,7 @@ public class DBConnection
                             "id";
         try(var stmt = conn.prepareStatement(sql)) {
             var result = stmt.executeQuery();
-            Country parentCountry = null;
+            Country parentCountry;
             Division customerDivision = null;
             while(result.next()) {
                 if ((parentCountry = controller.getCountry(result.getInt("country"))) != null) {
