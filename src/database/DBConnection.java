@@ -21,16 +21,13 @@ public class DBConnection
     Connection conn;
     Controller controller;
 
-    public DBConnection(Controller controller)
-    {
+    public DBConnection(Controller controller) {
         this.controller = controller;
 
-        try
-        {
+        try {
             conn = getDataSource().getConnection();
             //this.printDbMetaData();
-        } catch (SQLException e)
-        {
+        } catch (SQLException e) {
             conn = null;
             e.printStackTrace();
         }
@@ -349,7 +346,6 @@ public class DBConnection
             stmt.setString	(9, creator);
             stmt.setInt		(10, c.getDivision().getDivisionId());
 			int rows = stmt.executeUpdate();
-            System.out.println("Adding customer\nRows affected: " + rows);
 			return (rows > 0);
         } catch(SQLException e) {
             e.printStackTrace();
@@ -480,7 +476,6 @@ public class DBConnection
             //Remove the tailing comma
             sql = sql.substring(0, sql.length() - 2);
             sql += " WHERE Customer_ID = ?";
-            System.out.println(sql);
             try(var stmt = conn.prepareStatement(sql)) {
                 int bindIndex = 1;
                 for(String str : values) {

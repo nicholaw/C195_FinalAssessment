@@ -452,7 +452,6 @@ public class Controller
 	public void storeIds(int year) {
 		String str = "" + nextCustomerId;
 		str = str.substring(4);
-		System.out.printf("YEAR: %d\tID: %s\n", year, str);
 		int id = Integer.parseInt(str);
 		var f = new File(ControllerConstants.ID_DESTINATION);
 		try(var fos = new FileOutputStream(f, false);
