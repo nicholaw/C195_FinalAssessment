@@ -2,6 +2,7 @@ package controller;
 
 import appointment.Appointment;
 import appointment.AppointmentFieldCode;
+import appointment.AppointmentType;
 import customer.Customer;
 import customer.CustomerFieldCode;
 import database.AppointmentColumns;
@@ -254,6 +255,14 @@ public class Controller
     public HeaderPane getHeader() {
         return header;
     }
+
+	/**
+	 *
+	 * @return
+	 */
+	public ObservableList<AppointmentType> getAppointmentTypes() {
+		return FXCollections.observableArrayList(AppointmentType.values());
+	}
 
     /**
      *
@@ -532,10 +541,6 @@ public class Controller
         countries = FXCollections.observableArrayList(dbConnection.getCountries());
         customers = FXCollections.observableArrayList(dbConnection.getCustomers());
 		contacts = FXCollections.observableArrayList(dbConnection.getContacts());
-		System.out.printf("ID\t\t\tNAME\t\tEMAIL\n");
-		for(Contact c : contacts) {
-			System.out.printf("%d\t%s\t%s\n", c.getId(), c.getName(), c.getEmail());
-		}
         initializeCustomerUpdates();
         initializeAppointmentUpdates();
         editAppt = new AddEditAppointment(this);

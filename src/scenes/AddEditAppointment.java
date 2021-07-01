@@ -2,6 +2,7 @@ package scenes;
 
 import appointment.Appointment;
 import appointment.AppointmentFieldCode;
+import appointment.AppointmentType;
 import controller.Controller;
 import customer.Customer;
 import javafx.scene.control.*;
@@ -41,7 +42,7 @@ public class AddEditAppointment extends BorderPane
         apptTitleLabel 		= new Label("Title");
         apptTitleField 		= new TextField("");
         apptTypeLabel 		= new Label("Type");
-        apptTypeCombo 	 	= new ComboBox<String>();
+        apptTypeCombo 	 	= new ComboBox<AppointmentType>(this.controller.getAppointmentTypes());
         locationLabel		= new Label("Location");
         locationBox			= new ComboBox<Location>(this.controller.getLocations());
 		startTimeBox		= new TimeBox("Start:");
@@ -55,9 +56,14 @@ public class AddEditAppointment extends BorderPane
         //set initial states for scene elements
         apptIdField.setDisable(true);
 		newAppointment = true;
+		if(locationBox.getItems().size() > 0)
+			locationBox.setValue(locationBox.getItems().get(0));
+		if(apptTypeCombo.getItems().size() > 0)
+			apptTypeCombo.setValue(apptTypeCombo.getItems().get(0));
 
         //Add event handlers to scene elements
 		submitButton.setOnAction(event -> {
+			this.setDisable(true);
 			if(this.validateForm()) {
 				if(newAppointment) {
 					controller.addAppointment(null); //TODO
@@ -68,6 +74,7 @@ public class AddEditAppointment extends BorderPane
 				clear();
 				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
 			}
+			this.setDisable(false);
 		});
 		cancelButton.setOnAction(event -> {
 			clear();

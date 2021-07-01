@@ -23,6 +23,13 @@ public class ContactBox extends HBox {
 		contactsCombo.getItems().setAll(contacts);
 		selectFirst();
 		emailField.setDisable(true);
+
+		//Add event handler to contact combo
+		contactsCombo.setOnAction(event -> {
+			if(contactsCombo.getValue() != null) {
+				updateEmail();
+			}
+		});
 		
 		//Add elements to container
 		this.getChildren().addAll(contactLabel, contactsCombo, emailField);
