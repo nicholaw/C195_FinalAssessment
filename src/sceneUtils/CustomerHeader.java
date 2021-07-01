@@ -33,13 +33,17 @@ public class CustomerHeader extends HBox {
 	 *
 	 * @param id	the customer's id
 	 * @param name	the customer's name
-	 * @param phone	the cusotmer's phone number
+	 * @param phone	the customer's phone number
 	 */
-	public void setCusomterInfo(long id, String name, String phone) {
+	public void setCustomerInfo(long id, String name, String phone) {
 		idField.setText("" + id);
 		nameField.setText(name);
 		phoneField.setText(phone);
 	}//setCustomerInfo
+
+	public long getCustomerId() {
+		return Long.parseLong(idField.getText());
+	}
 	
 	/**
 	 *

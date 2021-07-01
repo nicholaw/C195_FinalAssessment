@@ -33,6 +33,38 @@ public class DBConnection
         }
     }//constructor
 
+    /**
+     *
+     * @param startDateTime
+     * @param endDateTime
+     * @return
+     */
+    public Set<Long> checkForOverlappingAppointment(LocalDateTime startDateTime, LocalDateTime endDateTime, long id) {
+        var appointments = new HashSet<Long>();
+        String sql =    "SELECT "                               +
+                            "Appointment_ID "                   +
+                        "FROM "                                 +
+                            "appointments "                     +
+                        "WHERE "                                +
+                            "Customer_Id = ? "                  +
+                            "AND ( Start BETWEEN ? AND ? "      +
+                            "OR End BETWEEN ? AND ? )";
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.setString(2, startDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            stmt.setString(4, startDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            stmt.setString(3, endDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            stmt.setString(5, endDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            var result = stmt.executeQuery();
+            while(result.next()) {
+                appointments.add(result.getLong("Appointment_ID"));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return appointments;
+    }//checkForOverLappingAppointments
+
     public boolean deleteAppointment(int id)
     {
 		String sql =	"DELETE FROM " 				+ 
@@ -186,6 +218,7 @@ public class DBConnection
                             "end, "                                         +
                             "contact_name, "                                +
                             "appts.Contact_ID "                             +
+                            "location "                                     +
                         "FROM "                                             +
                             "appointments AS appts "                        +
                             "LEFT JOIN "                                    +
@@ -202,7 +235,7 @@ public class DBConnection
             while(result.next()) {
                 list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
-                        id, controller.getContact( result.getInt("contact_id"))));
+                        id, controller.getContact( result.getInt("contact_id")), controller.getLocation(result.getString("location"))));
             }
         }catch(SQLException e)
         {

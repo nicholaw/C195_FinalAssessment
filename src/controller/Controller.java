@@ -62,46 +62,6 @@ public class Controller
         currentUser = null;
     }//constructor
 
-    public void changeScene(SceneCode code, Object participant) {
-        switch(code)
-        {
-            case LOGIN:
-                appScene.setRoot(login);
-                break;
-            case CUSTOMER_OVERVIEW:
-            	this.clearCustomerUpdates();
-            	custOverview.refreshCustomersTable();
-                appScene.setRoot(custOverview);
-                break;
-            case APPOINTMENT_OVERVIEW:
-                if(participant instanceof Customer) {
-                    Customer c = (Customer)participant;
-                    apptOverview.loadOverview(c, FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId())));
-                }
-                this.clearAppointmentUpdates();
-                appScene.setRoot(apptOverview);
-                break;
-            case EDIT_CUSTOMER:
-                if(participant instanceof Customer)
-                    editCust.loadCustomerInfo((Customer)participant);
-                else
-                    editCust.loadNewCustomer();
-                appScene.setRoot(editCust);
-                break;
-            case EDIT_APPOINTMENT:
-                if(participant instanceof Appointment)
-                    editAppt.loadAppointmentInfo((Appointment)participant);
-                else
-                    editAppt.loadNewAppointment();
-                editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
-                appScene.setRoot(editAppt);
-                break;
-            default:
-                System.out.println("ERROR: Scene code was not recognized");
-                appScene.setRoot(custOverview);
-        }//switch
-    }//changeScene
-	
 	/**
      *
      */
@@ -164,6 +124,56 @@ public class Controller
 			default:
 		}
 	}//addCustomerUpdate
+
+	public void changeScene(SceneCode code, Object participant) {
+		switch(code)
+		{
+			case LOGIN:
+				appScene.setRoot(login);
+				break;
+			case CUSTOMER_OVERVIEW:
+				this.clearCustomerUpdates();
+				custOverview.refreshCustomersTable();
+				appScene.setRoot(custOverview);
+				break;
+			case APPOINTMENT_OVERVIEW:
+				if(participant instanceof Customer) {
+					Customer c = (Customer)participant;
+					apptOverview.loadOverview(c, FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId())));
+				}
+				this.clearAppointmentUpdates();
+				appScene.setRoot(apptOverview);
+				break;
+			case EDIT_CUSTOMER:
+				if(participant instanceof Customer)
+					editCust.loadCustomerInfo((Customer)participant);
+				else
+					editCust.loadNewCustomer();
+				appScene.setRoot(editCust);
+				break;
+			case EDIT_APPOINTMENT:
+				if(participant instanceof Appointment)
+					editAppt.loadAppointmentInfo((Appointment)participant);
+				else
+					editAppt.loadNewAppointment();
+				editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
+				appScene.setRoot(editAppt);
+				break;
+			default:
+				System.out.println("ERROR: Scene code was not recognized");
+				appScene.setRoot(custOverview);
+		}//switch
+	}//changeScene
+
+	/**
+	 *
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public Set<Long> checkForOverlappingAppointments(LocalDateTime start, LocalDateTime end, long customerId) {
+		return dbConnection.checkForOverlappingAppointment(start, end, customerId);
+	}
 	
 	/**
 	 * Displays an information alert that informs the users which appointments will begin within 
@@ -271,6 +281,14 @@ public class Controller
     public HashMap<String, String> getAppointmentUpdates() {
         return appointmentUpdates;
     }
+
+    public Location getLocation(String name) {
+    	for(Location l : Location.values()) {
+    		if(l.equals(name))
+    			return l;
+		}
+    	return null;
+	}
 
 	/**
 	 *

@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import utils.Contact;
+import utils.Location;
 
 public class Appointment
 {
@@ -24,9 +25,10 @@ public class Appointment
 	private StringProperty	endTime;
 	private LongProperty	customerId;
 	private Contact			contact;
+	private Location		location;
 
     public Appointment(String title, String description, String type, LocalDateTime startDateTime, 
-						LocalDateTime endDateTime, int customerId, Contact contact)
+						LocalDateTime endDateTime, int customerId, Contact contact, Location location)
     {
         this.title 			= 	new SimpleStringProperty(this, title);
         this.description 	= 	new SimpleStringProperty(this, description);
@@ -39,11 +41,12 @@ public class Appointment
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
         this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
+		this.location		=	location;
     }//constructor
 
     public Appointment(int appointmentId, String title, String description, String type, 
 						LocalDateTime startDateTime, LocalDateTime endDateTime,
-						long customerId, Contact contact)
+						long customerId, Contact contact, Location location)
     {
         this.appointmentId	=	new SimpleIntegerProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, title);
@@ -57,6 +60,7 @@ public class Appointment
 		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
         this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
+		this.location		=	location;
     }//constructor
 
 	public IntegerProperty appointmentIdProperty() {

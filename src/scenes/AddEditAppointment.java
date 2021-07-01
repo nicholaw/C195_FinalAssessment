@@ -1,6 +1,7 @@
 package scenes;
 
 import appointment.Appointment;
+import appointment.AppointmentConstants;
 import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
 import controller.Controller;
@@ -14,6 +15,8 @@ import sceneUtils.CustomerHeader;
 import sceneUtils.SceneCode;
 import sceneUtils.TimeBox;
 import utils.Location;
+import java.time.LocalTime;
+import java.util.Set;
 
 public class AddEditAppointment extends BorderPane
 {
@@ -28,6 +31,7 @@ public class AddEditAppointment extends BorderPane
     private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
     private Button 		submitButton;		private Button 			cancelButton;
 	private Label		titleErrorLabel;	private Label			timeErrorLabel;
+	private Label		descriptionErrorLabel;
 
     public AddEditAppointment(Controller controller)
     {
@@ -52,6 +56,9 @@ public class AddEditAppointment extends BorderPane
         descriptionArea 	= new TextArea("");
         submitButton 	 	= new Button("Schedule");
         cancelButton 		= new Button("Cancel");
+        timeErrorLabel		= new Label("");
+        titleErrorLabel		= new Label("");
+        descriptionErrorLabel = new Label("");
 
         //set initial states for scene elements
         apptIdField.setDisable(true);
@@ -82,18 +89,6 @@ public class AddEditAppointment extends BorderPane
 		});
 
         //add scene elements to container
-        GridPane contentPane = new GridPane();
-        contentPane.addRow(0, sceneLabel);
-        contentPane.addRow(1, customerInfo);
-        contentPane.addRow(2, apptIdLabel, apptIdField);
-        contentPane.addRow(3, apptTitleLabel, apptTitleField);
-        contentPane.addRow(4, apptTypeLabel, apptTypeCombo, locationLabel, locationBox);
-		contentPane.addRow(5, startTimeBox);
-		contentPane.addRow(6, endTimeBox);
-        contentPane.addRow(7, contactBox);
-        contentPane.addRow(8, descriptionLabel, descriptionArea);
-        contentPane.addRow(9, submitButton, cancelButton);
-        this.setCenter(contentPane);
         this.setTop(header);
     }//constructor
 
@@ -109,6 +104,8 @@ public class AddEditAppointment extends BorderPane
 		endTimeBox.resetValues();
 		customerInfo.clear();
 		this.clearCombo(apptTypeCombo);
+		this.clearCombo(locationBox);
+		clearErrors();
 	}//clear
 	
 	/**
@@ -130,6 +127,7 @@ public class AddEditAppointment extends BorderPane
 	private void clearErrors() {
 		titleErrorLabel.setText("");
 		timeErrorLabel.setText("");
+		descriptionErrorLabel.setText("");
 	}//clearErrors
 	
 	/**
@@ -137,9 +135,16 @@ public class AddEditAppointment extends BorderPane
 	 */
 	private void flag(AppointmentFieldCode code, String message) {
 		switch(code) {
-			case TITLE_FIELD :
+			case TITLE_FIELD:
 				titleErrorLabel.setText(message);
 				break;
+			case START_TIME:
+				timeErrorLabel.setText(message);
+				break;
+			case END_TIME:
+				timeErrorLabel.setText(message);
+			case DESC_AREA:
+				descriptionErrorLabel.setText(message);
 			default :
 				controller.getMessageAlert().setAlertType(Alert.AlertType.ERROR);
 				controller.getMessageAlert().setContentText("An unknown validation error occurred");
@@ -153,13 +158,13 @@ public class AddEditAppointment extends BorderPane
 			apptIdField.setText("" + a.getAppointmentId());
 			apptTitleField.setText(a.getTitle());
 			apptTypeCombo.setValue(a.getType());
-			//TODO: continue
+			descriptionArea.setText(a.getDescription());
 		}
     }//loadAppointmentInfo
 
     public void loadCustomerInfo(Customer c) {
 		if(c != null) {
-			customerInfo.setCusomterInfo(c.getCustomerId(), c.getName(), c.getPhone());
+			customerInfo.setCustomerInfo(c.getCustomerId(), c.getName(), c.getPhone());
 		}
     }//loadCustomerInfo
 
@@ -170,8 +175,59 @@ public class AddEditAppointment extends BorderPane
 	private void processChanges() {
 		
 	}//processChanges
-	
+
+	/**
+	 *
+	 * @return
+	 */
 	private boolean validateForm() {
-		return false;
+		boolean valid = true;
+		String tempString;
+
+		//Check that title is not blank
+		tempString = apptTitleField.getText();
+		if(tempString.isBlank() || tempString.isEmpty()) {
+			valid = false;
+			flag(AppointmentFieldCode.TITLE_FIELD, "Title is required.");
+		}
+
+		//Check that description is not blank
+		tempString = descriptionArea.getText();
+		if(tempString.isBlank() || tempString.isEmpty()) {
+			valid = false;
+			flag(AppointmentFieldCode.DESC_AREA, "Description is required.");
+		}
+
+		//Check that start date\time is before end date\time
+		var start = startTimeBox.getSelectedDateTime();
+		var end = endTimeBox.getSelectedDateTime();
+		if(start.isAfter(end)) {
+			valid = false;
+			flag(AppointmentFieldCode.START_TIME, "End time must be after start time.");
+		}
+
+		//Check that meeting time is within business hours (08:00-22:00 EST)
+		var startTime = LocalTime.of(start.getHour(), start.getMinute());
+		var endTime = LocalTime.of(start.getHour(), start.getMinute());
+		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.OPEN_HOURS)) {
+			valid = false;
+			flag(AppointmentFieldCode.START_TIME, "Appointment must be within the business hours of 08:00 - 22:00 EST.");
+		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
+			valid = false;
+			flag(AppointmentFieldCode.START_TIME, "Appointment must be within the business hours of 08:00 - 22:00 EST.");
+		}
+
+		//Check that meeting does not overlap another existing appointment
+		Set<Long> overlappingAppointments = controller.checkForOverlappingAppointments(start, end, customerInfo.getCustomerId());
+		if(!overlappingAppointments.isEmpty()) {
+			valid = false;
+			String overlapError = "The following existing appointments overlap this appointment: \n";
+			for(Long l : overlappingAppointments) {
+				overlapError += ("\t" + l + "\n");
+			}
+			flag(AppointmentFieldCode.START_TIME, overlapError);
+		}
+
+		return valid;
 	}//validateForm
 }

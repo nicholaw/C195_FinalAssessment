@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import sceneUtils.SceneCode;
 import sceneUtils.CustomerHeader;
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class AppointmentOverview  extends BorderPane
@@ -144,7 +143,7 @@ public class AppointmentOverview  extends BorderPane
     private void loadCustomerInformation(Customer c) {
         if(c != null) {
             customerToDisplay = c;
-            customerInfo.setCusomterInfo(c.getCustomerId(), c.getName(), c.getPhone());
+            customerInfo.setCustomerInfo(c.getCustomerId(), c.getName(), c.getPhone());
         }
     }//loadCustomerAppointmentInformation
 
