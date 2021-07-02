@@ -54,7 +54,7 @@ public class AppointmentOverview  extends BorderPane
 		endDateCol.setCellValueFactory	(new PropertyValueFactory<>("endDate"));
 		startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
 		endTimeCol.setCellValueFactory	(new PropertyValueFactory<>("endTime"));
-		descCol.setCellValueFactory		(new PropertyValueFactory<>("descrition"));
+		descCol.setCellValueFactory		(new PropertyValueFactory<>("description"));
 		appointmentsTable.getColumns().setAll(idCol, titleCol, typeCol, startDateCol, endDateCol, startTimeCol, endTimeCol, descCol);
 
         //Set initial states for scene elements
@@ -125,6 +125,7 @@ public class AppointmentOverview  extends BorderPane
 	public void loadOverview(Customer c, ObservableList<Appointment> appointments) {
 		loadCustomerInformation(c);
 		loadAppointmentInformation(appointments);
+		appointmentsTable.refresh();
 	}//loadOverview
 	
 	/**

@@ -1,5 +1,6 @@
 package customer;
 
+import appointment.Appointment;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -8,6 +9,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import utils.Country;
 import utils.Division;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Customer
 {
@@ -20,6 +25,7 @@ public class Customer
 	private StringProperty countryName;
 	private StringProperty divisionName;
 	private IntegerProperty scheduledAppointments;
+	private Set<Appointment> appointments;
     private Country country;
     private Division division;
 
@@ -41,7 +47,8 @@ public class Customer
 			divisionName = new SimpleStringProperty(this, "division", "NULL");
 			e.printStackTrace();
 		}
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", 0);
+		appointments = new HashSet<>();
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
     }//constructor
 
 	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div, int appointments) {
@@ -65,9 +72,16 @@ public class Customer
 		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments);
 	}//constructor
 
-	public void addAppointment() {
-		int i = scheduledAppointments.get() + 1;
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", i);
+	public void addAllAppointments(Collection<Appointment> coll) {
+		for(Appointment a : coll) {
+			appointments.add(a);
+		}
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
+	}
+
+	public void addAppointment(Appointment a) {
+		appointments.add(a);
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
 	}
 
 	public StringProperty addressProperty() {
@@ -142,13 +156,9 @@ public class Customer
 		return postCode.get();
 	}
 
-	public void removeAppointment() {
-		int i = scheduledAppointments.get();
-		if(i > 0) {
-			i--;
-		} else {
-			i = 0;
-		}
+	public void removeAppointment(Appointment a) {
+		appointments.remove(a);
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
 	}
 	
 	public void setAddress(String str) {

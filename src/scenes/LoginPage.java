@@ -24,8 +24,8 @@ public class LoginPage extends BorderPane
 
     private final static String ERROR_MESSAGE  = "Username or password were invalid";
 
-    public LoginPage(Controller controller)
-    {
+    public LoginPage(Controller controller) {
+        //Initialize fields
         this.controller = controller;
         usernameLabel       =   new Label("Username");
         usernameField       =   new TextField();
@@ -34,11 +34,16 @@ public class LoginPage extends BorderPane
         errorMessageLabel   =   new Label("");
         submitButton        =   new Button("Submit");
 
+        //Set initial states for scene elements
+        this.setPrefSize(800, 800);
+
+        //Add nodes to containers
         VBox fieldBox = new VBox(usernameLabel, usernameField, passwordLabel, passwordField, errorMessageLabel);
         this.setTop(this.controller.getHeader());
         this.setCenter(fieldBox);
         this.setBottom(submitButton);
 
+        //Add event listeners to buttons
         submitButton.setOnAction(event -> {
             CharSequence chars = passwordField.getCharacters();
             String username = usernameField.getText();

@@ -87,10 +87,16 @@ public class AddEditAppointment extends BorderPane
 		var cancelPane = new HBox(cancelButton);
 		submitPane.setAlignment(Pos.BOTTOM_LEFT);
 		cancelPane.setAlignment(Pos.BOTTOM_RIGHT);
-		var buttonPane = new HBox(submitPane, cancelPane);
+		var buttonPane = new BorderPane();
+		buttonPane.setLeft(submitPane);
+		buttonPane.setRight(cancelPane);
+		var topCenterPane = new GridPane();
+		topCenterPane.addRow(0, apptIdLabel, apptIdField, apptTitleLabel, apptTitleField);
+		topCenterPane.addRow(1, apptTypeLabel, apptTypeCombo, locationLabel, locationBox);
+		var centerPane = new VBox(topCenterPane, dateTimePane, descriptionLabel, descriptionArea, contactBox);
 		var contentPane = new BorderPane();
 		contentPane.setTop(new VBox(sceneLabel, customerInfo));
-		contentPane.setCenter(dateTimePane);
+		contentPane.setCenter(centerPane);
 		contentPane.setBottom(buttonPane);
         this.setTop(header);
 		this.setCenter(contentPane);
