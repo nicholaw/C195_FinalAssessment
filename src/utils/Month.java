@@ -24,6 +24,19 @@ public enum Month
 		this.monthOfYear = monthOfYear;
         this.numDays 	 = numDays;
     }
+
+    /**
+     *
+     * @param monthOfYear
+     * @return
+     */
+    public static Month getMonth(int monthOfYear) {
+        for(Month m : Month.values()) {
+            if(m.getMonthOfYear() == monthOfYear)
+                return m;
+        }
+        return null;
+    }
 	
     public String getName() {
         return this.name;

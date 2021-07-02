@@ -6,15 +6,12 @@ import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
 import controller.Controller;
 import customer.Customer;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import sceneUtils.ContactBox;
-import sceneUtils.CustomerHeader;
-import sceneUtils.SceneCode;
-import sceneUtils.TimeBox;
+import javafx.scene.layout.*;
+import sceneUtils.*;
 import utils.Location;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -27,14 +24,12 @@ public class AddEditAppointment extends BorderPane
     private Label 		apptTypeLabel;    	private ComboBox		apptTypeCombo;
     private Label		locationLabel;		private ComboBox		locationBox;
     private ContactBox 	contactBox;  		private CustomerHeader	customerInfo;
-	private TimeBox		startTimeBox;		private TimeBox			endTimeBox;
     private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
     private Button 		submitButton;		private Button 			cancelButton;
 	private Label		titleErrorLabel;	private Label			timeErrorLabel;
-	private Label		descriptionErrorLabel;
+	private DateTimeBox dateTimePane;		private Label		descriptionErrorLabel;
 
-    public AddEditAppointment(Controller controller)
-    {
+    public AddEditAppointment(Controller controller) {
         this.controller = controller;
 
         //Instantiate scene elements
@@ -46,11 +41,10 @@ public class AddEditAppointment extends BorderPane
         apptTitleLabel 		= new Label("Title");
         apptTitleField 		= new TextField("");
         apptTypeLabel 		= new Label("Type");
+        dateTimePane		= new DateTimeBox();
         apptTypeCombo 	 	= new ComboBox<AppointmentType>(this.controller.getAppointmentTypes());
         locationLabel		= new Label("Location");
         locationBox			= new ComboBox<Location>(this.controller.getLocations());
-		startTimeBox		= new TimeBox("Start:");
-		endTimeBox			= new TimeBox("End:");
 		contactBox 			= new ContactBox(this.controller.getContacts());
         descriptionLabel	= new Label("Description");
         descriptionArea 	= new TextArea("");
@@ -89,7 +83,18 @@ public class AddEditAppointment extends BorderPane
 		});
 
         //add scene elements to container
+		var submitPane = new HBox(submitButton);
+		var cancelPane = new HBox(cancelButton);
+		submitPane.setAlignment(Pos.BOTTOM_LEFT);
+		cancelPane.setAlignment(Pos.BOTTOM_RIGHT);
+		var buttonPane = new HBox(submitPane, cancelPane);
+		var contentPane = new BorderPane();
+		contentPane.setTop(new VBox(sceneLabel, customerInfo));
+		contentPane.setCenter(dateTimePane);
+		contentPane.setBottom(buttonPane);
         this.setTop(header);
+		this.setCenter(contentPane);
+		this.setBottom(buttonPane);
     }//constructor
 
 	/**
@@ -100,8 +105,6 @@ public class AddEditAppointment extends BorderPane
 		apptTitleField.setText("");
 		descriptionArea.setText("");
 		contactBox.reset();
-		startTimeBox.resetValues();
-		endTimeBox.resetValues();
 		customerInfo.clear();
 		this.clearCombo(apptTypeCombo);
 		this.clearCombo(locationBox);
@@ -184,6 +187,8 @@ public class AddEditAppointment extends BorderPane
 		boolean valid = true;
 		String tempString;
 
+		/*
+
 		//Check that title is not blank
 		tempString = apptTitleField.getText();
 		if(tempString.isBlank() || tempString.isEmpty()) {
@@ -228,6 +233,7 @@ public class AddEditAppointment extends BorderPane
 			flag(AppointmentFieldCode.START_TIME, overlapError);
 		}
 
+		 */
 		return valid;
 	}//validateForm
 }

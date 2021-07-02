@@ -21,8 +21,21 @@ public enum Minute {
 		this.minute = minute;
 		this.minuteOfHour = minuteOfHour;
 	}
+
+	public static Minute getMinute(int minuteOfHour) {
+		int t;
+		for(Minute m : Minute.values()) {
+			t = m.getMinuteOfHour();
+			for(int i = t; i >= (t - 4); i--) {
+				if(i == minuteOfHour) {
+					return m;
+				}
+			}
+		}
+		return null;
+	}
 	
-	public String getMinute() {
+	public String getMinuteString() {
 		return this.minute;
 	}
 	

@@ -33,8 +33,16 @@ public enum Hour {
 		this.hour = hour;
 		this.hourOfDay = hourOfDay;
 	}
+
+	public static Hour getHour(int hourOfDay) {
+		for(Hour h : Hour.values()) {
+			if(h.getHourOfDay() == hourOfDay)
+				return h;
+		}
+		return null;
+	}
 	
-	public String getHour() {
+	public String getHourString() {
 		return this.hour;
 	}
 	
