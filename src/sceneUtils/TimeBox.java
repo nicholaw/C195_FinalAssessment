@@ -28,7 +28,6 @@ public class TimeBox extends GridPane {
 	}
 	
 	public void setTime(LocalDateTime currentTime) {
-		System.out.printf("%d:%d\n", currentTime.getHour(), currentTime.getMinute());
 		hourCombo.setValue(Hour.getHour(currentTime.getHour()));
 		minuteCombo.setValue(Minute.getMinute(currentTime.getMinute()));
 	}//setValues

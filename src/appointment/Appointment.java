@@ -146,4 +146,19 @@ public class Appointment
 	public Contact getContact() {
 		return contact;
 	}//getContact
+
+	public boolean overlaps(Appointment a) {
+    	if(a != null) {
+			LocalDateTime start = a.getStartDateTime();
+			return (start.isAfter(this.startDateTime) && start.isBefore(this.endDateTime));
+		} else
+			return false;
+	}
+
+	public boolean overlaps(LocalDateTime start) {
+		if(start != null) {
+			return (start.isAfter(this.startDateTime) && start.isBefore(this.endDateTime));
+		} else
+			return false;
+	}
 }//class Appointment

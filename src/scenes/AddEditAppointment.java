@@ -13,6 +13,7 @@ import sceneUtils.*;
 import utils.Location;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 public class AddEditAppointment extends BorderPane
@@ -67,7 +68,11 @@ public class AddEditAppointment extends BorderPane
 			this.setDisable(true);
 			if(this.validateForm()) {
 				if(newAppointment) {
-					controller.addAppointment(null); //TODO
+					Appointment a = new Appointment(Integer.parseInt(apptIdField.getText()), apptTitleField.getText(), descriptionArea.getText(),
+							apptTypeCombo.getValue().toString(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
+							(Location)locationBox.getValue());
+					controller.addAppointment(a);
+					customerInfo.getCustomer().addAppointment(a);
 				} else {
 					processChanges();
 					controller.updateAppointment(Integer.parseInt(apptIdField.getText()));
@@ -93,14 +98,14 @@ public class AddEditAppointment extends BorderPane
 		var topCenterPane = new GridPane();
 		topCenterPane.addRow(0, apptIdLabel, apptIdField, apptTitleLabel, apptTitleField);
 		topCenterPane.addRow(1, apptTypeLabel, apptTypeCombo, locationLabel, locationBox);
-		var centerPane = new VBox(topCenterPane, dateTimePane, descriptionLabel, descriptionArea, contactBox);
+		var centerPane = new VBox(topCenterPane, dateTimePane, descriptionLabel, descriptionArea, contactBox,
+				titleErrorLabel, descriptionErrorLabel, timeErrorLabel);
 		var contentPane = new BorderPane();
 		contentPane.setTop(new VBox(sceneLabel, customerInfo));
 		contentPane.setCenter(centerPane);
 		contentPane.setBottom(buttonPane);
         this.setTop(header);
 		this.setCenter(contentPane);
-		this.setBottom(buttonPane);
     }//constructor
 
 	/**
@@ -173,7 +178,7 @@ public class AddEditAppointment extends BorderPane
 
     public void loadCustomerInfo(Customer c) {
 		if(c != null) {
-			customerInfo.setCustomerInfo(c.getCustomerId(), c.getName(), c.getPhone());
+			customerInfo.setCustomer(c);
 		}
     }//loadCustomerInfo
 
@@ -193,8 +198,6 @@ public class AddEditAppointment extends BorderPane
 		boolean valid = true;
 		String tempString;
 
-		/*
-
 		//Check that title is not blank
 		tempString = apptTitleField.getText();
 		if(tempString.isBlank() || tempString.isEmpty()) {
@@ -210,8 +213,8 @@ public class AddEditAppointment extends BorderPane
 		}
 
 		//Check that start date\time is before end date\time
-		var start = startTimeBox.getSelectedDateTime();
-		var end = endTimeBox.getSelectedDateTime();
+		var start = dateTimePane.startDateTime();
+		var end = dateTimePane.endDateTime();
 		if(start.isAfter(end)) {
 			valid = false;
 			flag(AppointmentFieldCode.START_TIME, "End time must be after start time.");
@@ -219,8 +222,8 @@ public class AddEditAppointment extends BorderPane
 
 		//Check that meeting time is within business hours (08:00-22:00 EST)
 		var startTime = LocalTime.of(start.getHour(), start.getMinute());
-		var endTime = LocalTime.of(start.getHour(), start.getMinute());
-		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.OPEN_HOURS)) {
+		var endTime = LocalTime.of(end.getHour(), end.getMinute());
+		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
 			flag(AppointmentFieldCode.START_TIME, "Appointment must be within the business hours of 08:00 - 22:00 EST.");
 		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
@@ -229,17 +232,24 @@ public class AddEditAppointment extends BorderPane
 		}
 
 		//Check that meeting does not overlap another existing appointment
-		Set<Long> overlappingAppointments = controller.checkForOverlappingAppointments(start, end, customerInfo.getCustomerId());
-		if(!overlappingAppointments.isEmpty()) {
+		Customer c = customerInfo.getCustomer();
+		var overlappingAppts = new HashSet<Appointment>();
+		if(c.getAppointments() == null) {
+			c.setAppointments(controller.getCustomerAppointments(customerInfo.getCustomer()));
+		}
+		for(Appointment a : c.getAppointments()) {
+			if(a.overlaps(start))
+				overlappingAppts.add(a);
+		}
+		if(overlappingAppts.size() > 0) {
 			valid = false;
-			String overlapError = "The following existing appointments overlap this appointment: \n";
-			for(Long l : overlappingAppointments) {
-				overlapError += ("\t" + l + "\n");
+			String message = "Appointment overlaps the following existing appointments:\n";
+			for(Appointment a : overlappingAppts) {
+				message += "\t" + a.getAppointmentId() + "(" + a.getTitle() + ")\n";
 			}
-			flag(AppointmentFieldCode.START_TIME, overlapError);
+			flag(AppointmentFieldCode.START_TIME, message);
 		}
 
-		 */
 		return valid;
 	}//validateForm
 }

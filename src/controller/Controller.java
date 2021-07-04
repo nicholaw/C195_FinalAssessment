@@ -66,7 +66,8 @@ public class Controller
      *
      */
 	public boolean addAppointment(Appointment a) {
-		return  false;
+		return  dbConnection.insertAppointment(a, currentUser,
+				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 	}//addAppointment
 	
 	/**

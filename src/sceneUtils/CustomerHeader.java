@@ -1,5 +1,6 @@
 package sceneUtils;
 
+import customer.Customer;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -13,6 +14,7 @@ public class CustomerHeader extends HBox {
 	private TextField idField;
 	private TextField nameField;
 	private TextField phoneField;
+	private Customer customer;
 	
 	/**
 	 *
@@ -22,6 +24,7 @@ public class CustomerHeader extends HBox {
 		idField		=	new TextField("");
 		nameField	=	new TextField("");
 		phoneField	=	new TextField("");
+		customer	=	null;
 		idField.setDisable(true);
 		nameField.setDisable(true);
 		phoneField.setDisable(true);
@@ -29,20 +32,42 @@ public class CustomerHeader extends HBox {
 	}//constructor
 
 	/**
-	 * 
 	 *
-	 * @param id	the customer's id
-	 * @param name	the customer's name
-	 * @param phone	the customer's phone number
+	 * @param c
 	 */
-	public void setCustomerInfo(long id, String name, String phone) {
-		idField.setText("" + id);
-		nameField.setText(name);
-		phoneField.setText(phone);
+	public void setCustomer(Customer c) {
+		if(c != null) {
+			this.customer = c;
+			setCustomerInfo();
+		}
 	}//setCustomerInfo
 
+	/**
+	 *
+	 */
+	private void setCustomerInfo() {
+		idField.setText("" + customer.getCustomerId());
+		nameField.setText(customer.getName());
+		phoneField.setText(customer.getPhone());
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
 	public long getCustomerId() {
-		return Long.parseLong(idField.getText());
+		if(customer != null)
+			return customer.getCustomerId();
+		else
+			return -1;
 	}
 	
 	/**
@@ -52,5 +77,6 @@ public class CustomerHeader extends HBox {
 		idField.setText("");
 		nameField.setText("");
 		phoneField.setText("");
+		customer = null;
 	}//clear
 }//CustomerHeader

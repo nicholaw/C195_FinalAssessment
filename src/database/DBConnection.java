@@ -362,6 +362,7 @@ public class DBConnection
 			stmt.setLong	(13, a.getContactId());
 			int rows = stmt.executeUpdate();
 			System.out.println("Adding customer\nRows affected: " + rows);
+			printAppointments();
 			return (rows > 0);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -441,6 +442,20 @@ public class DBConnection
             e.printStackTrace();
         }
     }//getDbMetaData
+
+    public void printAppointments() {
+        String sql = "SELECT * FROM appointments ORDER BY customer_ID, appointment_ID";
+        try(var stmt = conn.prepareStatement(sql)) {
+            var result = stmt.executeQuery();
+            while(result.next()) {
+                System.out.printf("%d\t%s\t%d\n", result.getInt("appointment_id"),
+                        result.getString("title"), result.getInt("customer_id"));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("");
+    }//printAppointments
 
     /**
      *
