@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import utils.Country;
 import utils.Division;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +28,7 @@ public class Customer
     private Country country;
     private Division division;
 
-	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div) {
+	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div, int numAppointments) {
     	this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
@@ -47,11 +46,12 @@ public class Customer
 			divisionName = new SimpleStringProperty(this, "division", "NULL");
 			e.printStackTrace();
 		}
-		appointments = new HashSet<>();
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
+		appointments = null;
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", numAppointments);
     }//constructor
 
-	public Customer(long id, String name, String phone, String address, String postCode, Country country, Division div, int appointments) {
+	public Customer(long id, String name, String phone, String address, String postCode, Country country,
+					Division div, Collection<Appointment> appointments) {
 		this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
@@ -69,19 +69,23 @@ public class Customer
 			divisionName = new SimpleStringProperty(this, "division", "NULL");
 			e.printStackTrace();
 		}
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments);
+		if(appointments == null)
+			this.appointments = new HashSet<>();
+		else
+			this.appointments = new HashSet<>(appointments);
+		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", this.appointments.size());
 	}//constructor
 
-	public void addAllAppointments(Collection<Appointment> coll) {
-		for(Appointment a : coll) {
-			appointments.add(a);
-		}
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
+	public void setAppointments(Collection<Appointment> coll) {
+		appointments = new HashSet<>(coll);
+		scheduledAppointments.setValue(appointments.size());
 	}
 
 	public void addAppointment(Appointment a) {
+		if(appointments == null)
+			appointments = new HashSet<>();
 		appointments.add(a);
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
+		scheduledAppointments.setValue(appointments.size());
 	}
 
 	public StringProperty addressProperty() {
@@ -120,8 +124,12 @@ public class Customer
 		return scheduledAppointments;
 	}
 
-	public int getAppointments() {
-		return scheduledAppointments.get();
+	public Set<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public int getNumAppointments() {
+		return appointments.size();
 	}
 	
 	public String getAddress()  {
@@ -158,7 +166,7 @@ public class Customer
 
 	public void removeAppointment(Appointment a) {
 		appointments.remove(a);
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
+		scheduledAppointments.setValue(appointments.size());
 	}
 	
 	public void setAddress(String str) {

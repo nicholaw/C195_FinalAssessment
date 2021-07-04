@@ -138,8 +138,7 @@ public class Controller
 				break;
 			case APPOINTMENT_OVERVIEW:
 				if(participant instanceof Customer) {
-					Customer c = (Customer)participant;
-					apptOverview.loadOverview(c, FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId())));
+					apptOverview.loadOverview((Customer)participant);
 				}
 				this.clearAppointmentUpdates();
 				appScene.setRoot(apptOverview);
@@ -226,9 +225,17 @@ public class Controller
      *
      */
     public boolean deleteCustomer(Customer c) {
-		if(c.getAppointments() > 0) {
+    	if(c.getAppointments() == null)
+    		c.setAppointments(dbConnection.getCustomerAppointments(c.getCustomerId()));
+		if(c.getAppointments().size() > 0) { //TODO: filter past dated appointments
 			messageAlert.setAlertType(Alert.AlertType.INFORMATION);
-			messageAlert.setContentText("Unable to delete customer " + c.getCustomerId() + " because they still have scheduled appointments.");
+			messageAlert.setTitle("Customer Deletion");
+			String message = "Cannot delete customer " + c.getName() + "(#" + c.getCustomerId() + ") because " +
+					"they still have the following " + c.getAppointments().size() + " appointments:\n";
+			for(Appointment a : c.getAppointments()) {
+				message += ("\t" + a.getAppointmentId() + "\n");
+			}
+			messageAlert.setContentText(message);
 			messageAlert.showAndWait();
 			return false;
 		} else if(dbConnection.deleteCustomer(c.getCustomerId())) {

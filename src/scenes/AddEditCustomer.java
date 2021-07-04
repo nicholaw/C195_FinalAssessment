@@ -77,7 +77,7 @@ public class AddEditCustomer extends BorderPane
                 if(newCustomer) {
 					controller.addCustomer(new Customer(Long.parseLong(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
-                            countryAndDivisionsCombos.getSelectedDivision()));
+                            countryAndDivisionsCombos.getSelectedDivision(), null));
                 } else {
 					processChanges(true);
 					controller.updateCustomer(Integer.parseInt(idField.getText()));

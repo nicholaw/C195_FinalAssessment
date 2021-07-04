@@ -3,6 +3,7 @@ package scenes;
 import appointment.Appointment;
 import controller.Controller;
 import customer.Customer;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -122,21 +123,13 @@ public class AppointmentOverview  extends BorderPane
 	/**
 	 *
 	 */
-	public void loadOverview(Customer c, ObservableList<Appointment> appointments) {
+	public void loadOverview(Customer c) {
 		loadCustomerInformation(c);
-		loadAppointmentInformation(appointments);
+		if(c.getAppointments() == null)
+		    c.setAppointments(controller.getCustomerAppointments(c));
+		appointmentsTable.setItems(FXCollections.observableArrayList(c.getAppointments()));
 		appointmentsTable.refresh();
 	}//loadOverview
-	
-	/**
-	 *
-	 */
-	private void loadAppointmentInformation(ObservableList<Appointment> appointments) {
-		if(appointments != null) {
-			this.appointments = appointments;
-			appointmentsTable.setItems(this.appointments);
-		}
-	}//loadAppointmentInformation
 
 	/**
 	 *
