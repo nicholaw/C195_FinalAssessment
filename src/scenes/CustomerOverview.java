@@ -59,34 +59,27 @@ public class CustomerOverview  extends BorderPane
 		deleteCustomerButton.setDisable(true);
 
         //Add event listeners to scene elements
-        addCustomerButton.setOnAction(event ->
-        {
+        addCustomerButton.setOnAction(event -> {
             controller.changeScene(SceneCode.EDIT_CUSTOMER, null);
         });//addCustomerButton
-        editCustomerButton.setOnAction(event ->
-        {
+        editCustomerButton.setOnAction(event -> {
             controller.changeScene(SceneCode.EDIT_CUSTOMER, selectedCustomer);
         });//editCustomerButton
-        viewAppointmentsButton.setOnAction(event ->
-        {
+        viewAppointmentsButton.setOnAction(event -> {
             controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, selectedCustomer);
         });//viewAppointmentsButton
-        deleteCustomerButton.setOnAction(event ->
-        {
-            controller.getMessageAlert().setAlertType(Alert.AlertType.CONFIRMATION);
-            controller.getMessageAlert().setContentText("Are you sure you would like to delete this customer?");
-            controller.getMessageAlert().showAndWait()
-                    .filter(response -> response == ButtonType.OK)
-                    .ifPresent(response -> {
-						if(controller.deleteCustomer(selectedCustomer)) {
-							selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
-							if(selectedCustomer == null) {
-								editCustomerButton.setDisable(true);
-								viewAppointmentsButton.setDisable(true);
-								deleteCustomerButton.setDisable(true);
-							}	
-						}
-					});
+        deleteCustomerButton.setOnAction(event -> {
+            if(controller.displayConfirmationAlert("Confirm Delete", "Are you sure you would like to " +
+                    "delete this customer?")) {
+                if(controller.deleteCustomer(selectedCustomer)) {
+                    selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+                    if(selectedCustomer == null) {
+                        editCustomerButton.setDisable(true);
+                        viewAppointmentsButton.setDisable(true);
+                        deleteCustomerButton.setDisable(true);
+                    }
+                }
+            }
         });//deleteCustomerButton
         logoutButton.setOnAction(event ->
         {

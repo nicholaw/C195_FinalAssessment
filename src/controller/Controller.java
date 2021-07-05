@@ -28,8 +28,7 @@ import utils.Country;
 import utils.Location;
 import utils.User;
 
-public class Controller
-{
+public class Controller {
     //final attributes
     private final Scene appScene;
     private final HeaderPane header;
@@ -66,8 +65,12 @@ public class Controller
      *
      */
 	public boolean addAppointment(Appointment a) {
-		return  dbConnection.insertAppointment(a, currentUser,
-				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+		if(dbConnection.insertAppointment(a, currentUser,
+				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
+			nextAppointmentId++;
+			return true;
+		}
+		return false;
 	}//addAppointment
 	
 	/**

@@ -15,18 +15,16 @@ import sceneUtils.SceneCode;
 import sceneUtils.CustomerHeader;
 import java.util.Collection;
 
-public class AppointmentOverview  extends BorderPane
-{
+public class AppointmentOverview  extends BorderPane {
     private Controller controller;
     private Label sceneLabel;               private Pane header;
     private CustomerHeader customerInfo;	private TableView<Appointment> appointmentsTable;
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
-    private Appointment selectedAppointment;private ObservableList<Appointment> appointments;
+    private Appointment selectedAppointment;
     private Customer customerToDisplay;
 
-    public AppointmentOverview(Controller controller)
-    {
+    public AppointmentOverview(Controller controller) {
         //Instantiate scene elements
         this.controller 	= 	controller;
         this.header 		= 	this.controller.getHeader();
@@ -70,20 +68,27 @@ public class AppointmentOverview  extends BorderPane
             controller.changeScene(SceneCode.EDIT_APPOINTMENT, selectedAppointment);
         });
         deleteButton.setOnAction(event -> {
-            controller.getMessageAlert().setAlertType(Alert.AlertType.CONFIRMATION);
-            controller.getMessageAlert().setContentText("Are you sure you would like to delete this appointment?");
-            controller.getMessageAlert().showAndWait()
-                    .filter(response -> response == ButtonType.OK)
-                    .ifPresent(response -> controller.deleteAppointment(selectedAppointment));
+            if(controller.displayConfirmationAlert("Confirm Delete", "Are you sure you would " +
+                    "like to delete this appointment?")) {
+                if(controller.deleteAppointment(selectedAppointment)) {
+                    customerInfo.getCustomer().removeAppointment(selectedAppointment);
+                    selectedAppointment = null;
+                }
+                appointmentsTable.refresh();
+            }
         });
         returnButton.setOnAction(event -> {
             this.clear();
             controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
         });
         appointmentsTable.setOnMouseClicked(event -> {
-            if(selectedAppointment != null) {
-                deleteButton.setDisable(false);
-                editButton.setDisable(false);
+            Object obj = appointmentsTable.getSelectionModel().getSelectedItem();
+            if(obj != null) {
+                if(obj instanceof Appointment) {
+                    selectedAppointment = (Appointment)obj;
+                    deleteButton.setDisable(false);
+                    editButton.setDisable(false);
+                }
             }
         });
 
@@ -117,7 +122,7 @@ public class AppointmentOverview  extends BorderPane
 	 *
 	 */
 	public Collection<Appointment> getAppointments() {
-		return appointments;
+		return customerToDisplay.getAppointments();
 	}//getAppointments
 
 	/**

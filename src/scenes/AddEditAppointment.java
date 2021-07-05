@@ -78,7 +78,7 @@ public class AddEditAppointment extends BorderPane
 					controller.updateAppointment(Integer.parseInt(apptIdField.getText()));
 				}
 				clear();
-				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, customerInfo.getCustomer());
 			}
 			this.setDisable(false);
 		});

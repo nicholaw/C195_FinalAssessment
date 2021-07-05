@@ -30,15 +30,15 @@ public class Appointment
     public Appointment(String title, String description, String type, LocalDateTime startDateTime, 
 						LocalDateTime endDateTime, int customerId, Contact contact, Location location)
     {
-        this.title 			= 	new SimpleStringProperty(this, title);
-        this.description 	= 	new SimpleStringProperty(this, description);
-        this.type 			= 	new SimpleStringProperty(this, type);
+        this.title 			= 	new SimpleStringProperty(this, "title", title);
+        this.description 	= 	new SimpleStringProperty(this, "description", description);
+        this.type 			= 	new SimpleStringProperty(this, "type", type);
         this.startDateTime	= 	startDateTime;
-		this.startDate 		= 	new SimpleStringProperty(this, startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
-		this.startTime 		= 	new SimpleStringProperty(this, startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.startDate 		= 	new SimpleStringProperty(this, "startDate", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.startTime 		= 	new SimpleStringProperty(this, "startTime", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
         this.endDateTime 	= 	endDateTime;
-		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
-		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.endDate 		= 	new SimpleStringProperty(this, "endDate", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.endTime 		= 	new SimpleStringProperty(this, "endTime", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
         this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
 		this.location		=	location;
@@ -49,16 +49,16 @@ public class Appointment
 						long customerId, Contact contact, Location location)
     {
         this.appointmentId	=	new SimpleIntegerProperty(this, "appointmentId", appointmentId);
-		this.title 			= 	new SimpleStringProperty(this, title);
-        this.description 	= 	new SimpleStringProperty(this, description);
-        this.type 			= 	new SimpleStringProperty(this, type);
-        this.startDateTime	= 	startDateTime;
-		this.startDate 		= 	new SimpleStringProperty(this, startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
-		this.startTime 		= 	new SimpleStringProperty(this, startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.endDateTime 	= 	endDateTime;
-		this.endDate 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
-		this.endTime 		= 	new SimpleStringProperty(this, endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
+		this.title 			= 	new SimpleStringProperty(this, "title", title);
+		this.description 	= 	new SimpleStringProperty(this, "description", description);
+		this.type 			= 	new SimpleStringProperty(this, "type", type);
+		this.startDateTime	= 	startDateTime;
+		this.startDate 		= 	new SimpleStringProperty(this, "startDate", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.startTime 		= 	new SimpleStringProperty(this, "startTime", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.endDateTime 	= 	endDateTime;
+		this.endDate 		= 	new SimpleStringProperty(this, "endDate", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.endTime 		= 	new SimpleStringProperty(this, "endTime", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
 		this.location		=	location;
     }//constructor
@@ -130,6 +130,10 @@ public class Appointment
     public LocalDateTime getEndDateTime() {
         return endDateTime;
     }//getEndDateTime
+
+	public Location getLocation() {
+    	return location;
+	}
 
     public LocalDateTime getStartDateTime() {
         return startDateTime;

@@ -65,18 +65,15 @@ public class DBConnection
         return appointments;
     }//checkForOverLappingAppointments
 
-    public boolean deleteAppointment(int id)
-    {
+    public boolean deleteAppointment(int id) {
 		String sql =	"DELETE FROM " 				+ 
 							"appointments " 		+
 						"WHERE " 					+ 
 							"Appointment_ID = ?";
-		try(var stmt = conn.prepareStatement(sql))
-		{
+		try(var stmt = conn.prepareStatement(sql)) {
 			stmt.setInt(1, id);
 			return (stmt.executeUpdate() > 0);
-		} catch(SQLException e)
-		{
+		} catch(SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -217,7 +214,7 @@ public class DBConnection
                             "start, "                                       +
                             "end, "                                         +
                             "contact_name, "                                +
-                            "appts.Contact_ID "                             +
+                            "appts.Contact_ID AS contact, "                 +
                             "location "                                     +
                         "FROM "                                             +
                             "appointments AS appts "                        +
@@ -235,7 +232,7 @@ public class DBConnection
             while(result.next()) {
                 list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
-                        id, controller.getContact( result.getInt("contact_id")), controller.getLocation(result.getString("location"))));
+                        id, controller.getContact(result.getInt("contact")), controller.getLocation(result.getString("location"))));
             }
         }catch(SQLException e)
         {
@@ -343,25 +340,26 @@ public class DBConnection
      * @return
      */
     public boolean insertAppointment(Appointment a, User user, String timestamp) {
-		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Type, Start, End, Create_Date, " +
+		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, " +
 							"Created_By, Last_Update, Last_Updated_By, Customer_Id, User_Id, Contact_Id) " + 
-						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try(var stmt = conn.prepareStatement(sql)) {
 			stmt.setInt		(1, a.getAppointmentId());
 			stmt.setString	(2, a.getTitle());
 			stmt.setString	(3, a.getDescription());
-			stmt.setString	(4, a.getType());
-			stmt.setString	(5, a.getStartDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-			stmt.setString	(6, a.getEndDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-			stmt.setString	(7, timestamp);
-			stmt.setString	(8, user.getUsername());
-			stmt.setString	(9, timestamp);
-			stmt.setString	(10, user.getUsername());
-			stmt.setLong	(11, a.getCustomerId());
-			stmt.setLong	(12, user.getUserId());
-			stmt.setLong	(13, a.getContactId());
+			stmt.setString  (4, a.getLocation().getLocation());
+			stmt.setString	(5, a.getType());
+			stmt.setString	(6, a.getStartDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			stmt.setString	(7, a.getEndDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			stmt.setString	(8, timestamp);
+			stmt.setString	(9, user.getUsername());
+			stmt.setString	(10, timestamp);
+			stmt.setString	(11, user.getUsername());
+			stmt.setLong	(12, a.getCustomerId());
+			stmt.setLong	(13, user.getUserId());
+			stmt.setLong	(14, a.getContactId());
 			int rows = stmt.executeUpdate();
-			System.out.println("Adding customer\nRows affected: " + rows);
+			System.out.println("Adding appointment\nRows affected: " + rows);
 			printAppointments();
 			return (rows > 0);
 		} catch (SQLException e) {
