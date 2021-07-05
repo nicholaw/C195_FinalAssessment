@@ -164,11 +164,9 @@ public class AddEditCustomer extends BorderPane
            return false;
     }
 
-    private void checkForMaximumCharacters(TextInputControl inputElement, int maximum)
-    {
+    private void checkForMaximumCharacters(TextInputControl inputElement, int maximum) {
         String oldString = inputElement.getText();
-        if(oldString.length() > maximum)
-        {
+        if(oldString.length() > maximum) {
             String newString = oldString.substring(0, (maximum));
             inputElement.setText(newString);
             inputElement.positionCaret(maximum);

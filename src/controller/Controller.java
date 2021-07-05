@@ -167,16 +167,6 @@ public class Controller {
 				appScene.setRoot(custOverview);
 		}//switch
 	}//changeScene
-
-	/**
-	 *
-	 * @param start
-	 * @param end
-	 * @return
-	 */
-	public Set<Long> checkForOverlappingAppointments(LocalDateTime start, LocalDateTime end, long customerId) {
-		return dbConnection.checkForOverlappingAppointment(start, end, customerId);
-	}
 	
 	/**
 	 * Displays an information alert that informs the users which appointments will begin within 
@@ -233,7 +223,7 @@ public class Controller {
     		c.setAppointments(dbConnection.getCustomerAppointments(c.getCustomerId()));
 		if(c.getAppointments().size() > 0) { //TODO: filter past dated appointments
 			messageAlert.setAlertType(Alert.AlertType.INFORMATION);
-			messageAlert.setTitle("Customer Deletion");
+			messageAlert.setTitle("Delete Customer");
 			String message = "Cannot delete customer " + c.getName() + "(#" + c.getCustomerId() + ") because " +
 					"they still have the following " + c.getAppointments().size() + " appointments:\n";
 			for(Appointment a : c.getAppointments()) {
@@ -487,7 +477,7 @@ public class Controller {
 			System.out.println("Could not find " + f.getAbsolutePath() + "\n");
 			e.printStackTrace();
 		} catch(IOException e) {
-			System.out.println("IOException reading customer and appoinment id");
+			System.out.println("IOException reading customer and appointment id");
 			e.printStackTrace();
 		}
 	}//initializeIds

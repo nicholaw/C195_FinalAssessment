@@ -66,6 +66,7 @@ public class AddEditAppointment extends BorderPane
         //Add event handlers to scene elements
 		submitButton.setOnAction(event -> {
 			this.setDisable(true);
+			clearErrors();
 			if(this.validateForm()) {
 				if(newAppointment) {
 					Appointment a = new Appointment(Integer.parseInt(apptIdField.getText()), apptTitleField.getText(), descriptionArea.getText(),
@@ -85,6 +86,12 @@ public class AddEditAppointment extends BorderPane
 		cancelButton.setOnAction(event -> {
 			clear();
 			controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+		});
+		apptTitleField.setOnKeyReleased(event -> {
+			checkForMaximumCharacters(apptTitleField, AppointmentConstants.MAX_CHARS_TITLE);
+		});
+		descriptionArea.setOnKeyReleased(event -> {
+			checkForMaximumCharacters(descriptionArea, AppointmentConstants.MAX_CHARS_DESC);
 		});
 
         //add scene elements to container
@@ -107,6 +114,15 @@ public class AddEditAppointment extends BorderPane
         this.setTop(header);
 		this.setCenter(contentPane);
     }//constructor
+
+	private void checkForMaximumCharacters(TextInputControl inputElement, int maximum) {
+		String oldString = inputElement.getText();
+		if(oldString.length() > maximum) {
+			String newString = oldString.substring(0, (maximum));
+			inputElement.setText(newString);
+			inputElement.positionCaret(maximum);
+		}
+	}//checkForMaximumCharacters
 
 	/**
 	 *
@@ -157,8 +173,10 @@ public class AddEditAppointment extends BorderPane
 				break;
 			case END_TIME:
 				timeErrorLabel.setText(message);
+				break;
 			case DESC_AREA:
 				descriptionErrorLabel.setText(message);
+				break;
 			default :
 				controller.getMessageAlert().setAlertType(Alert.AlertType.ERROR);
 				controller.getMessageAlert().setContentText("An unknown validation error occurred");
@@ -183,7 +201,8 @@ public class AddEditAppointment extends BorderPane
     }//loadCustomerInfo
 
     public void loadNewAppointment() {
-
+		apptIdField.setText("" + controller.getNextAppointmentId());
+		dateTimePane.setDateTime(LocalDateTime.now());
     }//loadNewAppointment
 	
 	private void processChanges() {

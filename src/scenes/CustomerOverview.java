@@ -79,6 +79,7 @@ public class CustomerOverview  extends BorderPane
                         deleteCustomerButton.setDisable(true);
                     }
                 }
+                customersTable.refresh();
             }
         });//deleteCustomerButton
         logoutButton.setOnAction(event ->

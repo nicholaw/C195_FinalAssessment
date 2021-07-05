@@ -117,13 +117,6 @@ public class AppointmentOverview  extends BorderPane {
         deleteButton.setDisable(true);
         editButton.setDisable(true);
     }//clear
-	
-	/**
-	 *
-	 */
-	public Collection<Appointment> getAppointments() {
-		return customerToDisplay.getAppointments();
-	}//getAppointments
 
 	/**
 	 *
