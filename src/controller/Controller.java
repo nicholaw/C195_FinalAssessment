@@ -78,6 +78,27 @@ public class Controller {
      */
 	public void addAppointmentUpdate(AppointmentFieldCode code, String update) {
 		switch(code) {
+			case TITLE_FIELD:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_TITLE.getColName(), update);
+				break;
+			case DESC_AREA:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_DESCRIPTION.getColName(), update);
+				break;
+			case LOCATION_COMBO:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_LOCATION.getColName(), update);
+				break;
+			case TYPE_COMBO:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_TYPE.getColName(), update);
+				break;
+			case START_TIME:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_START.getColName(), update);
+				break;
+			case END_TIME:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_END.getColName(), update);
+				break;
+			case CONTACT_COMBO:
+				appointmentUpdates.put(AppointmentColumns.APPOINTMENT_CONTACT_ID.getColName(), update);
+				break;
 			default:
 		}
 	}//addAppointmentUpdate
@@ -511,9 +532,9 @@ public class Controller {
      */
     public boolean updateAppointment(int appointmentId) {
 		if(appointmentUpdates != null) {
-			//add user and date to appoinment updates for last updated by and last updated
+			//add user and date to appointment updates for last updated by and last updated
 			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
-			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
+			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATE_DATE.getColName(), LocalDateTime.now().format(ControllerConstants.TIMESTAMP_FORMAT));
 			return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
 		}
         return false;
@@ -542,13 +563,18 @@ public class Controller {
      * @param password  Password entered in the login form
      */
     public void validateLoginCredentials(String username, CharSequence password) {
-		if(dbConnection.validateCredentials(username).equals(Controller.pseudoHashPassword(password))) {
-            logLoginAttempt(username, true);
-            validLogin(username);
-        } else {
-            logLoginAttempt(username, false);
-            login.invalidLogin();
-        }
+    	try {
+			if(dbConnection.validateCredentials(username).equals(Controller.pseudoHashPassword(password))) {
+				logLoginAttempt(username, true);
+				validLogin(username);
+			} else {
+				logLoginAttempt(username, false);
+				login.invalidLogin();
+			}
+		} catch(NullPointerException e) {
+			logLoginAttempt(username, false);
+			login.invalidLogin();
+		}
     }//validateLoginCredentials
 
 	/**

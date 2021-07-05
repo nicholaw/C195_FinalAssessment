@@ -459,41 +459,32 @@ public class DBConnection
      * @param appointmentId Id of customer to be updated
      * @return  True if at least one table row was affected
      */
-    public boolean updateAppointment(HashMap<String, String> updates, int appointmentId)
-    {
-        if(updates != null)
-        {
-            Set<String> keys = updates.keySet();
-            String sql = "UPDATE customers SET ";
+    public boolean updateAppointment(HashMap<String, String> updates, int appointmentId) {
+        if(updates != null) {
+            String sql = "UPDATE appointments SET ";
+            var keys = updates.keySet();
+            var values = new ArrayList<String>();
             //Add the correct number of bind variables to sql statement
-            for(int i = 0; i < keys.size(); i++)
-            {
-                if(i == keys.size() - 1)
-                    sql += "? = ? ";
-                else
-                    sql += "? = ?, ";
+            for(String str : keys) {
+                if ((updates.get(str) != null) && (AppointmentColumns.contains(str))) {
+                    sql += (str + " = ?, ");
+                    values.add(updates.get(str));
+                }
             }
-            sql += "WHERE CustomerID = ?";
-            try(var stmt = conn.prepareStatement(sql))
-            {
+            //Remove the tailing comma
+            sql = sql.substring(0, sql.length() - 2);
+            sql += " WHERE Appointment_ID = ?";
+            try(var stmt = conn.prepareStatement(sql)) {
                 int bindIndex = 1;
-                for(String str : keys)
-                {
-                    //Contact Id column holds integers and update value must be parsed
-                    if(str.equals(AppointmentColumns.APPOINTMENT_CONTACT_ID.getColName()))
-                    {
+                for(String str : values) {
+                    try {
+                        //check for the id column
+                        stmt.setInt(bindIndex, Integer.parseInt(str));
+                    } catch(NumberFormatException e) {
                         stmt.setString(bindIndex, str);
-                        bindIndex++;
-                        stmt.setInt(bindIndex, Integer.parseInt(updates.get(str)));
-                        bindIndex++;
-                    } else
-                    {
-                        stmt.setString(bindIndex, str);
-                        bindIndex++;
-                        stmt.setString(bindIndex, updates.get(str));
-                        bindIndex++;
                     }
-                }//for str:keys
+                    bindIndex++;
+                }//for str:values
                 stmt.setInt(bindIndex, appointmentId);
                 return (stmt.executeUpdate() > 0);
             } catch(SQLException e) {
@@ -502,7 +493,6 @@ public class DBConnection
             }
         }//if updates!=null
         return false;
-
     }//updateAppointment
 
     /**

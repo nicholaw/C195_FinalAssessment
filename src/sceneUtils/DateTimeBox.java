@@ -33,4 +33,13 @@ public class DateTimeBox extends GridPane {
         start.setTime(dateTime);
         end.setTime(dateTime);
     }
+
+    public void setStart(LocalDateTime dateTime) {
+        date.setDateTime(dateTime);
+        start.setTime(dateTime);
+    }
+
+    public void setEnd(LocalDateTime dateTime) {
+        end.setTime(dateTime);
+    }
 }

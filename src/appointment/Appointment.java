@@ -159,6 +159,38 @@ public class Appointment
 			return false;
 	}
 
+	public void setTitle(String title) {
+    	this.title.setValue(title);
+	}
+
+	public void setDescription(String description) {
+    	this.description.setValue(description);
+	}
+
+	public void setStartDateTime(LocalDateTime start) {
+    	this.startDateTime = start;
+    	startDate.setValue(start.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		startTime.setValue(start.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+	}
+
+	public void setEndDateTime(LocalDateTime end) {
+		this.endDateTime = end;
+		endDate.setValue(end.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		endTime.setValue(end.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+	}
+
+	public void setLocation(Location l) {
+    	this.location = l;
+	}
+
+	public void setContact(Contact c) {
+    	this.contact = c;
+	}
+
+	public void setType(AppointmentType t) {
+    	this.type.setValue(t.getType());
+	}
+
 	/**
 	 *
 	 * @param start
@@ -175,5 +207,14 @@ public class Appointment
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof Appointment))
+			return false;
+		return (this.getAppointmentId() == ((Appointment) obj).getAppointmentId());
 	}
 }//class Appointment

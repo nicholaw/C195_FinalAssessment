@@ -5,16 +5,17 @@ import appointment.AppointmentConstants;
 import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
 import controller.Controller;
+import controller.ControllerConstants;
 import customer.Customer;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import sceneUtils.*;
+import utils.Contact;
 import utils.Location;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
-import java.util.Set;
 
 public class AddEditAppointment extends BorderPane
 {
@@ -28,7 +29,8 @@ public class AddEditAppointment extends BorderPane
     private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
     private Button 		submitButton;		private Button 			cancelButton;
 	private Label		titleErrorLabel;	private Label			timeErrorLabel;
-	private DateTimeBox dateTimePane;		private Label		descriptionErrorLabel;
+	private DateTimeBox dateTimePane;		private Label			descriptionErrorLabel;
+	private Appointment appointmentToEdit;
 
     public AddEditAppointment(Controller controller) {
         this.controller = controller;
@@ -54,6 +56,7 @@ public class AddEditAppointment extends BorderPane
         timeErrorLabel		= new Label("");
         titleErrorLabel		= new Label("");
         descriptionErrorLabel = new Label("");
+        appointmentToEdit 	= null;
 
         //set initial states for scene elements
         apptIdField.setDisable(true);
@@ -75,7 +78,7 @@ public class AddEditAppointment extends BorderPane
 					controller.addAppointment(a);
 					customerInfo.getCustomer().addAppointment(a);
 				} else {
-					processChanges();
+					processChanges(true);
 					controller.updateAppointment(Integer.parseInt(apptIdField.getText()));
 				}
 				clear();
@@ -135,6 +138,9 @@ public class AddEditAppointment extends BorderPane
 		customerInfo.clear();
 		this.clearCombo(apptTypeCombo);
 		this.clearCombo(locationBox);
+		appointmentToEdit = null;
+		newAppointment = true;
+		submitButton.setText("Schedule");
 		clearErrors();
 	}//clear
 	
@@ -191,6 +197,11 @@ public class AddEditAppointment extends BorderPane
 			apptTitleField.setText(a.getTitle());
 			apptTypeCombo.setValue(a.getType());
 			descriptionArea.setText(a.getDescription());
+			appointmentToEdit = a;
+			dateTimePane.setStart(a.getStartDateTime());
+			dateTimePane.setEnd(a.getEndDateTime());
+			submitButton.setText("Update");
+			newAppointment = false;
 		}
     }//loadAppointmentInfo
 
@@ -203,10 +214,83 @@ public class AddEditAppointment extends BorderPane
     public void loadNewAppointment() {
 		apptIdField.setText("" + controller.getNextAppointmentId());
 		dateTimePane.setDateTime(LocalDateTime.now());
+		submitButton.setText("Schedule");
+		newAppointment = true;
     }//loadNewAppointment
 	
-	private void processChanges() {
-		
+	private boolean processChanges(boolean commitChanges) {
+		boolean changesMade = false;
+		String tempString;
+
+		//check for title change
+		tempString = apptTitleField.getText();
+		if(!tempString.equals(appointmentToEdit.getTitle())) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.TITLE_FIELD, tempString);
+				appointmentToEdit.setTitle(tempString);
+			}
+		}
+
+		//check for description change
+		tempString = descriptionArea.getText();
+		if(!tempString.equals(appointmentToEdit.getDescription())) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.DESC_AREA, tempString);
+				appointmentToEdit.setDescription(tempString);
+			}
+		}
+
+		//check for location change
+		if(appointmentToEdit.getLocation() != locationBox.getValue()) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.LOCATION_COMBO, locationBox.getValue().toString());
+				appointmentToEdit.setLocation((Location) locationBox.getValue());
+			}
+		}
+
+		//check for type change
+		if(appointmentToEdit.getType() != apptTypeCombo.getValue()) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.TYPE_COMBO, apptTypeCombo.getValue().toString());
+				appointmentToEdit.setType((AppointmentType) apptTypeCombo.getValue());
+			}
+		}
+
+		//check for start change
+		LocalDateTime tempDateTime = dateTimePane.startDateTime();
+		if(!appointmentToEdit.getStartDateTime().equals(tempDateTime)) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.START_TIME, tempDateTime.format(ControllerConstants.TIMESTAMP_FORMAT));
+				appointmentToEdit.setStartDateTime(tempDateTime);
+			}
+		}
+
+		//check for end change
+		tempDateTime = dateTimePane.endDateTime();
+		if(!appointmentToEdit.getStartDateTime().equals(tempDateTime)) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.END_TIME, tempDateTime.format(ControllerConstants.TIMESTAMP_FORMAT));
+				appointmentToEdit.setEndDateTime(tempDateTime);
+			}
+		}
+
+		//check for contact change
+		Contact tempContact = contactBox.getSelectedContact();
+		if(!appointmentToEdit.getContact().equals(tempContact)) {
+			changesMade = true;
+			if(commitChanges) {
+				controller.addAppointmentUpdate(AppointmentFieldCode.CONTACT_COMBO, ("" + tempContact.getId()));
+				appointmentToEdit.setContact(tempContact);
+			}
+		}
+
+		return changesMade;
 	}//processChanges
 
 	/**
@@ -257,8 +341,14 @@ public class AddEditAppointment extends BorderPane
 			c.setAppointments(controller.getCustomerAppointments(customerInfo.getCustomer()));
 		}
 		for(Appointment a : c.getAppointments()) {
-			if(a.overlaps(start, end))
-				overlappingAppts.add(a);
+			if(a.overlaps(start, end)) {
+				if(newAppointment) {
+					overlappingAppts.add(a);
+				} else {
+					if(!(a.equals(appointmentToEdit)))
+						overlappingAppts.add(a);
+				}
+			}
 		}
 		if(overlappingAppts.size() > 0) {
 			valid = false;

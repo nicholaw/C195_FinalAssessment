@@ -3,9 +3,10 @@ package appointment;
 public enum AppointmentFieldCode {
 	ID_FIELD,
 	TITLE_FIELD,
-	TYPE_FIELD,
+	TYPE_COMBO,
 	START_TIME,
 	END_TIME,
 	DESC_AREA,
-	CONTACT_BOX
+	LOCATION_COMBO,
+	CONTACT_COMBO
 }
