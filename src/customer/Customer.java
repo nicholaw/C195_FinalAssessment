@@ -7,6 +7,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import utils.Country;
 import utils.Division;
 import java.util.Collection;
@@ -24,7 +26,7 @@ public class Customer
 	private StringProperty countryName;
 	private StringProperty divisionName;
 	private IntegerProperty scheduledAppointments;
-	private Set<Appointment> appointments;
+	private ObservableList<Appointment> appointments;
     private Country country;
     private Division division;
 
@@ -70,22 +72,29 @@ public class Customer
 			e.printStackTrace();
 		}
 		if(appointments == null)
-			this.appointments = new HashSet<>();
+			this.appointments = null;
 		else
-			this.appointments = new HashSet<>(appointments);
+			this.appointments = FXCollections.observableArrayList(appointments);
 		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", this.appointments.size());
 	}//constructor
 
 	public void setAppointments(Collection<Appointment> coll) {
-		appointments = new HashSet<>(coll);
-		scheduledAppointments.setValue(appointments.size());
+		if(coll == null)
+			appointments = null;
+		else {
+			appointments = FXCollections.observableArrayList(coll);
+			scheduledAppointments.setValue(appointments.size());
+		}
 	}
 
-	public void addAppointment(Appointment a) {
-		if(appointments == null)
-			appointments = new HashSet<>();
-		appointments.add(a);
-		scheduledAppointments.setValue(appointments.size());
+	public boolean addAppointment(Appointment a) {
+		if(appointments.contains(a))
+			return false;
+		else {
+			appointments.add(a);
+			scheduledAppointments.setValue(appointments.size());
+			return true;
+		}
 	}
 
 	public StringProperty addressProperty() {
@@ -124,7 +133,7 @@ public class Customer
 		return scheduledAppointments;
 	}
 
-	public Set<Appointment> getAppointments() {
+	public ObservableList<Appointment> getAppointments() {
 		return appointments;
 	}
 

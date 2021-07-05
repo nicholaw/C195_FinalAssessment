@@ -127,7 +127,7 @@ public class AppointmentOverview  extends BorderPane {
 		    customerInfo.setCustomer(customerToDisplay);
             if(c.getAppointments() == null)
                 c.setAppointments(controller.getCustomerAppointments(c));
-            appointmentsTable.setItems(FXCollections.observableArrayList(c.getAppointments()));
+            appointmentsTable.setItems(c.getAppointments());
             appointmentsTable.refresh();
         }
 	}//loadOverview

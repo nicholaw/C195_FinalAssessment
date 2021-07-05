@@ -159,10 +159,21 @@ public class Appointment
 			return false;
 	}
 
-	public boolean overlaps(LocalDateTime start) {
-		if(start != null) {
-			return (start.isAfter(this.startDateTime) && start.isBefore(this.endDateTime));
-		} else
-			return false;
+	/**
+	 *
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public boolean overlaps(LocalDateTime start, LocalDateTime end) {
+		if(start != null && end != null) {
+			if(start.isAfter(startDateTime) && start.isBefore(endDateTime))
+				return true;
+			if(end.isAfter(startDateTime) && end.isBefore(endDateTime))
+				return true;
+			if(start.isBefore(startDateTime) && end.isAfter(endDateTime))
+				return true;
+		}
+		return false;
 	}
 }//class Appointment

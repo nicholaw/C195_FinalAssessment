@@ -33,38 +33,6 @@ public class DBConnection
         }
     }//constructor
 
-    /**
-     *
-     * @param startDateTime
-     * @param endDateTime
-     * @return
-     */
-    public Set<Long> checkForOverlappingAppointment(LocalDateTime startDateTime, LocalDateTime endDateTime, long id) {
-        var appointments = new HashSet<Long>();
-        String sql =    "SELECT "                               +
-                            "Appointment_ID "                   +
-                        "FROM "                                 +
-                            "appointments "                     +
-                        "WHERE "                                +
-                            "Customer_Id = ? "                  +
-                            "AND ( Start BETWEEN ? AND ? "      +
-                            "OR End BETWEEN ? AND ? )";
-        try(var stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.setString(2, startDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-            stmt.setString(4, startDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-            stmt.setString(3, endDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-            stmt.setString(5, endDateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-            var result = stmt.executeQuery();
-            while(result.next()) {
-                appointments.add(result.getLong("Appointment_ID"));
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return appointments;
-    }//checkForOverLappingAppointments
-
     public boolean deleteAppointment(int id) {
 		String sql =	"DELETE FROM " 				+ 
 							"appointments " 		+
@@ -359,8 +327,6 @@ public class DBConnection
 			stmt.setLong	(13, user.getUserId());
 			stmt.setLong	(14, a.getContactId());
 			int rows = stmt.executeUpdate();
-			System.out.println("Adding appointment\nRows affected: " + rows);
-			printAppointments();
 			return (rows > 0);
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -257,7 +257,7 @@ public class AddEditAppointment extends BorderPane
 			c.setAppointments(controller.getCustomerAppointments(customerInfo.getCustomer()));
 		}
 		for(Appointment a : c.getAppointments()) {
-			if(a.overlaps(start))
+			if(a.overlaps(start, end))
 				overlappingAppts.add(a);
 		}
 		if(overlappingAppts.size() > 0) {
