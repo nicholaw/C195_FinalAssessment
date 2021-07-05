@@ -13,7 +13,6 @@ public class CustomerOverview  extends BorderPane
 {
     //Declare scene attributes and elements
     Controller controller;
-    Pane header;
     Label sceneLabel;
     Label userWelcomeLabel;
     TableView<Customer> customersTable;
@@ -28,7 +27,6 @@ public class CustomerOverview  extends BorderPane
     {
         //Instantiate scene elements
         this.controller = controller;
-        this.header = controller.getHeader();
         sceneLabel = new Label("Customer Overview");
         userWelcomeLabel = new Label("Welcome ...");
         customersTable = new TableView<>();
@@ -99,7 +97,7 @@ public class CustomerOverview  extends BorderPane
 
         //Add scene elements to containers
         HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, deleteCustomerButton, viewAppointmentsButton, logoutButton);
-        this.setTop(header);
+        this.setTop(this.controller.getHeader());
         this.setCenter(customersTable);
         this.setBottom(buttonBox);
     }//constructor

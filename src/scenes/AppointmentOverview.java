@@ -17,7 +17,7 @@ import java.util.Collection;
 
 public class AppointmentOverview  extends BorderPane {
     private Controller controller;
-    private Label sceneLabel;               private Pane header;
+    private Label sceneLabel;               //private Pane header;
     private CustomerHeader customerInfo;	private TableView<Appointment> appointmentsTable;
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
@@ -27,7 +27,7 @@ public class AppointmentOverview  extends BorderPane {
     public AppointmentOverview(Controller controller) {
         //Instantiate scene elements
         this.controller 	= 	controller;
-        this.header 		= 	this.controller.getHeader();
+        //this.header 		= 	this.controller.getHeader();
         sceneLabel 			= 	new Label("Appointment Overview");
         customerInfo        =   new CustomerHeader();
         appointmentsTable 	= 	new TableView<>();
@@ -103,7 +103,7 @@ public class AppointmentOverview  extends BorderPane {
         contentPane.addRow(1, customerInfo);
         contentPane.addRow(2, appointmentsTable);
         contentPane.addRow(3, buttonPane);
-        this.setTop(header);
+        this.setTop(this.controller.getHeader());
         this.setCenter(contentPane);
     }//constructor
 

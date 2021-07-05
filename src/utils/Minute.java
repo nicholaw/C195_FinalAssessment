@@ -32,7 +32,7 @@ public enum Minute {
 				}
 			}
 		}
-		return null;
+		return Minute.ZERO;
 	}
 	
 	public String getMinuteString() {

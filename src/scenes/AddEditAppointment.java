@@ -36,7 +36,7 @@ public class AddEditAppointment extends BorderPane
         this.controller = controller;
 
         //Instantiate scene elements
-        header 				= this.controller.getHeader();
+        //header 				= this.controller.getHeader();
         sceneLabel 			= new Label("Schedule Appointment");
 		customerInfo		= new CustomerHeader();
         apptIdLabel 		= new Label("Id");
@@ -114,7 +114,7 @@ public class AddEditAppointment extends BorderPane
 		contentPane.setTop(new VBox(sceneLabel, customerInfo));
 		contentPane.setCenter(centerPane);
 		contentPane.setBottom(buttonPane);
-        this.setTop(header);
+        this.setTop(this.controller.getHeader());
 		this.setCenter(contentPane);
     }//constructor
 

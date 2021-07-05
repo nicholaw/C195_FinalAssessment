@@ -21,7 +21,7 @@ public class AddEditCustomer extends BorderPane
     private Controller controller;
 
     //Scene elements
-    private Label sceneLabel;           private HeaderPane header;
+    private Label sceneLabel;
     private Label idLabel;              private TextField idField;
     private Label nameLabel;            private TextField nameField;      	private Label nameErrorLabel;
     private Label phoneLabel;           private TextField phoneField;     	private Label phoneErrorLabel;
@@ -42,7 +42,6 @@ public class AddEditCustomer extends BorderPane
 
         //Instantiate scene elements
         sceneLabel			= new Label("Add New Customer");
-        header				= controller.getHeader();
         idLabel				= new Label("Customer Id");
         idField				= new TextField("");
         nameLabel			= new Label("Name");
@@ -141,7 +140,7 @@ public class AddEditCustomer extends BorderPane
         fieldsPane.addRow(5, countryAndDivisionsCombos);
         fieldsPane.addRow(6, postCodeLabel, postCodeField,  postCodeErrorLabel);
         fieldsPane.addRow(7, buttonPane);
-        this.setTop(header);
+        this.setTop(this.controller.getHeader());
         this.setCenter(fieldsPane);
     }//constructor
 
