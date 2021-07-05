@@ -245,7 +245,7 @@ public class DBConnection
 							"Appointment_ID AS id, " 								+
 							"Title AS title, " 										+ 
 							"customers.Customer_Name AS customer, " 				+
-							"customers.Customer_ID AS cusotmerId, " 				+ 
+							"customers.Customer_ID AS customerId, " 				+
 							"Start AS start " 										+
 						"FROM " 													+ 
 							"appointments " 										+ 

@@ -114,7 +114,7 @@ public class AddEditAppointment extends BorderPane
 		contentPane.setTop(new VBox(sceneLabel, customerInfo));
 		contentPane.setCenter(centerPane);
 		contentPane.setBottom(buttonPane);
-        this.setTop(this.controller.getHeader());
+        //this.setTop(this.controller.getHeader());
 		this.setCenter(contentPane);
     }//constructor
 

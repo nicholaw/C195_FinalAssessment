@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.BorderPane;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
@@ -30,8 +31,9 @@ import utils.User;
 
 public class Controller {
     //final attributes
-    private final Scene appScene;
+    //private final Scene appScene;
     private final HeaderPane header;
+    private final BorderPane contentPane;
     private final LoginPage login;
     private AddEditAppointment editAppt;
     private AddEditCustomer editCust;
@@ -52,11 +54,13 @@ public class Controller {
 	private HashMap<String, String> appointmentUpdates;
 
     public Controller(Scene scn) {
-        appScene = scn;
         header = new HeaderPane();
+        contentPane = new BorderPane();
 		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
+        contentPane.setTop(header);
+        scn.setRoot(contentPane);
         this.changeScene(SceneCode.LOGIN, null);
         currentUser = null;
     }//constructor
@@ -154,6 +158,46 @@ public class Controller {
 		switch(code)
 		{
 			case LOGIN:
+				contentPane.setCenter(login);
+				break;
+			case CUSTOMER_OVERVIEW:
+				this.clearCustomerUpdates();
+				custOverview.refreshCustomersTable();
+				contentPane.setCenter(custOverview);
+				break;
+			case APPOINTMENT_OVERVIEW:
+				if(participant instanceof Customer) {
+					apptOverview.loadOverview((Customer)participant);
+				}
+				this.clearAppointmentUpdates();
+				contentPane.setCenter(apptOverview);
+				break;
+			case EDIT_CUSTOMER:
+				if(participant instanceof Customer)
+					editCust.loadCustomerInfo((Customer)participant);
+				else
+					editCust.loadNewCustomer();
+				contentPane.setCenter(editCust);
+				break;
+			case EDIT_APPOINTMENT:
+				if(participant instanceof Appointment)
+					editAppt.loadAppointmentInfo((Appointment)participant);
+				else
+					editAppt.loadNewAppointment();
+				editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
+				contentPane.setCenter(editAppt);
+				break;
+			default:
+				System.out.println("ERROR: Scene code was not recognized");
+				contentPane.setCenter(custOverview);
+		}//switch
+	}//changeScene
+
+	/*
+	public void changeScene(SceneCode code, Object participant) {
+		switch(code)
+		{
+			case LOGIN:
 				appScene.setRoot(login);
 				break;
 			case CUSTOMER_OVERVIEW:
@@ -188,6 +232,7 @@ public class Controller {
 				appScene.setRoot(custOverview);
 		}//switch
 	}//changeScene
+	*/
 	
 	/**
 	 * Displays an information alert that informs the users which appointments will begin within 

@@ -39,7 +39,7 @@ public class LoginPage extends BorderPane
 
         //Add nodes to containers
         VBox fieldBox = new VBox(usernameLabel, usernameField, passwordLabel, passwordField, errorMessageLabel);
-        this.setTop(this.controller.getHeader());
+        //this.setTop(this.controller.getHeader());
         this.setCenter(fieldBox);
         this.setBottom(submitButton);
 

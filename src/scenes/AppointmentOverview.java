@@ -103,7 +103,7 @@ public class AppointmentOverview  extends BorderPane {
         contentPane.addRow(1, customerInfo);
         contentPane.addRow(2, appointmentsTable);
         contentPane.addRow(3, buttonPane);
-        this.setTop(this.controller.getHeader());
+        //this.setTop(this.controller.getHeader());
         this.setCenter(contentPane);
     }//constructor
 

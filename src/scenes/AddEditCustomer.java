@@ -140,7 +140,7 @@ public class AddEditCustomer extends BorderPane
         fieldsPane.addRow(5, countryAndDivisionsCombos);
         fieldsPane.addRow(6, postCodeLabel, postCodeField,  postCodeErrorLabel);
         fieldsPane.addRow(7, buttonPane);
-        this.setTop(this.controller.getHeader());
+        //this.setTop(this.controller.getHeader());
         this.setCenter(fieldsPane);
     }//constructor
 
