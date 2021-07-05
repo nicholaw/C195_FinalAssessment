@@ -54,13 +54,14 @@ public class Controller {
 	private HashMap<String, String> appointmentUpdates;
 
     public Controller(Scene scn) {
-        header = new HeaderPane();
-        contentPane = new BorderPane();
+		contentPane = new BorderPane();
+		header = new HeaderPane();
+		contentPane.setTop(header);
+		scn.getStylesheets().add("/styles/style.css");
+		scn.setRoot(contentPane);
 		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
         login = new LoginPage(this);
-        contentPane.setTop(header);
-        scn.setRoot(contentPane);
         this.changeScene(SceneCode.LOGIN, null);
         currentUser = null;
     }//constructor

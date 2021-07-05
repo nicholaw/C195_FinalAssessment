@@ -36,6 +36,7 @@ public class LoginPage extends BorderPane
 
         //Set initial states for scene elements
         this.setPrefSize(800, 800);
+        usernameField.getStyleClass().add("test-field");
 
         //Add nodes to containers
         VBox fieldBox = new VBox(usernameLabel, usernameField, passwordLabel, passwordField, errorMessageLabel);

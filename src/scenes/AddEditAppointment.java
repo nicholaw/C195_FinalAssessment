@@ -87,8 +87,16 @@ public class AddEditAppointment extends BorderPane
 			this.setDisable(false);
 		});
 		cancelButton.setOnAction(event -> {
-			clear();
-			controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+			if(processChanges(false)) {
+				if(controller.displayConfirmationAlert("Confirm Navigation", "You have made changes to this appointment. Are you sure you would like to " +
+						"leave without saving these changes?")) {
+					clear();
+					controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+				}
+			} else {
+				clear();
+				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+			}
 		});
 		apptTitleField.setOnKeyReleased(event -> {
 			checkForMaximumCharacters(apptTitleField, AppointmentConstants.MAX_CHARS_TITLE);
