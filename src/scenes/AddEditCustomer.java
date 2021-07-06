@@ -4,6 +4,7 @@ import controller.Controller;
 import customer.Customer;
 import customer.CustomerConstants;
 import customer.CustomerFieldCode;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
@@ -66,11 +67,10 @@ public class AddEditCustomer extends BorderPane
 		customerToEdit = null;
 
         //Instantiate buttons and add event listeners
-        submitButton = new Button("Add Customer");
+        submitButton = new Button("Add");
         submitButton.setOnAction(event -> {
             this.setDisable(true);
-			if(this.validateForm())
-            {
+			if(this.validateForm()) {
                 if(newCustomer) {
 					controller.addCustomer(new Customer(Long.parseLong(idField.getText()), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
@@ -95,6 +95,7 @@ public class AddEditCustomer extends BorderPane
                         controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                     }
                 } else {
+                    clearAll();
                     controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 }
             } else if(processChanges(false)) {
@@ -104,6 +105,7 @@ public class AddEditCustomer extends BorderPane
                     controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 }
             } else {
+                clearAll();
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
             }
         });
@@ -130,18 +132,46 @@ public class AddEditCustomer extends BorderPane
 
         //Add elements to containers
         var buttonPane = new HBox(submitButton, cancelButton);
-        var fieldsPane = new GridPane();
-        fieldsPane.addRow(0, sceneLabel);
-        fieldsPane.addRow(1, idLabel,       idField);
-        fieldsPane.addRow(2, nameLabel,     nameField,      nameErrorLabel);
-        fieldsPane.addRow(3, phoneLabel,    phoneField,     phoneErrorLabel);
-        fieldsPane.addRow(4, addressLabel,  addressArea,    addressErrorLabel);
-        //fieldsPane.addRow(5, cityLabel, 	cityField,		cityErrorLabel);
-        fieldsPane.addRow(5, countryAndDivisionsCombos);
-        fieldsPane.addRow(6, postCodeLabel, postCodeField,  postCodeErrorLabel);
-        fieldsPane.addRow(7, buttonPane);
-        //this.setTop(this.controller.getHeader());
-        this.setCenter(fieldsPane);
+        var namePane = new GridPane();
+        namePane.add(nameLabel, 0, 0);
+        namePane.add(nameErrorLabel, 1, 0);
+        var phonePane = new GridPane();
+        phonePane.add(phoneLabel, 0, 0);
+        phonePane.add(phoneErrorLabel, 1, 0);
+        var addressPane = new GridPane();
+        addressPane.add(addressLabel, 0, 0);
+        addressPane.add(addressErrorLabel, 1, 0);
+        var postCodePane = new GridPane();
+        postCodePane.add(postCodeLabel, 0, 0);
+        postCodePane.add(postCodeErrorLabel, 1, 0);
+        var contentPane = new GridPane();
+        contentPane.add(sceneLabel, 0, 0);
+        contentPane.add(namePane, 0, 1);
+        contentPane.add(nameField, 0, 2);
+        contentPane.add(phonePane, 0, 3);
+        contentPane.add(phoneField, 0, 4);
+        contentPane.add(addressPane, 0, 5);
+        contentPane.add(addressArea, 0, 6);
+        contentPane.add(countryAndDivisionsCombos, 0, 7);
+        contentPane.add(postCodePane, 0, 8);
+        contentPane.add(postCodeField, 0, 9);
+        contentPane.add(buttonPane, 0, 10);
+        this.setCenter(contentPane);
+
+        //Style containers
+        contentPane.setAlignment(Pos.CENTER);
+        contentPane.setVgap(10);
+        buttonPane.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.setSpacing(20);
+        sceneLabel.getStyleClass().add("scene-label");
+        namePane.setHgap(20);
+        addressPane.setHgap(20);
+        phonePane.setHgap(20);
+        postCodePane.setHgap(20);
+        nameErrorLabel.getStyleClass().add("error-label");
+        phoneErrorLabel.getStyleClass().add("error-label");
+        addressErrorLabel.getStyleClass().add("error-label");
+        postCodeErrorLabel.getStyleClass().add("error-label");
     }//constructor
 
     /**
@@ -171,8 +201,7 @@ public class AddEditCustomer extends BorderPane
     }//checkForMaximumCharacters
 
     //Clears all values from input fields
-    public void clearAll()
-    {
+    public void clearAll() {
         nameErrorLabel.setText("");
         //cityErrorLabel.setText("");
         phoneErrorLabel.setText("");
@@ -183,7 +212,7 @@ public class AddEditCustomer extends BorderPane
         addressArea.setText("");
         //cityField.setText("");
         postCodeField.setText("");
-        countryAndDivisionsCombos.clear();
+        countryAndDivisionsCombos.reset();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
 		newCustomer = true;
 		customerToEdit = null;
@@ -217,7 +246,7 @@ public class AddEditCustomer extends BorderPane
 				countryAndDivisionsCombos.setSelectedCountry(c.getCountry());
 				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
-				submitButton.setText("Update Customer");
+				submitButton.setText("Update");
 			} catch(NullPointerException e) {
 				clearAll();
 				controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
@@ -232,6 +261,7 @@ public class AddEditCustomer extends BorderPane
     public void loadNewCustomer() {
         idField.setText("" + controller.getNextCustomerId());
 		newCustomer = true;
+		submitButton.setText("Add");
     }//loadNewCustomer
 
     /**
@@ -333,34 +363,34 @@ public class AddEditCustomer extends BorderPane
         input = nameField.getText().trim();
         if(input.isBlank() || input.isEmpty()) {
             valid = false;
-            flag(CustomerFieldCode.NAME_FIELD, "Name is required");
+            flag(CustomerFieldCode.NAME_FIELD, "- Name is required");
         }
 
         //check phone is not blank and matches regEx
         input = phoneField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
             valid = false;
-            flag(CustomerFieldCode.PHONE_FIELD, "Phone number is required");
+            flag(CustomerFieldCode.PHONE_FIELD, "- Phone number is required");
         } else if (Pattern.compile("[^0-9]").matcher(input).find()) {
             valid = false;
-            flag(CustomerFieldCode.PHONE_FIELD, "Phone number should only contain digits");
+            flag(CustomerFieldCode.PHONE_FIELD, "- Phone number may only contain digits");
         }
 
         //check that address is not blank
         input = addressArea.getText().trim();
         if(input.isBlank() || input.isEmpty()) {
             valid = false;
-            flag(CustomerFieldCode.ADDRESS_FIELD, "Address is required");
+            flag(CustomerFieldCode.ADDRESS_FIELD, "- Address is required");
         }
 
         //check that postal code is not blank and only contains digits
         input = phoneField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
             valid = false;
-            flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code is required");
+            flag(CustomerFieldCode.POST_CODE_FIELD, "- Postal code is required");
         } else if (Pattern.compile("[^0-9]").matcher(input).find()) {
             valid = false;
-            flag(CustomerFieldCode.POST_CODE_FIELD, "Postal code should only contain digits");
+            flag(CustomerFieldCode.POST_CODE_FIELD, "- Postal code may only contain digits");
         }
 
         return valid;

@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 
-public class AddEditAppointment extends BorderPane
-{
+public class AddEditAppointment extends BorderPane {
     private Controller	controller;			private boolean			newAppointment;
     private Pane 		header;            	private Label			sceneLabel;
     private Label 		apptIdLabel;      	private TextField		apptIdField;
@@ -228,7 +227,7 @@ public class AddEditAppointment extends BorderPane
 	
 	private boolean processChanges(boolean commitChanges) {
 		boolean changesMade = false;
-		String tempString;
+		String tempString = "";
 
 		//check for title change
 		tempString = apptTitleField.getText();

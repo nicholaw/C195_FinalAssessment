@@ -2,9 +2,11 @@ package scenes;
 
 import controller.Controller;
 import customer.Customer;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import sceneUtils.SceneCode;
@@ -23,8 +25,7 @@ public class CustomerOverview  extends BorderPane
     Button logoutButton;
     Customer selectedCustomer;
 
-    public CustomerOverview(Controller controller)
-    {
+    public CustomerOverview(Controller controller) {
         //Instantiate scene elements
         this.controller = controller;
         sceneLabel = new Label("Customer Overview");
@@ -96,10 +97,29 @@ public class CustomerOverview  extends BorderPane
 		});//customersTable
 
         //Add scene elements to containers
-        HBox buttonBox = new HBox(addCustomerButton, editCustomerButton, deleteCustomerButton, viewAppointmentsButton, logoutButton);
-        //this.setTop(this.controller.getHeader());
-        this.setCenter(customersTable);
-        this.setBottom(buttonBox);
+        var buttonSubpane1 = new GridPane();
+        buttonSubpane1.add(addCustomerButton, 0, 0);
+        buttonSubpane1.add(editCustomerButton, 1, 0);
+        buttonSubpane1.add(viewAppointmentsButton, 2, 0);
+        var buttonSubane2 = new HBox(deleteCustomerButton);
+        var buttonPane = new GridPane();
+        buttonPane.add(buttonSubpane1, 0, 0);
+        buttonPane.add(buttonSubane2, 1, 0);
+        var logoutPane = new HBox(logoutButton);
+        var contentPane = new GridPane();
+        contentPane.add(customersTable, 0, 0);
+        contentPane.add(buttonPane, 0, 1);
+        contentPane.add(logoutPane, 0, 2);
+        this.setCenter(contentPane);
+
+        //Style containers
+        contentPane.setAlignment(Pos.CENTER);
+        contentPane.setVgap(10);
+        contentPane.setHgap(10);
+        buttonSubpane1.setAlignment(Pos.CENTER_LEFT);
+        buttonSubane2.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.setHgap(10);
+        logoutPane.setAlignment(Pos.CENTER);
     }//constructor
 	
 	private void clear() {

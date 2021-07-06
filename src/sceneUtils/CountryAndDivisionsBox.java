@@ -2,13 +2,14 @@ package sceneUtils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import utils.Country;
 import utils.Division;
 
-public class CountryAndDivisionsBox extends HBox
+public class CountryAndDivisionsBox extends GridPane
 {
     //TODO: use observableList for items of combo boxes
     private ComboBox<Country> countryCombo;
@@ -36,7 +37,13 @@ public class CountryAndDivisionsBox extends HBox
         });
 
         //Add elements to this pane
-        this.getChildren().addAll(countryLabel, countryCombo, divisionLabel, firstLevelDivisionsCombo);
+        this.add(countryLabel, 0, 0);   this.add(divisionLabel, 1, 0);
+        this.add(countryCombo, 0, 1);   this.add(firstLevelDivisionsCombo, 1, 1);
+
+        //Style this pane
+        this.setAlignment(Pos.CENTER);
+        this.setHgap(20);
+        this.setVgap(10);
     }//constructor
 
     public Country getSelectedCountry()
@@ -48,6 +55,16 @@ public class CountryAndDivisionsBox extends HBox
     {
         return firstLevelDivisionsCombo.getValue();
     }
+
+    public void reset() {
+        if(countryCombo.getItems().size() > 0) {
+            countryCombo.setValue(countryCombo.getItems().get(0));
+            updateFirstDivisions();
+        } else {
+            countryCombo.setValue(null);
+            firstLevelDivisionsCombo.setValue(null);
+        }
+    }//clear
 
     /**
      *
@@ -99,15 +116,4 @@ public class CountryAndDivisionsBox extends HBox
             firstLevelDivisionsCombo.setValue(null);
         }
     }//updateFirstDivisions
-
-    public void clear() {
-        if(countryCombo.getItems().size() > 0) {
-            countryCombo.setValue(countryCombo.getItems().get(0));
-            updateFirstDivisions();
-        }
-        else {
-            countryCombo.setValue(null);
-            firstLevelDivisionsCombo.setValue(null);
-        }
-    }//clear
 }
