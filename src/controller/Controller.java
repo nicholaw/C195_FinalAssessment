@@ -31,7 +31,6 @@ import utils.User;
 
 public class Controller {
     //final attributes
-    //private final Scene appScene;
     private final HeaderPane header;
     private final BorderPane contentPane;
     private final LoginPage login;
@@ -57,7 +56,7 @@ public class Controller {
 		contentPane = new BorderPane();
 		header = new HeaderPane();
 		contentPane.setTop(header);
-		scn.getStylesheets().add("/styles/style.css");
+		scn.getStylesheets().add(ControllerConstants.STYLE_DESTINATION);
 		scn.setRoot(contentPane);
 		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
