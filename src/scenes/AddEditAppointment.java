@@ -19,23 +19,21 @@ import java.util.HashSet;
 
 public class AddEditAppointment extends BorderPane {
     private Controller	controller;			private boolean			newAppointment;
-    private Pane 		header;            	private Label			sceneLabel;
     private Label 		apptIdLabel;      	private TextField		apptIdField;
     private Label 		apptTitleLabel;   	private TextField		apptTitleField;
     private Label 		apptTypeLabel;    	private ComboBox		apptTypeCombo;
     private Label		locationLabel;		private ComboBox		locationBox;
     private ContactBox 	contactBox;  		private CustomerHeader	customerInfo;
-    private Label 		descriptionLabel; 	private TextArea 		descriptionArea;
+    private Label 		descriptionLabel; 	private TextField 		descriptionArea;
     private Button 		submitButton;		private Button 			cancelButton;
 	private Label		titleErrorLabel;	private Label			timeErrorLabel;
 	private DateTimeBox dateTimePane;		private Label			descriptionErrorLabel;
-	private Appointment appointmentToEdit;
+	private Appointment appointmentToEdit;	private Label			sceneLabel;
 
     public AddEditAppointment(Controller controller) {
         this.controller = controller;
 
         //Instantiate scene elements
-        //header 				= this.controller.getHeader();
         sceneLabel 			= new Label("Schedule Appointment");
 		customerInfo		= new CustomerHeader();
         apptIdLabel 		= new Label("Id");
@@ -49,7 +47,7 @@ public class AddEditAppointment extends BorderPane {
         locationBox			= new ComboBox<Location>(this.controller.getLocations());
 		contactBox 			= new ContactBox(this.controller.getContacts());
         descriptionLabel	= new Label("Description");
-        descriptionArea 	= new TextArea("");
+        descriptionArea 	= new TextField("");
         submitButton 	 	= new Button("Schedule");
         cancelButton 		= new Button("Cancel");
         timeErrorLabel		= new Label("");
@@ -86,15 +84,28 @@ public class AddEditAppointment extends BorderPane {
 			this.setDisable(false);
 		});
 		cancelButton.setOnAction(event -> {
-			if(processChanges(false)) {
-				if(controller.displayConfirmationAlert("Confirm Navigation", "You have made changes to this appointment. Are you sure you would like to " +
-						"leave without saving these changes?")) {
+			if(newAppointment) {
+				if(checkForInput()) {
+					if(controller.displayConfirmationAlert("Confirm Navigation", "You have not finished scheduling this appointment. Are you sure you would like to " +
+							"leave without finishing?")) {
+						clear();
+						controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+					}
+				} else {
 					clear();
 					controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
 				}
 			} else {
-				clear();
-				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+				if(processChanges(false)) {
+					if(controller.displayConfirmationAlert("Confirm Navigation", "You have made changes to this appointment. Are you sure you would like to " +
+							"leave without saving these changes?")) {
+						clear();
+						controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+					}
+				} else {
+					clear();
+					controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
+				}
 			}
 		});
 		apptTitleField.setOnKeyReleased(event -> {
@@ -107,23 +118,48 @@ public class AddEditAppointment extends BorderPane {
         //add scene elements to container
 		var submitPane = new HBox(submitButton);
 		var cancelPane = new HBox(cancelButton);
-		submitPane.setAlignment(Pos.BOTTOM_LEFT);
-		cancelPane.setAlignment(Pos.BOTTOM_RIGHT);
 		var buttonPane = new BorderPane();
-		buttonPane.setLeft(submitPane);
 		buttonPane.setRight(cancelPane);
-		var topCenterPane = new GridPane();
-		topCenterPane.addRow(0, apptIdLabel, apptIdField, apptTitleLabel, apptTitleField);
-		topCenterPane.addRow(1, apptTypeLabel, apptTypeCombo, locationLabel, locationBox);
-		var centerPane = new VBox(topCenterPane, dateTimePane, descriptionLabel, descriptionArea, contactBox,
-				titleErrorLabel, descriptionErrorLabel, timeErrorLabel);
-		var contentPane = new BorderPane();
-		contentPane.setTop(new VBox(sceneLabel, customerInfo));
-		contentPane.setCenter(centerPane);
-		contentPane.setBottom(buttonPane);
-        //this.setTop(this.controller.getHeader());
+		buttonPane.setLeft(submitPane);
+		var contentPane = new GridPane();
+		contentPane.add(sceneLabel, 0, 0);
+		contentPane.add(customerInfo, 0, 1);
+		contentPane.add(apptTitleLabel, 0, 2);
+		contentPane.add(apptTitleField, 0, 3);
+		contentPane.add(apptTypeLabel, 0, 4);
+		contentPane.add(apptTypeCombo, 0, 5);
+		contentPane.add(locationLabel, 0, 6);
+		contentPane.add(locationBox, 0, 7);
+		contentPane.add(dateTimePane, 0, 8);
+		contentPane.add(descriptionLabel, 0, 9);
+		contentPane.add(descriptionArea, 0, 10);
+		contentPane.add(contactBox, 0, 11);
+		contentPane.add(buttonPane, 0, 12);
 		this.setCenter(contentPane);
+
+		//Style scene elements
+		contentPane.setVgap(10);
+		contentPane.setAlignment(Pos.CENTER);
+		submitPane.setAlignment(Pos.CENTER_LEFT);
+		cancelPane.setAlignment(Pos.CENTER_RIGHT);
     }//constructor
+
+	private boolean checkForInput() {
+    	boolean newInput = false;
+    	String tempString;
+
+    	tempString = apptTitleField.getText();
+    	if(!(tempString.isBlank() || tempString.isEmpty())) {
+			newInput = true;
+		}
+
+    	tempString = descriptionArea.getText();
+    	if(!(tempString.isEmpty() || tempString.isBlank())) {
+			newInput = true;
+		}
+
+    	return newInput;
+	}
 
 	private void checkForMaximumCharacters(TextInputControl inputElement, int maximum) {
 		String oldString = inputElement.getText();

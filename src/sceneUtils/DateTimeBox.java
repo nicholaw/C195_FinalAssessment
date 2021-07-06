@@ -1,5 +1,6 @@
 package sceneUtils;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -16,8 +17,27 @@ public class DateTimeBox extends GridPane {
         start   =   new TimeBox(currentDateTime);
         end     =   new TimeBox(currentDateTime);
 
-        this.addRow(0, new Label("Date"), date.getDatePane(), date.getYearPane());
-        this.addRow(1, new Label("Start"), start, new Label("End"), end);
+        //Add elements
+        var startPane = new GridPane();
+        startPane.add(new Label("Start"), 0, 0);
+        startPane.add(start, 0, 1);
+        var endPane = new GridPane();
+        endPane.add(new Label("End"), 0, 0);
+        endPane.add(end, 0, 1);
+        var timePane = new GridPane();
+        timePane.add(startPane, 0, 0);
+        timePane.add(endPane, 1, 0);
+        this.add(date, 0, 0);
+        this.add(timePane, 0, 1);
+
+        //Style elements
+        this.setVgap(10);
+        this.setHgap(10);
+        timePane.setHgap(10);
+        timePane.setAlignment(Pos.CENTER);
+        startPane.setAlignment(Pos.CENTER);
+        endPane.setAlignment(Pos.CENTER);
+        this.setAlignment(Pos.CENTER);
     }
 
     public LocalDateTime endDateTime() {

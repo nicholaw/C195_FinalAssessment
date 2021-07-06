@@ -1,14 +1,15 @@
 package sceneUtils;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import utils.Contact;
 
 import java.util.Collection;
 
-public class ContactBox extends HBox {
+public class ContactBox extends GridPane {
 	private Label contactLabel;
 	private ComboBox<Contact> contactsCombo;
 	private TextField emailField;
@@ -32,7 +33,17 @@ public class ContactBox extends HBox {
 		});
 		
 		//Add elements to container
-		this.getChildren().addAll(contactLabel, contactsCombo, emailField);
+		var comboPane = new GridPane();
+		comboPane.add(contactsCombo, 0, 0);
+		comboPane.add(emailField, 1, 0);
+		this.add(contactLabel, 0, 0);
+		this.add(comboPane, 0, 1);
+
+		//Style elements
+		comboPane.setAlignment(Pos.CENTER);
+		comboPane.setHgap(10);
+		this.setAlignment(Pos.CENTER);
+		this.setVgap(10);
 	}//constructor
 
 	public void reset() {

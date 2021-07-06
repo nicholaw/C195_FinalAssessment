@@ -2,15 +2,15 @@ package sceneUtils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
+import java.time.LocalDateTime;
+
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import java.time.LocalDateTime;
-import javafx.scene.layout.Pane;
 import utils.Month;
 
-public class DateBox {
+public class DateBox extends GridPane {
     private ComboBox<Month>   monthCombo;
     private ComboBox<Integer> dayCombo;
     private ComboBox<Integer> yearCombo;
@@ -27,16 +27,24 @@ public class DateBox {
         monthCombo.setOnAction(event -> {
             updateDays();
         });
+
+        //Add elements
+        this.add(new Label("Date"), 0, 0);
+        var comboPane = new GridPane();
+        comboPane.add(monthCombo, 0, 0);
+        comboPane.add(dayCombo, 1, 0);
+        comboPane.add(yearCombo, 2, 0);
+        this.add(comboPane, 0, 1);
+
+        //Style elements
+        this.setVgap(10);
+        comboPane.setHgap(10);
+        this.setAlignment(Pos.CENTER);
+        comboPane.setAlignment(Pos.CENTER);
     }//constructor
 
     public int getDayOfMonth() {
         return dayCombo.getValue();
-    }
-
-    public Pane getDatePane() {
-        var pane = new GridPane();
-        pane.addRow(0, monthCombo, new Label(""), dayCombo);
-        return pane;
     }
 
     public int getMonthOfYear() {
@@ -45,10 +53,6 @@ public class DateBox {
 
     public int getYear() {
         return yearCombo.getValue();
-    }
-
-    public Node getYearPane() {
-        return yearCombo;
     }
 
     /**

@@ -3,12 +3,12 @@ package sceneUtils;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import java.time.LocalDateTime;
+import javafx.scene.layout.HBox;
 import utils.Hour;
 import utils.Minute;
 
-public class TimeBox extends GridPane {
+public class TimeBox extends HBox {
 	private ComboBox<Hour>    hourCombo;
 	private ComboBox<Minute>  minuteCombo;
 	
@@ -16,7 +16,12 @@ public class TimeBox extends GridPane {
 		hourCombo	=	new ComboBox<>(FXCollections.observableArrayList(Hour.values()));
 		minuteCombo =	new ComboBox<>(FXCollections.observableArrayList(Minute.values()));
 		setTime(time);
-		this.addRow(0, hourCombo, new Label(" : "), minuteCombo);
+
+		//Add elements to containers
+		this.getChildren().setAll(hourCombo, new Label(":"), minuteCombo);
+
+		//Style elements
+		this.setSpacing(5);
 	}//constructor
 
 	public int getHour() {

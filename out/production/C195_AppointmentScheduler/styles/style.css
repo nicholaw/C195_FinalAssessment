@@ -4,10 +4,12 @@
     -fx-base: rgb(132, 145, 47);
     -fx-background: rgb(225, 228, 203);
 }
-.scene-label{
-    -fx-font-size: 24pt;
+.app-header{
 }
 .error-label{
     /*-fx-color: #FA8072;*/
     -fx-text-fill: rgb(250, 128, 114);
+}
+.scene-label{
+    -fx-font-size: 24pt;
 }

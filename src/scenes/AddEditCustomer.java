@@ -42,7 +42,7 @@ public class AddEditCustomer extends BorderPane
         this.controller = controller;
 
         //Instantiate scene elements
-        sceneLabel			= new Label("Add New Customer");
+        sceneLabel			= new Label("Add Customer");
         idLabel				= new Label("Customer Id");
         idField				= new TextField("");
         nameLabel			= new Label("Name");
@@ -212,6 +212,7 @@ public class AddEditCustomer extends BorderPane
         addressArea.setText("");
         //cityField.setText("");
         postCodeField.setText("");
+        sceneLabel.setText("Add Customer");
         countryAndDivisionsCombos.reset();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
 		newCustomer = true;
@@ -247,6 +248,7 @@ public class AddEditCustomer extends BorderPane
 				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
 				submitButton.setText("Update");
+				sceneLabel.setText("Edit Customer");
 			} catch(NullPointerException e) {
 				clearAll();
 				controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
@@ -260,6 +262,7 @@ public class AddEditCustomer extends BorderPane
 
     public void loadNewCustomer() {
         idField.setText("" + controller.getNextCustomerId());
+        sceneLabel.setText("Add Customer");
 		newCustomer = true;
 		submitButton.setText("Add");
     }//loadNewCustomer
