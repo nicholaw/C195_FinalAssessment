@@ -3,13 +3,14 @@ package sceneUtils;
 import customer.Customer;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
  * Displays customer information to inform the user which customer for
  * which they are creating or editing an appointment
  */
-public class CustomerHeader extends HBox {
+public class CustomerHeader extends GridPane {
 	private final Label label;
 	private TextField idField;
 	private TextField nameField;
@@ -20,7 +21,7 @@ public class CustomerHeader extends HBox {
 	 *
 	 */
 	public CustomerHeader() {
-		label		=	new Label("Customer: ");
+		label		=	new Label("Customer");
 		idField		=	new TextField("");
 		nameField	=	new TextField("");
 		phoneField	=	new TextField("");
@@ -28,7 +29,14 @@ public class CustomerHeader extends HBox {
 		idField.setDisable(true);
 		nameField.setDisable(true);
 		phoneField.setDisable(true);
-		this.getChildren().addAll(label, idField, nameField, phoneField);
+
+		//Add elements to containers
+		var fieldPane = new HBox(nameField, phoneField);
+		this.add(label, 0, 0);
+		this.add(fieldPane, 0, 1);
+
+		//Style elements
+		fieldPane.setSpacing(10);
 	}//constructor
 
 	/**

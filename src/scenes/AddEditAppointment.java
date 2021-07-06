@@ -27,7 +27,7 @@ public class AddEditAppointment extends BorderPane {
     private Label 		descriptionLabel; 	private TextField 		descriptionArea;
     private Button 		submitButton;		private Button 			cancelButton;
 	private Label		titleErrorLabel;	private Label			timeErrorLabel;
-	private DateTimeBox dateTimePane;		private Label			descriptionErrorLabel;
+	private DateTimeBox dateTimePane;		private Label descErrorLabel;
 	private Appointment appointmentToEdit;	private Label			sceneLabel;
 
     public AddEditAppointment(Controller controller) {
@@ -41,7 +41,10 @@ public class AddEditAppointment extends BorderPane {
         apptTitleLabel 		= new Label("Title");
         apptTitleField 		= new TextField("");
         apptTypeLabel 		= new Label("Type");
-        dateTimePane		= new DateTimeBox();
+		timeErrorLabel		= new Label("");
+		titleErrorLabel		= new Label("");
+		descErrorLabel 		= new Label("");
+        dateTimePane		= new DateTimeBox(timeErrorLabel);
         apptTypeCombo 	 	= new ComboBox<AppointmentType>(this.controller.getAppointmentTypes());
         locationLabel		= new Label("Location");
         locationBox			= new ComboBox<Location>(this.controller.getLocations());
@@ -50,9 +53,6 @@ public class AddEditAppointment extends BorderPane {
         descriptionArea 	= new TextField("");
         submitButton 	 	= new Button("Schedule");
         cancelButton 		= new Button("Cancel");
-        timeErrorLabel		= new Label("");
-        titleErrorLabel		= new Label("");
-        descriptionErrorLabel = new Label("");
         appointmentToEdit 	= null;
 
         //set initial states for scene elements
@@ -116,32 +116,42 @@ public class AddEditAppointment extends BorderPane {
 		});
 
         //add scene elements to container
-		var submitPane = new HBox(submitButton);
-		var cancelPane = new HBox(cancelButton);
-		var buttonPane = new BorderPane();
-		buttonPane.setRight(cancelPane);
-		buttonPane.setLeft(submitPane);
+		var buttonPane = new HBox(submitButton, cancelButton);
+		var headerPane = new GridPane();
+		headerPane.add(sceneLabel, 0, 0);
+		headerPane.add(customerInfo, 0, 1);
+		var titlePane = new HBox(apptTitleLabel, titleErrorLabel);
+		var descPane = new HBox(descriptionLabel, descErrorLabel);
+		var fieldsPane = new GridPane();
+		fieldsPane.add(titlePane, 0, 0);
+		fieldsPane.add(apptTitleField, 0, 1);
+		fieldsPane.add(apptTypeLabel, 0, 2);
+		fieldsPane.add(apptTypeCombo, 0, 3);
+		fieldsPane.add(locationLabel, 0, 4);
+		fieldsPane.add(locationBox, 0, 5);
+		fieldsPane.add(dateTimePane, 0, 6);
+		fieldsPane.add(descPane, 0, 7);
+		fieldsPane.add(descriptionArea, 0, 8);
+		fieldsPane.add(contactBox, 0, 9);
 		var contentPane = new GridPane();
-		contentPane.add(sceneLabel, 0, 0);
-		contentPane.add(customerInfo, 0, 1);
-		contentPane.add(apptTitleLabel, 0, 2);
-		contentPane.add(apptTitleField, 0, 3);
-		contentPane.add(apptTypeLabel, 0, 4);
-		contentPane.add(apptTypeCombo, 0, 5);
-		contentPane.add(locationLabel, 0, 6);
-		contentPane.add(locationBox, 0, 7);
-		contentPane.add(dateTimePane, 0, 8);
-		contentPane.add(descriptionLabel, 0, 9);
-		contentPane.add(descriptionArea, 0, 10);
-		contentPane.add(contactBox, 0, 11);
-		contentPane.add(buttonPane, 0, 12);
+		contentPane.add(headerPane, 0, 0);
+		contentPane.add(fieldsPane, 0, 1);
+		contentPane.add(buttonPane, 0, 2);
 		this.setCenter(contentPane);
 
 		//Style scene elements
-		contentPane.setVgap(10);
+		sceneLabel.getStyleClass().add("scene-label");
+		fieldsPane.setVgap(10);
+		fieldsPane.setAlignment(Pos.CENTER);
+		buttonPane.setAlignment(Pos.CENTER_RIGHT);
 		contentPane.setAlignment(Pos.CENTER);
-		submitPane.setAlignment(Pos.CENTER_LEFT);
-		cancelPane.setAlignment(Pos.CENTER_RIGHT);
+		contentPane.setVgap(20);
+		buttonPane.setSpacing(20);
+		titlePane.setSpacing(20);
+		descPane.setSpacing(20);
+		timeErrorLabel.getStyleClass().add("error-label");
+		titleErrorLabel.getStyleClass().add("error-label");
+		descErrorLabel.getStyleClass().add("error-label");
     }//constructor
 
 	private boolean checkForInput() {
@@ -184,6 +194,7 @@ public class AddEditAppointment extends BorderPane {
 		appointmentToEdit = null;
 		newAppointment = true;
 		submitButton.setText("Schedule");
+		sceneLabel.setText("Schedule Appointment");
 		clearErrors();
 	}//clear
 	
@@ -206,7 +217,7 @@ public class AddEditAppointment extends BorderPane {
 	private void clearErrors() {
 		titleErrorLabel.setText("");
 		timeErrorLabel.setText("");
-		descriptionErrorLabel.setText("");
+		descErrorLabel.setText("");
 	}//clearErrors
 	
 	/**
@@ -224,7 +235,7 @@ public class AddEditAppointment extends BorderPane {
 				timeErrorLabel.setText(message);
 				break;
 			case DESC_AREA:
-				descriptionErrorLabel.setText(message);
+				descErrorLabel.setText(message);
 				break;
 			default :
 				controller.getMessageAlert().setAlertType(Alert.AlertType.ERROR);
@@ -244,7 +255,10 @@ public class AddEditAppointment extends BorderPane {
 			dateTimePane.setStart(a.getStartDateTime());
 			dateTimePane.setEnd(a.getEndDateTime());
 			submitButton.setText("Update");
+			sceneLabel.setText("Edit Appointment");
 			newAppointment = false;
+		} else {
+			loadNewAppointment();
 		}
     }//loadAppointmentInfo
 
@@ -258,6 +272,7 @@ public class AddEditAppointment extends BorderPane {
 		apptIdField.setText("" + controller.getNextAppointmentId());
 		dateTimePane.setDateTime(LocalDateTime.now());
 		submitButton.setText("Schedule");
+		sceneLabel.setText("Schedule Appointment");
 		newAppointment = true;
     }//loadNewAppointment
 	
@@ -348,14 +363,14 @@ public class AddEditAppointment extends BorderPane {
 		tempString = apptTitleField.getText();
 		if(tempString.isBlank() || tempString.isEmpty()) {
 			valid = false;
-			flag(AppointmentFieldCode.TITLE_FIELD, "Title is required.");
+			flag(AppointmentFieldCode.TITLE_FIELD, "- Title is required");
 		}
 
 		//Check that description is not blank
 		tempString = descriptionArea.getText();
 		if(tempString.isBlank() || tempString.isEmpty()) {
 			valid = false;
-			flag(AppointmentFieldCode.DESC_AREA, "Description is required.");
+			flag(AppointmentFieldCode.DESC_AREA, "- Description is required");
 		}
 
 		//Check that start date\time is before end date\time
@@ -363,7 +378,7 @@ public class AddEditAppointment extends BorderPane {
 		var end = dateTimePane.endDateTime();
 		if(start.isAfter(end)) {
 			valid = false;
-			flag(AppointmentFieldCode.START_TIME, "End time must be after start time.");
+			flag(AppointmentFieldCode.START_TIME, "- End time must be after start time");
 		}
 
 		//Check that meeting time is within business hours (08:00-22:00 EST)
@@ -371,10 +386,10 @@ public class AddEditAppointment extends BorderPane {
 		var endTime = LocalTime.of(end.getHour(), end.getMinute());
 		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
-			flag(AppointmentFieldCode.START_TIME, "Appointment must be within the business hours of 08:00 - 22:00 EST.");
+			flag(AppointmentFieldCode.START_TIME, "- Appointment must be within the business hours of 08:00 - 22:00 EST");
 		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
-			flag(AppointmentFieldCode.START_TIME, "Appointment must be within the business hours of 08:00 - 22:00 EST.");
+			flag(AppointmentFieldCode.START_TIME, "- Appointment must be within the business hours of 08:00 - 22:00 EST");
 		}
 
 		//Check that meeting does not overlap another existing appointment
@@ -395,7 +410,7 @@ public class AddEditAppointment extends BorderPane {
 		}
 		if(overlappingAppts.size() > 0) {
 			valid = false;
-			String message = "Appointment overlaps the following existing appointments:\n";
+			String message = "- Appointment overlaps the following existing appointments:\n";
 			for(Appointment a : overlappingAppts) {
 				message += "\t" + a.getAppointmentId() + "(" + a.getTitle() + ")\n";
 			}

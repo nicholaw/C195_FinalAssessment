@@ -40,9 +40,7 @@ public class ContactBox extends GridPane {
 		this.add(comboPane, 0, 1);
 
 		//Style elements
-		comboPane.setAlignment(Pos.CENTER);
 		comboPane.setHgap(10);
-		this.setAlignment(Pos.CENTER);
 		this.setVgap(10);
 	}//constructor
 

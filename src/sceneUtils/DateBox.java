@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import utils.Month;
 
 public class DateBox extends GridPane {
@@ -39,8 +40,30 @@ public class DateBox extends GridPane {
         //Style elements
         this.setVgap(10);
         comboPane.setHgap(10);
-        this.setAlignment(Pos.CENTER);
-        comboPane.setAlignment(Pos.CENTER);
+    }//constructor
+
+    public DateBox(LocalDateTime date, Label error) {
+        monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
+        dayCombo	=	new ComboBox<>(days);
+        yearCombo   =   new ComboBox<>(FXCollections.observableArrayList(date.getYear(), date.getYear() + 1));
+        setDateTime(date);
+        monthCombo.setOnAction(event -> {
+            updateDays();
+        });
+
+        //Add elements
+        var labelPane = new HBox(new Label("Date"), error);
+        this.add(labelPane, 0, 0);
+        var comboPane = new GridPane();
+        comboPane.add(monthCombo, 0, 0);
+        comboPane.add(dayCombo, 1, 0);
+        comboPane.add(yearCombo, 2, 0);
+        this.add(comboPane, 0, 1);
+
+        //Style elements
+        this.setVgap(10);
+        labelPane.setSpacing(20);
+        comboPane.setHgap(10);
     }//constructor
 
     public int getDayOfMonth() {
