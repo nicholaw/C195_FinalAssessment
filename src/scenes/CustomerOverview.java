@@ -2,6 +2,7 @@ package scenes;
 
 import controller.Controller;
 import customer.Customer;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -97,29 +98,26 @@ public class CustomerOverview  extends BorderPane
 		});//customersTable
 
         //Add scene elements to containers
-        var buttonSubpane1 = new GridPane();
-        buttonSubpane1.add(addCustomerButton, 0, 0);
-        buttonSubpane1.add(editCustomerButton, 1, 0);
-        buttonSubpane1.add(viewAppointmentsButton, 2, 0);
-        var buttonSubane2 = new HBox(deleteCustomerButton);
-        var buttonPane = new GridPane();
-        buttonPane.add(buttonSubpane1, 0, 0);
-        buttonPane.add(buttonSubane2, 1, 0);
+        var buttonPane = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, deleteCustomerButton);
         var logoutPane = new HBox(logoutButton);
+        var tablePane = new GridPane();
+        tablePane.add(customersTable, 0, 0);
+        tablePane.add(buttonPane, 0, 1);
         var contentPane = new GridPane();
-        contentPane.add(customersTable, 0, 0);
-        contentPane.add(buttonPane, 0, 1);
+        contentPane.add(sceneLabel, 0, 0);
+        contentPane.add(tablePane, 0, 1);
         contentPane.add(logoutPane, 0, 2);
         this.setCenter(contentPane);
 
         //Style containers
         contentPane.setAlignment(Pos.CENTER);
-        contentPane.setVgap(10);
-        contentPane.setHgap(10);
-        buttonSubpane1.setAlignment(Pos.CENTER_LEFT);
-        buttonSubane2.setAlignment(Pos.CENTER_RIGHT);
-        buttonPane.setHgap(10);
+        buttonPane.setAlignment(Pos.CENTER);
         logoutPane.setAlignment(Pos.CENTER);
+        tablePane.setVgap(10);
+        contentPane.setVgap(20);
+        buttonPane.setSpacing(10);
+        logoutPane.setPadding(new Insets(10, 10, 10, 10));
+        sceneLabel.getStyleClass().add("scene-label");
     }//constructor
 	
 	private void clear() {

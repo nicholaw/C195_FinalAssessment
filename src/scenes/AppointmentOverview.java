@@ -5,6 +5,7 @@ import controller.Controller;
 import customer.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -93,18 +94,28 @@ public class AppointmentOverview  extends BorderPane {
         });
 
         //Add scene elements to containers
-        HBox leftButtonPane = new HBox(scheduleButton, editButton, deleteButton);
-        HBox rightButtonPane = new HBox(returnButton);
-        BorderPane buttonPane = new BorderPane();
-        buttonPane.setLeft(leftButtonPane);
-        buttonPane.setRight(rightButtonPane);
-        GridPane contentPane = new GridPane();
-        contentPane.addRow(0, sceneLabel);
-        contentPane.addRow(1, customerInfo);
-        contentPane.addRow(2, appointmentsTable);
-        contentPane.addRow(3, buttonPane);
-        //this.setTop(this.controller.getHeader());
+        var headerPane = new GridPane();
+        headerPane.add(sceneLabel, 0, 0);
+        headerPane.add(customerInfo, 0, 1);
+        var buttonPane = new HBox(scheduleButton, editButton, deleteButton);
+        var footerPane = new HBox(returnButton);
+        var tablePane = new GridPane();
+        tablePane.add(appointmentsTable, 0, 0);
+        tablePane.add(buttonPane, 0, 1);
+        var contentPane = new GridPane();
+        contentPane.add(headerPane, 0, 0);
+        contentPane.add(tablePane, 0, 1);
+        contentPane.add(footerPane, 0, 2);
         this.setCenter(contentPane);
+
+        //Style elements
+        contentPane.setAlignment(Pos.CENTER);
+        footerPane.setAlignment(Pos.CENTER);
+        contentPane.setVgap(20);
+        tablePane.setVgap(10);
+        buttonPane.setSpacing(10);
+        sceneLabel.getStyleClass().add("scene-label");
+
     }//constructor
 
     /**
