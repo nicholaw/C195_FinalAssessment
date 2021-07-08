@@ -9,9 +9,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import sceneUtils.Refreshable;
 
-public class LoginPage extends BorderPane
-{
+public class LoginPage extends BorderPane implements Refreshable {
     //Scene controls
     private Controller      controller;
     private TextField       usernameField;
@@ -31,17 +31,18 @@ public class LoginPage extends BorderPane
         errorMessageLabel   =   new Label("");
         submitButton        =   new Button(this.controller.getResourceBundle().getString("submit"));
 
-        //Set initial states for scene elements
-        //this.setPrefSize(800, 800);
-
         //Add nodes to containers and style
+        var usernamePane = new HBox(usernameLabel);
+        usernamePane.setAlignment(Pos.CENTER_RIGHT);
+        var passwordPane = new HBox(passwordLabel);
+        passwordPane.setAlignment(Pos.CENTER_RIGHT);
         var fieldPane = new GridPane();
         fieldPane.setPadding(new Insets(10,10,10,10));
         fieldPane.setHgap(10);
         fieldPane.setVgap(10);
         fieldPane.setAlignment(Pos.CENTER);
-        fieldPane.add(usernameLabel, 0, 0);   fieldPane.add(usernameField, 1, 0);
-        fieldPane.add(passwordLabel, 0, 1);   fieldPane.add(passwordField, 1, 1);
+        fieldPane.add(usernamePane, 0, 0);   fieldPane.add(usernameField, 1, 0);
+        fieldPane.add(passwordPane, 0, 1);   fieldPane.add(passwordField, 1, 1);
         var buttonPane = new HBox(submitButton);
         buttonPane.setAlignment(Pos.CENTER_RIGHT);
         buttonPane.setPadding(new Insets(10, 10, 10, 10));
@@ -74,6 +75,10 @@ public class LoginPage extends BorderPane
         errorMessageLabel.setText("");
     }
 
+    public void clear() {
+        this.clearAll();
+    }
+
     private void clearErrorMessage() {
         errorMessageLabel.setText("");
     }
@@ -81,6 +86,15 @@ public class LoginPage extends BorderPane
     public void invalidLogin() {
         passwordField.setText("");
         errorMessageLabel.setText("Username or password were invalid");
+    }
+
+    public void refresh() {
+        //TODO: I hate this b/c it is hardcoded and scene-specific
+        usernameLabel.setText(this.controller.getResourceBundle().getString("username"));
+        passwordLabel.setText(this.controller.getResourceBundle().getString("password"));
+        submitButton.setText(this.controller.getResourceBundle().getString("submit"));
+        if(!errorMessageLabel.getText().isEmpty())
+            errorMessageLabel.setText(this.controller.getResourceBundle().getString("login_error"));
     }
 
     private void submitForm() {

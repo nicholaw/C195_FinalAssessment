@@ -34,25 +34,25 @@ public class AddEditAppointment extends BorderPane {
         this.controller = controller;
 
         //Instantiate scene elements
-        sceneLabel 			= new Label("Schedule Appointment");
+        sceneLabel 			= new Label(this.controller.getResourceBundle().getString("schedule_appointment"));
 		customerInfo		= new CustomerHeader();
-        apptIdLabel 		= new Label("Id");
+        apptIdLabel 		= new Label(this.controller.getResourceBundle().getString("id"));
         apptIdField 		= new TextField("" + controller.getNextAppointmentId());
-        apptTitleLabel 		= new Label("Title");
+        apptTitleLabel 		= new Label(this.controller.getResourceBundle().getString("title"));
         apptTitleField 		= new TextField("");
-        apptTypeLabel 		= new Label("Type");
+        apptTypeLabel 		= new Label(this.controller.getResourceBundle().getString("type"));
 		timeErrorLabel		= new Label("");
 		titleErrorLabel		= new Label("");
 		descErrorLabel 		= new Label("");
         dateTimePane		= new DateTimeBox(timeErrorLabel);
         apptTypeCombo 	 	= new ComboBox<AppointmentType>(this.controller.getAppointmentTypes());
-        locationLabel		= new Label("Location");
+        locationLabel		= new Label(this.controller.getResourceBundle().getString("location"));
         locationBox			= new ComboBox<Location>(this.controller.getLocations());
 		contactBox 			= new ContactBox(this.controller.getContacts());
-        descriptionLabel	= new Label("Description");
+        descriptionLabel	= new Label(this.controller.getResourceBundle().getString("description"));
         descriptionArea 	= new TextField("");
-        submitButton 	 	= new Button("Schedule");
-        cancelButton 		= new Button("Cancel");
+        submitButton 	 	= new Button(this.controller.getResourceBundle().getString("schedule"));
+        cancelButton 		= new Button(this.controller.getResourceBundle().getString("cancel"));
         appointmentToEdit 	= null;
 
         //set initial states for scene elements
@@ -193,8 +193,8 @@ public class AddEditAppointment extends BorderPane {
 		this.clearCombo(locationBox);
 		appointmentToEdit = null;
 		newAppointment = true;
-		submitButton.setText("Schedule");
-		sceneLabel.setText("Schedule Appointment");
+		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
+		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
 		clearErrors();
 	}//clear
 	
@@ -254,8 +254,8 @@ public class AddEditAppointment extends BorderPane {
 			appointmentToEdit = a;
 			dateTimePane.setStart(a.getStartDateTime());
 			dateTimePane.setEnd(a.getEndDateTime());
-			submitButton.setText("Update");
-			sceneLabel.setText("Edit Appointment");
+			submitButton.setText(this.controller.getResourceBundle().getString("update"));
+			sceneLabel.setText(this.controller.getResourceBundle().getString("update_appointment"));
 			newAppointment = false;
 		} else {
 			loadNewAppointment();
@@ -271,8 +271,8 @@ public class AddEditAppointment extends BorderPane {
     public void loadNewAppointment() {
 		apptIdField.setText("" + controller.getNextAppointmentId());
 		dateTimePane.setDateTime(LocalDateTime.now());
-		submitButton.setText("Schedule");
-		sceneLabel.setText("Schedule Appointment");
+		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
+		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
 		newAppointment = true;
     }//loadNewAppointment
 	

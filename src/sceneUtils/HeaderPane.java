@@ -1,27 +1,54 @@
 package sceneUtils;
 
+import controller.Controller;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import localization.SupportedLocale;
 
 public class HeaderPane extends BorderPane {
-    private Label currentTimeLabel;
+    private Controller controller;
+    private Clock currentLocalTime;
     private Label languageZoneLabel;
     private ComboBox languageZoneCombo;
+    private ComboBox timeZoneCombo;
 
-    public HeaderPane() {
-        currentTimeLabel = new Label("08:00 EST"); //TODO: placeholder; Time zone separate label?
+    public HeaderPane(Controller controller, ObservableList<SupportedLocale> supportedLocales, SupportedLocale defaultLocale) {
+        this.controller = controller;
+        currentLocalTime = new Clock();
+        timeZoneCombo = new ComboBox<String>();
+        timeZoneCombo.getItems().setAll("EST", "GMT");
+        timeZoneCombo.setValue(timeZoneCombo.getItems().get(0));
         languageZoneLabel = new Label("Language: ");
-        languageZoneCombo = new ComboBox<String>();
-        languageZoneCombo.getItems().addAll("EN", "FR");
-        languageZoneCombo.setValue("EN");
-        HBox clockPane = new HBox(currentTimeLabel);
-        clockPane.setAlignment(Pos.CENTER_LEFT);
-        HBox languagePane = new HBox(languageZoneLabel, languageZoneCombo);
-        languagePane.setAlignment(Pos.CENTER_RIGHT);
+        languageZoneCombo = new ComboBox<>(supportedLocales);
+        languageZoneCombo.setValue(defaultLocale);
+
+        //Add event listeners to elements
+        languageZoneCombo.setOnAction(event -> {
+            SupportedLocale sl = (SupportedLocale)languageZoneCombo.getValue();
+            if(sl != null) {
+                if(!(sl.equals(this.controller.getCurrentLocale()))) {
+                    controller.setLocale(sl);
+                }
+            }
+        });
+        timeZoneCombo.setOnAction(event -> {
+            //TODO: populate method
+        });
+
+        //Add elements to containers
+        var clockPane = new HBox(currentLocalTime, timeZoneCombo);
+        var languagePane = new HBox(languageZoneLabel, languageZoneCombo);
         this.setLeft(clockPane);
         this.setRight(languagePane);
+
+        //Style elements and containers
+        clockPane.setAlignment(Pos.CENTER_LEFT);
+        languagePane.setAlignment(Pos.CENTER_RIGHT);
+        this.setPadding(new Insets(0, 10, 0, 10));
     }
 }

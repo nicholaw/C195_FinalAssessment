@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
+import localization.SupportedLocale;
 import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import scenes.*;
@@ -47,6 +48,7 @@ public class Controller {
     private long nextCustomerId;
     private long nextAppointmentId;
 	private ResourceBundle rb;
+	private SceneCode currentScene;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
 	private ObservableList<Contact> contacts;
@@ -54,9 +56,9 @@ public class Controller {
 	private HashMap<String, String> appointmentUpdates;
 
     public Controller(Scene scn) {
-    	rb = ResourceBundle.getBundle("localization.Localization", Locale.ENGLISH);
+    	rb = ResourceBundle.getBundle("localization.Localization", Locale.FRENCH);
 		contentPane = new BorderPane();
-		header = new HeaderPane();
+		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()), SupportedLocale.LOCALE_FRENCH);
 		contentPane.setTop(header);
 		scn.getStylesheets().add(ControllerConstants.STYLE_DESTINATION);
 		scn.setRoot(contentPane);
@@ -193,6 +195,7 @@ public class Controller {
 				System.out.println("ERROR: Scene code was not recognized");
 				contentPane.setCenter(custOverview);
 		}//switch
+		currentScene = code;
 	}//changeScene
 	
 	/**
@@ -292,6 +295,10 @@ public class Controller {
 	 */
 	public ObservableList<AppointmentType> getAppointmentTypes() {
 		return FXCollections.observableArrayList(AppointmentType.values());
+	}
+
+	public Locale getCurrentLocale() {
+		return rb.getLocale();
 	}
 
     public Location getLocation(String name) {
@@ -487,6 +494,24 @@ public class Controller {
 			e.printStackTrace();
 		}
 	}//initializeIds
+
+	private void refreshScene() {
+		switch(currentScene) {
+			case LOGIN:
+				login.refresh();
+				break;
+			default:
+		}
+	}
+
+	/**
+	 *
+	 * @param locale
+	 */
+	public void setLocale(SupportedLocale locale) {
+		rb = ResourceBundle.getBundle("localization.Localization", locale.getLocale());
+		refreshScene();
+	}
 	
 	/**
 	 *
