@@ -24,12 +24,12 @@ public class LoginPage extends BorderPane
     public LoginPage(Controller controller) {
         //Initialize fields
         this.controller = controller;
-        usernameLabel       =   new Label("Username");
+        usernameLabel       =   new Label(this.controller.getResourceBundle().getString("username"));
         usernameField       =   new TextField();
-        passwordLabel       =   new Label("Password");
+        passwordLabel       =   new Label(this.controller.getResourceBundle().getString("password"));
         passwordField       =   new PasswordField();
         errorMessageLabel   =   new Label("");
-        submitButton        =   new Button("Submit");
+        submitButton        =   new Button(this.controller.getResourceBundle().getString("submit"));
 
         //Set initial states for scene elements
         //this.setPrefSize(800, 800);

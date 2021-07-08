@@ -16,7 +16,7 @@ public class ContactBox extends GridPane {
 	
 	public ContactBox(Collection<Contact> contacts) {
 		//Instantiate elements
-		contactLabel = new Label("Contact:");
+		contactLabel = new Label("Contact");
 		contactsCombo = new ComboBox<>();
 		emailField = new TextField("");
 		

@@ -46,6 +46,7 @@ public class Controller {
     private Alert messageAlert;
     private long nextCustomerId;
     private long nextAppointmentId;
+	private ResourceBundle rb;
     private ObservableList<Country> countries;
 	private ObservableList<Customer> customers;
 	private ObservableList<Contact> contacts;
@@ -53,6 +54,7 @@ public class Controller {
 	private HashMap<String, String> appointmentUpdates;
 
     public Controller(Scene scn) {
+    	rb = ResourceBundle.getBundle("localization.Localization", Locale.ENGLISH);
 		contentPane = new BorderPane();
 		header = new HeaderPane();
 		contentPane.setTop(header);
@@ -192,47 +194,6 @@ public class Controller {
 				contentPane.setCenter(custOverview);
 		}//switch
 	}//changeScene
-
-	/*
-	public void changeScene(SceneCode code, Object participant) {
-		switch(code)
-		{
-			case LOGIN:
-				appScene.setRoot(login);
-				break;
-			case CUSTOMER_OVERVIEW:
-				this.clearCustomerUpdates();
-				custOverview.refreshCustomersTable();
-				appScene.setRoot(custOverview);
-				break;
-			case APPOINTMENT_OVERVIEW:
-				if(participant instanceof Customer) {
-					apptOverview.loadOverview((Customer)participant);
-				}
-				this.clearAppointmentUpdates();
-				appScene.setRoot(apptOverview);
-				break;
-			case EDIT_CUSTOMER:
-				if(participant instanceof Customer)
-					editCust.loadCustomerInfo((Customer)participant);
-				else
-					editCust.loadNewCustomer();
-				appScene.setRoot(editCust);
-				break;
-			case EDIT_APPOINTMENT:
-				if(participant instanceof Appointment)
-					editAppt.loadAppointmentInfo((Appointment)participant);
-				else
-					editAppt.loadNewAppointment();
-				editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
-				appScene.setRoot(editAppt);
-				break;
-			default:
-				System.out.println("ERROR: Scene code was not recognized");
-				appScene.setRoot(custOverview);
-		}//switch
-	}//changeScene
-	*/
 	
 	/**
 	 * Displays an information alert that informs the users which appointments will begin within 
@@ -325,14 +286,6 @@ public class Controller {
 		return (result.isPresent() && result.get() == ButtonType.OK);
 	}
 
-    /**
-     *
-     * @return
-     */
-    public HeaderPane getHeader() {
-        return header;
-    }
-
 	/**
 	 *
 	 * @return
@@ -340,14 +293,6 @@ public class Controller {
 	public ObservableList<AppointmentType> getAppointmentTypes() {
 		return FXCollections.observableArrayList(AppointmentType.values());
 	}
-
-    /**
-     *
-     * @return
-     */
-    public HashMap<String, String> getAppointmentUpdates() {
-        return appointmentUpdates;
-    }
 
     public Location getLocation(String name) {
     	for(Location l : Location.values()) {
@@ -427,14 +372,6 @@ public class Controller {
      *
      * @return
      */
-    public HashMap<String, String> getCustomerUpdates() {
-        return customerUpdates;
-    }
-
-    /**
-     *
-     * @return
-     */
     public long getNextAppointmentId() {
         return nextAppointmentId;
     }
@@ -451,6 +388,9 @@ public class Controller {
         return currentUser;
     }//getSessionUser
 
+	public ResourceBundle getResourceBundle() {
+    	return rb;
+	}
 
 	/**
 	 *

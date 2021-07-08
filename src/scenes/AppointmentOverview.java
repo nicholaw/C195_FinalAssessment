@@ -124,7 +124,6 @@ public class AppointmentOverview  extends BorderPane {
     private void clear() {
         customerInfo.clear();
         selectedAppointment = null;
-        appointmentsTable.getItems().removeAll(appointmentsTable.getItems());
         deleteButton.setDisable(true);
         editButton.setDisable(true);
     }//clear

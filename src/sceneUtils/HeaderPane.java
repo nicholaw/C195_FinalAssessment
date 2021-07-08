@@ -6,14 +6,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
-public class HeaderPane extends BorderPane
-{
+public class HeaderPane extends BorderPane {
     private Label currentTimeLabel;
     private Label languageZoneLabel;
     private ComboBox languageZoneCombo;
 
-    public HeaderPane()
-    {
+    public HeaderPane() {
         currentTimeLabel = new Label("08:00 EST"); //TODO: placeholder; Time zone separate label?
         languageZoneLabel = new Label("Language: ");
         languageZoneCombo = new ComboBox<String>();

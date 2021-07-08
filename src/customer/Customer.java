@@ -12,8 +12,6 @@ import javafx.collections.ObservableList;
 import utils.Country;
 import utils.Division;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Customer
 {
@@ -71,11 +69,14 @@ public class Customer
 			divisionName = new SimpleStringProperty(this, "division", "NULL");
 			e.printStackTrace();
 		}
-		if(appointments == null)
+		if(appointments == null) {
 			this.appointments = null;
-		else
+			scheduledAppointments = new SimpleIntegerProperty(this, "appointments", 0);
+		}
+		else {
 			this.appointments = FXCollections.observableArrayList(appointments);
-		scheduledAppointments = new SimpleIntegerProperty(this, "appointments", this.appointments.size());
+			scheduledAppointments = new SimpleIntegerProperty(this, "appointments", appointments.size());
+		}
 	}//constructor
 
 	public void setAppointments(Collection<Appointment> coll) {
