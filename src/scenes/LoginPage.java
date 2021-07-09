@@ -9,17 +9,18 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import sceneUtils.ErrorLabel;
+import sceneUtils.ErrorMessage;
 import sceneUtils.Refreshable;
 
 public class LoginPage extends BorderPane implements Refreshable {
-    //Scene controls
     private Controller      controller;
     private TextField       usernameField;
     private PasswordField   passwordField;
     private Button          submitButton;
     private Label           usernameLabel;
     private Label           passwordLabel;
-    private Label           errorMessageLabel;
+    private ErrorLabel      errorMessageLabel;
 
     public LoginPage(Controller controller) {
         //Initialize fields
@@ -28,7 +29,7 @@ public class LoginPage extends BorderPane implements Refreshable {
         usernameField       =   new TextField();
         passwordLabel       =   new Label(this.controller.getResourceBundle().getString("password"));
         passwordField       =   new PasswordField();
-        errorMessageLabel   =   new Label("");
+        errorMessageLabel   =   new ErrorLabel();
         submitButton        =   new Button(this.controller.getResourceBundle().getString("submit"));
 
         //Add nodes to containers and style
@@ -51,14 +52,13 @@ public class LoginPage extends BorderPane implements Refreshable {
         contentPane.setHgap(10);
         contentPane.setVgap(10);
         contentPane.setAlignment(Pos.CENTER);
-        contentPane.add(fieldPane, 0, 0);
-        contentPane.add(buttonPane, 0, 1);
-        contentPane.add(errorMessageLabel, 0, 2);
-        //contentPane.setBorder(new Border());
+        contentPane.add(errorMessageLabel, 0, 0);
+        contentPane.add(fieldPane, 0, 1);
+        contentPane.add(buttonPane, 0, 2);
         this.setCenter(contentPane);
         this.setPrefSize(500, 500);
 
-        //Add event listeners to buttons
+        //Add event listeners to buttons and fields
         submitButton.setOnAction(event -> {
             submitForm();
         });//submitButton
@@ -69,34 +69,55 @@ public class LoginPage extends BorderPane implements Refreshable {
         });
     }//constructor
 
+    /**
+     *
+     */
     public void clearAll() {
         usernameField.setText("");
         passwordField.setText("");
         errorMessageLabel.setText("");
     }
 
+    /**
+     * Driver method for the clearAll method
+     */
     public void clear() {
         this.clearAll();
     }
 
+    /**
+     *
+     */
     private void clearErrorMessage() {
-        errorMessageLabel.setText("");
+        errorMessageLabel.clear();
     }
 
+    /**
+     *
+     */
     public void invalidLogin() {
         passwordField.setText("");
-        errorMessageLabel.setText("Username or password were invalid");
+        errorMessageLabel.setMessage(controller.getResourceBundle().getString(ErrorMessage.LOGIN_CREDENTIAL_ERROR.getLocaleKey()), ErrorMessage.LOGIN_CREDENTIAL_ERROR);
     }
 
+    /**
+     *
+     */
     public void refresh() {
         //TODO: I hate this b/c it is hardcoded and scene-specific
         usernameLabel.setText(this.controller.getResourceBundle().getString("username"));
         passwordLabel.setText(this.controller.getResourceBundle().getString("password"));
         submitButton.setText(this.controller.getResourceBundle().getString("submit"));
-        if(!errorMessageLabel.getText().isEmpty())
-            errorMessageLabel.setText(this.controller.getResourceBundle().getString("login_error"));
+        if(errorMessageLabel.getError() != null) {
+            errorMessageLabel.setText(controller.getResourceBundle().getString(errorMessageLabel.getError().getLocaleKey()));
+        } else {
+            errorMessageLabel.setText("");
+        }
     }
 
+    /**
+     *
+     */
     private void submitForm() {
         this.setDisable(true);
         clearErrorMessage();
@@ -121,13 +142,13 @@ public class LoginPage extends BorderPane implements Refreshable {
         tempString = usernameField.getText();
         if(tempString.isEmpty() || tempString.isBlank()) {
             valid = false;
-            errorMessageLabel.setText("Username is required");
+            errorMessageLabel.setMessage(controller.getResourceBundle().getString(ErrorMessage.LOGIN_USERNAME_ERROR.getLocaleKey()), ErrorMessage.LOGIN_USERNAME_ERROR);
         }
 
         //Check that password is not blank
         if(!(passwordField.getCharacters().length() > 0)) {
             valid = false;
-            errorMessageLabel.setText("Password is required");
+            errorMessageLabel.setMessage(controller.getResourceBundle().getString(ErrorMessage.LOGIN_PASSWORD_ERROR.getLocaleKey()), ErrorMessage.LOGIN_PASSWORD_ERROR);
         }
 
         return valid;

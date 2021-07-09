@@ -163,6 +163,7 @@ public class Controller {
 		{
 			case LOGIN:
 				contentPane.setCenter(login);
+				currentUser = null;
 				break;
 			case CUSTOMER_OVERVIEW:
 				this.clearCustomerUpdates();
@@ -456,12 +457,6 @@ public class Controller {
 		}
 	}//logLoginAttempt
 	
-	private boolean overlapsExistingAppointment(Appointment a) {
-		//check when adding appointment or updating appointment
-		//can check in observable list from appointment overview
-		return false;
-	}//overlapsExistingAppointment
-	
 	/**
 	 *
 	 */
@@ -500,7 +495,9 @@ public class Controller {
 			case LOGIN:
 				login.refresh();
 				break;
-			default:
+			case CUSTOMER_OVERVIEW:
+				custOverview.refresh();
+				break;
 		}
 	}
 

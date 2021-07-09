@@ -23,7 +23,7 @@ public class HeaderPane extends BorderPane {
         timeZoneCombo = new ComboBox<String>();
         timeZoneCombo.getItems().setAll("EST", "GMT");
         timeZoneCombo.setValue(timeZoneCombo.getItems().get(0));
-        languageZoneLabel = new Label("Language: ");
+        languageZoneLabel = new Label(this.controller.getResourceBundle().getString("language"));
         languageZoneCombo = new ComboBox<>(supportedLocales);
         languageZoneCombo.setValue(defaultLocale);
 
@@ -33,6 +33,7 @@ public class HeaderPane extends BorderPane {
             if(sl != null) {
                 if(!(sl.equals(this.controller.getCurrentLocale()))) {
                     controller.setLocale(sl);
+                    languageZoneLabel.setText(controller.getResourceBundle().getString("language"));
                 }
             }
         });

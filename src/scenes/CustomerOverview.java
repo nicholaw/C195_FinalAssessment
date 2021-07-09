@@ -5,53 +5,35 @@ import customer.Customer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import sceneUtils.CustomerOverviewTable;
+import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 
-public class CustomerOverview  extends BorderPane
-{
-    //Declare scene attributes and elements
+public class CustomerOverview  extends BorderPane implements Refreshable {
     Controller controller;
     Label sceneLabel;
-    Label userWelcomeLabel;
-    TableView<Customer> customersTable;
+    CustomerOverviewTable customersTable;
     Button addCustomerButton;
     Button editCustomerButton;
     Button viewAppointmentsButton;
     Button deleteCustomerButton;
     Button logoutButton;
-    Customer selectedCustomer;
 
     public CustomerOverview(Controller controller) {
-        //Instantiate scene elements
         this.controller = controller;
-        sceneLabel = new Label("Customer Overview");
-        userWelcomeLabel = new Label("Welcome ...");
-        customersTable = new TableView<>();
-        addCustomerButton = new Button("Add Customer");
-        editCustomerButton = new Button("Edit Customer");
-        viewAppointmentsButton = new Button("View Appointments");
-        deleteCustomerButton = new Button("Delete Customer");
-        logoutButton = new Button("Logout");
-        selectedCustomer = null;
 
-        //Set initial states for tableview
-        customersTable.setItems(controller.getCustomers());
-        TableColumn<Customer, Long> idCol = new TableColumn<>("Customer ID");
-        idCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-        TableColumn<Customer, String> nameCol = new TableColumn<>("Customer");
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TableColumn<Customer, String> phoneCol = new TableColumn<>("Phone");
-        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
-        countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
-        TableColumn<Customer, Integer> apptsCol = new TableColumn<>("Appointments");
-        apptsCol.setCellValueFactory(new PropertyValueFactory<>("appointments"));
-        customersTable.getColumns().setAll(idCol, nameCol, phoneCol, countryCol, apptsCol);
+        //Instantiate scene elements
+        customersTable          = new   CustomerOverviewTable(controller.getResourceBundle(), controller.getCustomers());
+        sceneLabel              = new   Label("");
+        addCustomerButton       = new   Button("");
+        viewAppointmentsButton  = new   Button("");
+        deleteCustomerButton    = new   Button("");
+        logoutButton            = new   Button("");
+        editCustomerButton      = new   Button("");
+        setElementText();
 		
 		//set initial states for buttons
 		editCustomerButton.setDisable(true);
@@ -63,34 +45,31 @@ public class CustomerOverview  extends BorderPane
             controller.changeScene(SceneCode.EDIT_CUSTOMER, null);
         });//addCustomerButton
         editCustomerButton.setOnAction(event -> {
-            controller.changeScene(SceneCode.EDIT_CUSTOMER, selectedCustomer);
+            controller.changeScene(SceneCode.EDIT_CUSTOMER, customersTable.getSelectedCustomer());
         });//editCustomerButton
         viewAppointmentsButton.setOnAction(event -> {
-            controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, selectedCustomer);
+            controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, customersTable.getSelectedCustomer());
         });//viewAppointmentsButton
         deleteCustomerButton.setOnAction(event -> {
-            if(controller.displayConfirmationAlert("Confirm Delete", "Are you sure you would like to " +
-                    "delete this customer?")) {
-                if(controller.deleteCustomer(selectedCustomer)) {
-                    selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
-                    if(selectedCustomer == null) {
-                        editCustomerButton.setDisable(true);
+            if(customersTable.getSelectedCustomer() != null) {
+                Customer selectedCustomer = customersTable.getSelectedCustomer();
+                if(controller.displayConfirmationAlert("Confirm Delete", "Are you sure you would like to " +
+                        "delete this customer?")) {
+                    if(controller.deleteCustomer(selectedCustomer)) {
                         viewAppointmentsButton.setDisable(true);
+                        editCustomerButton.setDisable(true);
                         deleteCustomerButton.setDisable(true);
+                        customersTable.refresh();
                     }
                 }
-                customersTable.refresh();
             }
         });//deleteCustomerButton
-        logoutButton.setOnAction(event ->
-        {
+        logoutButton.setOnAction(event -> {
 			this.clear();
             controller.changeScene(SceneCode.LOGIN, null);
         });//logoutButton
 		customersTable.setOnMouseClicked(event -> {
-			Object obj = customersTable.getSelectionModel().getSelectedItem();
-			if(obj != null) {
-				selectedCustomer = (Customer)obj;
+			if(customersTable.getSelectedCustomer() != null) {
 				editCustomerButton.setDisable(false);
 				viewAppointmentsButton.setDisable(false);
 				deleteCustomerButton.setDisable(false);
@@ -119,12 +98,31 @@ public class CustomerOverview  extends BorderPane
         logoutPane.setPadding(new Insets(10, 10, 10, 10));
         sceneLabel.getStyleClass().add("scene-label");
     }//constructor
-	
-	private void clear() {
-		selectedCustomer = null;
+
+    @Override
+    public void refresh() {
+        setElementText();
+        customersTable.setResourceBundle(controller.getResourceBundle());
+    }
+
+    private void setElementText() {
+        sceneLabel.setText(this.controller.getResourceBundle().getString("customer_overview"));
+        addCustomerButton.setText(this.controller.getResourceBundle().getString("add") + " " +
+                this.controller.getResourceBundle().getString("customer"));
+        editCustomerButton.setText(this.controller.getResourceBundle().getString("edit") + " " +
+                this.controller.getResourceBundle().getString("customer"));
+        viewAppointmentsButton.setText(this.controller.getResourceBundle().getString("view") + " " +
+                this.controller.getResourceBundle().getString("appointments"));
+        deleteCustomerButton.setText(this.controller.getResourceBundle().getString("delete") + " " +
+                this.controller.getResourceBundle().getString("customer"));
+        logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
+    }
+
+    public void clear() {
 		editCustomerButton.setDisable(true);
 		viewAppointmentsButton.setDisable(true);
 		deleteCustomerButton.setDisable(true);
+		customersTable.refresh();
 	}
 
 	public void refreshCustomersTable() {
