@@ -10,9 +10,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import sceneUtils.ErrorLabel;
-import sceneUtils.ErrorMessage;
+import sceneUtils.ErrorCode;
+import sceneUtils.Refreshable;
 
-public class LoginPage extends BorderPane {
+import java.util.ResourceBundle;
+
+public class LoginPage extends BorderPane implements Refreshable {
     private Controller      controller;
     private TextField       usernameField;
     private PasswordField   passwordField;
@@ -28,7 +31,7 @@ public class LoginPage extends BorderPane {
         usernameField       =   new TextField();
         passwordLabel       =   new Label(this.controller.getResourceBundle().getString("password"));
         passwordField       =   new PasswordField();
-        errorMessageLabel   =   new ErrorLabel();
+        errorMessageLabel   =   new ErrorLabel(this.controller.getResourceBundle());
         submitButton        =   new Button(this.controller.getResourceBundle().getString("submit"));
 
         //Add nodes to containers and style
@@ -89,22 +92,17 @@ public class LoginPage extends BorderPane {
      */
     public void invalidLogin() {
         passwordField.setText("");
-        errorMessageLabel.setMessage(controller.getResourceBundle().getString(ErrorMessage.LOGIN_CREDENTIAL_ERROR.getLocaleKey()), ErrorMessage.LOGIN_CREDENTIAL_ERROR);
+        errorMessageLabel.setError(ErrorCode.LOGIN_INVALID_CREDENTIAL_ERROR);
     }
 
     /**
      *
      */
-    public void refresh() {
-        //TODO: I hate this b/c it is hardcoded and scene-specific
+    public void refresh(ResourceBundle rb) {
         usernameLabel.setText(this.controller.getResourceBundle().getString("username"));
         passwordLabel.setText(this.controller.getResourceBundle().getString("password"));
         submitButton.setText(this.controller.getResourceBundle().getString("submit"));
-        if(errorMessageLabel.getError() != null) {
-            errorMessageLabel.setText(controller.getResourceBundle().getString(errorMessageLabel.getError().getLocaleKey()));
-        } else {
-            errorMessageLabel.setText("");
-        }
+        errorMessageLabel.setResourceBundle(rb);
     }
 
     /**
@@ -134,13 +132,13 @@ public class LoginPage extends BorderPane {
         tempString = usernameField.getText();
         if(tempString.isEmpty() || tempString.isBlank()) {
             valid = false;
-            errorMessageLabel.setMessage(controller.getResourceBundle().getString(ErrorMessage.LOGIN_USERNAME_ERROR.getLocaleKey()), ErrorMessage.LOGIN_USERNAME_ERROR);
+            errorMessageLabel.setError(ErrorCode.LOGIN_USERNAME_REQUIRED_ERROR);
         }
 
         //Check that password is not blank
         if(!(passwordField.getCharacters().length() > 0)) {
             valid = false;
-            errorMessageLabel.setMessage(controller.getResourceBundle().getString(ErrorMessage.LOGIN_PASSWORD_ERROR.getLocaleKey()), ErrorMessage.LOGIN_PASSWORD_ERROR);
+            errorMessageLabel.setError(ErrorCode.LOGIN_PASSWORD_REQUIRED_ERROR);
         }
 
         return valid;

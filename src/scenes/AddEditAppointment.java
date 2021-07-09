@@ -16,8 +16,9 @@ import utils.Location;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 
-public class AddEditAppointment extends BorderPane {
+public class AddEditAppointment extends BorderPane implements Refreshable {
     private Controller	controller;			private boolean			newAppointment;
     private Label 		apptIdLabel;      	private TextField		apptIdField;
     private Label 		apptTitleLabel;   	private TextField		apptTitleField;
@@ -350,6 +351,11 @@ public class AddEditAppointment extends BorderPane {
 
 		return changesMade;
 	}//processChanges
+
+	@Override
+	public void refresh(ResourceBundle rb) {
+
+	}
 
 	/**
 	 *

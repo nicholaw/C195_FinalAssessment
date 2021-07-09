@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import utils.Country;
 import utils.Division;
-
 import java.util.ResourceBundle;
 
 public class CountryAndDivisionsBox extends GridPane {
@@ -75,7 +74,7 @@ public class CountryAndDivisionsBox extends GridPane {
 
     private void setLabelText() {
         countryLabel.setText(rb.getString("country"));
-        divisionLabel.setText(rb.getString("first-level-division"));
+        divisionLabel.setText(rb.getString("first_level_division"));
     }
 
     public void setResourceBundle(ResourceBundle rb) {

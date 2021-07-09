@@ -10,23 +10,24 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
-import sceneUtils.CountryAndDivisionsBox;
-import sceneUtils.SceneCode;
+
+import sceneUtils.*;
 import utils.Division;
 
-public class AddEditCustomer extends BorderPane
-{
+public class AddEditCustomer extends BorderPane implements Refreshable {
     //Controller
     private Controller controller;
 
     //Scene elements
     private Label sceneLabel;
     private Label idLabel;              private TextField idField;
-    private Label nameLabel;            private TextField nameField;      	private Label nameErrorLabel;
-    private Label phoneLabel;           private TextField phoneField;     	private Label phoneErrorLabel;
-    private Label addressLabel;         private TextArea addressArea;     	private Label addressErrorLabel;
-    private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
+    private Label nameLabel;            private TextField nameField;      	private ErrorLabel nameErrorLabel;
+    private Label phoneLabel;           private TextField phoneField;     	private ErrorLabel phoneErrorLabel;
+    private Label addressLabel;         private TextArea addressArea;     	private ErrorLabel addressErrorLabel;
+    private Label postCodeLabel;		private TextField postCodeField;	private ErrorLabel postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
     private CountryAndDivisionsBox countryAndDivisionsCombos;
 	
@@ -50,10 +51,10 @@ public class AddEditCustomer extends BorderPane
         addressArea			= new TextArea("");
         postCodeLabel       = new Label("");
         postCodeField       = new TextField("");
-        nameErrorLabel		= new Label("");
-        phoneErrorLabel		= new Label("");
-        addressErrorLabel	= new Label("");
-        postCodeErrorLabel  = new Label("");
+        nameErrorLabel		= new ErrorLabel(this.controller.getResourceBundle());
+        phoneErrorLabel		= new ErrorLabel(this.controller.getResourceBundle());
+        addressErrorLabel	= new ErrorLabel(this.controller.getResourceBundle());
+        postCodeErrorLabel  = new ErrorLabel(this.controller.getResourceBundle());
         countryAndDivisionsCombos = new CountryAndDivisionsBox(controller.getCountries(), controller.getResourceBundle());
 		
 		//Instantiate scene attributes
@@ -104,6 +105,7 @@ public class AddEditCustomer extends BorderPane
             }
         });
 
+        //Set initial text for scene labels and buttons
         setElementText();
 
         //Add key event listener to text fields and areas to prevent number of characters over maximum allowed
@@ -195,10 +197,6 @@ public class AddEditCustomer extends BorderPane
 
     //Clears all values from input fields
     public void clearAll() {
-        nameErrorLabel.setText("");
-        phoneErrorLabel.setText("");
-        addressErrorLabel.setText("");
-        postCodeErrorLabel.setText("");
         nameField.setText("");
         phoneField.setText("");
         addressArea.setText("");
@@ -209,13 +207,14 @@ public class AddEditCustomer extends BorderPane
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
 		newCustomer = true;
 		customerToEdit = null;
+		clearErrors();
     }//clearAll
 
     public void clearErrors() {
-        nameErrorLabel.setText("");
-        phoneErrorLabel.setText("");
-        addressErrorLabel.setText("");
-        postCodeErrorLabel.setText("");
+        nameErrorLabel.clear();
+        phoneErrorLabel.clear();
+        addressErrorLabel.clear();
+        postCodeErrorLabel.clear();
     }//clearErrors
 
     /**
@@ -224,8 +223,7 @@ public class AddEditCustomer extends BorderPane
      *	@param	c	the customer to edit
      */
     public void loadCustomerInfo(Customer c) {
-        if(c != null)
-        {
+        if(c != null) {
 			try {
 				customerToEdit = c;
 				idField.setText("" + c.getCustomerId());
@@ -238,7 +236,7 @@ public class AddEditCustomer extends BorderPane
 				newCustomer = false;
 				submitButton.setText(controller.getResourceBundle().getString("update"));
 				sceneLabel.setText(controller.getResourceBundle().getString("edit") + " " +
-                        controller.getResourceBundle().getString("cusotmer"));
+                        controller.getResourceBundle().getString("customer"));
 			} catch(NullPointerException e) {
 				clearAll();
 				controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
@@ -324,10 +322,22 @@ public class AddEditCustomer extends BorderPane
 		return changesMade;
 	}//processChanges
 
-    public void refresh() {
+    /**
+     *
+     * @param rb
+     */
+    public void refresh(ResourceBundle rb) {
         setElementText();
+        nameErrorLabel.setResourceBundle(rb);
+        phoneErrorLabel.setResourceBundle(rb);
+        addressErrorLabel.setResourceBundle(rb);
+        postCodeErrorLabel.setResourceBundle(rb);
+        countryAndDivisionsCombos.setResourceBundle(rb);
     }
 
+    /**
+     *
+     */
     private void setElementText() {
 	    if(newCustomer) {
             sceneLabel.setText(controller.getResourceBundle().getString("add") + " " +
@@ -358,66 +368,36 @@ public class AddEditCustomer extends BorderPane
         input = nameField.getText().trim();
         if(input.isBlank() || input.isEmpty()) {
             valid = false;
-            flag(CustomerFieldCode.NAME_FIELD, "- Name is required");
+            nameErrorLabel.setError(ErrorCode.CUSTOMER_NAME_REQUIRED_ERROR);
         }
 
         //check phone is not blank and matches regEx
         input = phoneField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
             valid = false;
-            flag(CustomerFieldCode.PHONE_FIELD, "- Phone number is required");
+            phoneErrorLabel.setError(ErrorCode.CUSTOMER_PHONE_REQUIRED_ERROR);
         } else if (Pattern.compile("[^0-9]").matcher(input).find()) {
             valid = false;
-            flag(CustomerFieldCode.PHONE_FIELD, "- Phone number may only contain digits");
+            phoneErrorLabel.setError(ErrorCode.CUSTOMER_PHONE_DIGITS_ERROR);
         }
 
         //check that address is not blank
         input = addressArea.getText().trim();
         if(input.isBlank() || input.isEmpty()) {
             valid = false;
-            flag(CustomerFieldCode.ADDRESS_FIELD, "- Address is required");
+            addressErrorLabel.setError(ErrorCode.CUSTOMER_ADDRESS_REQUIRED_ERROR);
         }
 
         //check that postal code is not blank and only contains digits
         input = phoneField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
             valid = false;
-            flag(CustomerFieldCode.POST_CODE_FIELD, "- Postal code is required");
+            postCodeErrorLabel.setError(ErrorCode.CUSTOMER_POSTCODE_REQUIRED_ERROR);
         } else if (Pattern.compile("[^0-9]").matcher(input).find()) {
             valid = false;
-            flag(CustomerFieldCode.POST_CODE_FIELD, "- Postal code may only contain digits");
+            postCodeErrorLabel.setError(ErrorCode.CUSTOMER_POSTCODE_DIGITS_ERROR);
         }
 
         return valid;
     }//validateForm
-
-    /**
-     *	Displays an error message to inform the user of a validation error.
-     *	@param code		code denoting which field contained a validation error
-     *	@param message	error message to be displayed
-     */
-    private void flag(CustomerFieldCode code, String message) {
-        switch(code)
-        {
-            case NAME_FIELD :
-                nameErrorLabel.setText(message);
-                break;
-            case PHONE_FIELD :
-                phoneErrorLabel.setText(message);
-                break;
-            case ADDRESS_FIELD :
-                addressErrorLabel.setText(message);
-                break;
-            case POST_CODE_FIELD :
-                postCodeErrorLabel.setText(message);
-                break;
-            default :
-                Alert unknownError = new Alert(AlertType.ERROR);
-                if(message.isBlank() || message.isEmpty() || message == null)
-                    unknownError.setContentText("An unknown validation error occurred.");
-                else
-                    unknownError.setContentText(message);
-                unknownError.showAndWait();
-        }//switch
-    }//flag
 }//class AddEditCustomer

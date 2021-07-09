@@ -9,9 +9,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import sceneUtils.CustomerOverviewTable;
+import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 
-public class CustomerOverview  extends BorderPane {
+import java.util.ResourceBundle;
+
+public class CustomerOverview  extends BorderPane implements Refreshable {
     Controller controller;
     Label sceneLabel;
     CustomerOverviewTable customersTable;
@@ -98,7 +101,7 @@ public class CustomerOverview  extends BorderPane {
         sceneLabel.getStyleClass().add("scene-label");
     }//constructor
 
-    public void refresh() {
+    public void refresh(ResourceBundle rb) {
         setElementText();
         customersTable.setResourceBundle(controller.getResourceBundle());
     }

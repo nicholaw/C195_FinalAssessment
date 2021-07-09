@@ -3,22 +3,20 @@ package scenes;
 import appointment.Appointment;
 import controller.Controller;
 import customer.Customer;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 import sceneUtils.CustomerHeader;
-import java.util.Collection;
+import java.util.ResourceBundle;
 
-public class AppointmentOverview  extends BorderPane {
+public class AppointmentOverview  extends BorderPane implements Refreshable {
     private Controller controller;
-    private Label sceneLabel;               //private Pane header;
+    private Label sceneLabel;
     private CustomerHeader customerInfo;	private TableView<Appointment> appointmentsTable;
     private Button scheduleButton;          private Button editButton;
     private Button deleteButton;            private Button returnButton;
@@ -145,4 +143,8 @@ public class AppointmentOverview  extends BorderPane {
     public Customer getCustomerToDisplay() {
         return customerToDisplay;
     }//getCustomerToDisplay
+
+    public void refresh(ResourceBundle rb) {
+
+    }
 }//class AppointmentOverview

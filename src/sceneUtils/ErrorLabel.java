@@ -2,13 +2,17 @@ package sceneUtils;
 
 import javafx.scene.control.Label;
 
-public class ErrorLabel extends Label {
-    private ErrorMessage error;
+import java.util.ResourceBundle;
 
-    public ErrorLabel() {
+public class ErrorLabel extends Label {
+    private ErrorCode error;
+    private ResourceBundle rb;
+
+    public ErrorLabel(ResourceBundle rb) {
         this.error = null;
         this.setText("");
         this.getStyleClass().add("error-label");
+        this.rb = rb;
     }
 
     public void clear() {
@@ -16,16 +20,19 @@ public class ErrorLabel extends Label {
         setText("");
     }
 
-    public ErrorMessage getError() {
+    public ErrorCode getError() {
         return error;
     }
 
-    public void setMessage(String text, ErrorMessage em) {
-        if(em == null) {
-            clear();
-        } else {
-            error = em;
-            setText(text);
+    public void setError(ErrorCode error) {
+        this.error = error;
+        this.setText(rb.getString(this.error.getLocaleKey()));
+    }
+
+    public void setResourceBundle(ResourceBundle rb) {
+        this.rb = rb;
+        if(error != null) {
+            this.setText(rb.getString(error.getLocaleKey()));
         }
     }
 }

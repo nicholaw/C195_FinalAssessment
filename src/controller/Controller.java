@@ -9,7 +9,6 @@ import database.AppointmentColumns;
 import database.CustomerColumns;
 import database.DBConnection;
 import database.DBConstants;
-import database.DBTables;
 import io.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,10 +18,13 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Stream;
+
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import localization.SupportedLocale;
 import sceneUtils.HeaderPane;
+import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 import scenes.*;
 import utils.Contact;
@@ -41,6 +43,7 @@ public class Controller {
     private AppointmentOverview apptOverview;
     private final DBConnection dbConnection;
 	private final File loginAttemptDestinaiton;
+	private final Set<Refreshable> scenes;
 
     //non-final attributes
     private User currentUser;
@@ -56,15 +59,16 @@ public class Controller {
 	private HashMap<String, String> appointmentUpdates;
 
     public Controller(Scene scn) {
-    	rb = ResourceBundle.getBundle("localization.Localization", Locale.FRENCH);
+    	rb = ResourceBundle.getBundle("localization.Localization", Locale.ENGLISH);
 		contentPane = new BorderPane();
-		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()), SupportedLocale.LOCALE_FRENCH);
+		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()), SupportedLocale.LOCALE_ENGLISH);
 		contentPane.setTop(header);
 		scn.getStylesheets().add(ControllerConstants.STYLE_DESTINATION);
 		scn.setRoot(contentPane);
 		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
-        login = new LoginPage(this);
+        scenes = new HashSet<>();
+        scenes.add(login = new LoginPage(this));
         this.changeScene(SceneCode.LOGIN, null);
         currentUser = null;
     }//constructor
@@ -490,14 +494,12 @@ public class Controller {
 		}
 	}//initializeIds
 
-	private void refreshScene() {
-		switch(currentScene) {
-			case LOGIN:
-				login.refresh();
-				break;
-			case CUSTOMER_OVERVIEW:
-				custOverview.refresh();
-				break;
+	/**
+	 *
+	 */
+	private void refreshScenes() {
+		for(Refreshable scene : scenes) {
+			scene.refresh(rb);
 		}
 	}
 
@@ -507,7 +509,7 @@ public class Controller {
 	 */
 	public void setLocale(SupportedLocale locale) {
 		rb = ResourceBundle.getBundle("localization.Localization", locale.getLocale());
-		refreshScene();
+		refreshScenes();
 	}
 	
 	/**
@@ -596,10 +598,10 @@ public class Controller {
 		contacts = FXCollections.observableArrayList(dbConnection.getContacts());
         initializeCustomerUpdates();
         initializeAppointmentUpdates();
-        editAppt = new AddEditAppointment(this);
-        editCust = new AddEditCustomer(this);
-        custOverview = new CustomerOverview(this);
-        apptOverview = new AppointmentOverview(this);
+        scenes.add(editAppt = new AddEditAppointment(this));
+        scenes.add(editCust = new AddEditCustomer(this));
+		scenes.add(custOverview = new CustomerOverview(this));
+		scenes.add(apptOverview = new AppointmentOverview(this));
         messageAlert = new Alert(Alert.AlertType.NONE);
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
