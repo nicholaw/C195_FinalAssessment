@@ -579,6 +579,7 @@ public class Controller {
 				login.invalidLogin();
 			}
 		} catch(NullPointerException e) {
+    		e.printStackTrace();
 			logLoginAttempt(username, false);
 			login.invalidLogin();
 		}

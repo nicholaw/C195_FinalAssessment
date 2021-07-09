@@ -9,16 +9,23 @@ import javafx.scene.layout.GridPane;
 import utils.Country;
 import utils.Division;
 
-public class CountryAndDivisionsBox extends GridPane
-{
-    //TODO: use observableList for items of combo boxes
+import java.util.ResourceBundle;
+
+public class CountryAndDivisionsBox extends GridPane {
     private ComboBox<Country> countryCombo;
     private ComboBox<Division> firstLevelDivisionsCombo;
-    private final Label countryLabel = new Label("Country");
-    private final Label divisionLabel = new Label("First-Level Division");
+    private final Label countryLabel;
+    private final Label divisionLabel;
+    private ResourceBundle rb;
 
-    public CountryAndDivisionsBox(ObservableList<Country> countries)
-    {
+    public CountryAndDivisionsBox(ObservableList<Country> countries, ResourceBundle rb) {
+        this.rb = rb;
+
+        //Instantiate labels
+        countryLabel = new Label("");
+        divisionLabel = new Label("");
+        setLabelText();
+
         //Instantiate country combo box and add countries from db to combo box
         countryCombo = new ComboBox<>();
         countryCombo.getItems().setAll(countries);
@@ -64,7 +71,17 @@ public class CountryAndDivisionsBox extends GridPane
             countryCombo.setValue(null);
             firstLevelDivisionsCombo.setValue(null);
         }
-    }//clear
+    }//reset
+
+    private void setLabelText() {
+        countryLabel.setText(rb.getString("country"));
+        divisionLabel.setText(rb.getString("first-level-division"));
+    }
+
+    public void setResourceBundle(ResourceBundle rb) {
+        this.rb = rb;
+        setLabelText();
+    }
 
     /**
      *

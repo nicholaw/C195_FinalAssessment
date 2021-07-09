@@ -9,10 +9,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import sceneUtils.CustomerOverviewTable;
-import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 
-public class CustomerOverview  extends BorderPane implements Refreshable {
+public class CustomerOverview  extends BorderPane {
     Controller controller;
     Label sceneLabel;
     CustomerOverviewTable customersTable;
@@ -99,7 +98,6 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         sceneLabel.getStyleClass().add("scene-label");
     }//constructor
 
-    @Override
     public void refresh() {
         setElementText();
         customersTable.setResourceBundle(controller.getResourceBundle());

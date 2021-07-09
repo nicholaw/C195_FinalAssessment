@@ -12,7 +12,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import java.util.regex.Pattern;
 import sceneUtils.CountryAndDivisionsBox;
-import sceneUtils.HeaderPane;
 import sceneUtils.SceneCode;
 import utils.Division;
 
@@ -27,7 +26,6 @@ public class AddEditCustomer extends BorderPane
     private Label nameLabel;            private TextField nameField;      	private Label nameErrorLabel;
     private Label phoneLabel;           private TextField phoneField;     	private Label phoneErrorLabel;
     private Label addressLabel;         private TextArea addressArea;     	private Label addressErrorLabel;
-    //private Label cityLabel;			private TextField cityField;		private Label cityErrorLabel;
     private Label postCodeLabel;		private TextField postCodeField;	private Label postCodeErrorLabel;
     private Button submitButton;        private Button cancelButton;
     private CountryAndDivisionsBox countryAndDivisionsCombos;
@@ -36,38 +34,34 @@ public class AddEditCustomer extends BorderPane
 	private boolean newCustomer;
 	private Customer customerToEdit;
 
-    public AddEditCustomer(Controller controller)
-    {
+    public AddEditCustomer(Controller controller){
         //Set Controller
         this.controller = controller;
 
         //Instantiate scene elements
-        sceneLabel			= new Label("Add Customer");
-        idLabel				= new Label("Customer Id");
+        sceneLabel			= new Label("");
+        idLabel				= new Label("");
         idField				= new TextField("");
-        nameLabel			= new Label("Name");
+        nameLabel			= new Label("");
         nameField			= new TextField("");
-        phoneLabel			= new Label("Phone");
+        phoneLabel			= new Label("");
         phoneField			= new TextField("");
-        addressLabel		= new Label("Address");
+        addressLabel		= new Label("");
         addressArea			= new TextArea("");
-        //cityLabel			= new Label("City");
-        //cityField			= new TextField("");
-        countryAndDivisionsCombos = new CountryAndDivisionsBox(controller.getCountries());
-        postCodeLabel       = new Label("Postal Code");
+        postCodeLabel       = new Label("");
         postCodeField       = new TextField("");
         nameErrorLabel		= new Label("");
         phoneErrorLabel		= new Label("");
         addressErrorLabel	= new Label("");
-        //cityErrorLabel      = new Label("");
         postCodeErrorLabel  = new Label("");
+        countryAndDivisionsCombos = new CountryAndDivisionsBox(controller.getCountries(), controller.getResourceBundle());
 		
 		//Instantiate scene attributes
 		newCustomer = true;
 		customerToEdit = null;
 
         //Instantiate buttons and add event listeners
-        submitButton = new Button("Add");
+        submitButton = new Button("");
         submitButton.setOnAction(event -> {
             this.setDisable(true);
 			if(this.validateForm()) {
@@ -85,7 +79,7 @@ public class AddEditCustomer extends BorderPane
             }
 			this.setDisable(false);
         });
-        cancelButton = new Button("Cancel");
+        cancelButton = new Button("");
         cancelButton.setOnAction(event -> {
             if(newCustomer) {
                 if(checkForInput()) {
@@ -110,6 +104,8 @@ public class AddEditCustomer extends BorderPane
             }
         });
 
+        setElementText();
+
         //Add key event listener to text fields and areas to prevent number of characters over maximum allowed
         nameField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(nameField, CustomerConstants.MAX_CHAR_DEFAULT);
@@ -120,9 +116,6 @@ public class AddEditCustomer extends BorderPane
         addressArea.setOnKeyReleased(event -> {
             checkForMaximumCharacters(addressArea, CustomerConstants.MAX_CHAR_ADDRESS);
         });
-        /*cityField.setOnKeyReleased(event -> {
-            checkForMaximumCharacters(cityField, CustomerConstants.MAX_CHAR_DEFAULT);
-        });*/
         postCodeField.setOnKeyReleased(event -> {
             checkForMaximumCharacters(postCodeField, CustomerConstants.MAX_CHAR_DEFAULT);
         });
@@ -203,26 +196,23 @@ public class AddEditCustomer extends BorderPane
     //Clears all values from input fields
     public void clearAll() {
         nameErrorLabel.setText("");
-        //cityErrorLabel.setText("");
         phoneErrorLabel.setText("");
         addressErrorLabel.setText("");
         postCodeErrorLabel.setText("");
         nameField.setText("");
         phoneField.setText("");
         addressArea.setText("");
-        //cityField.setText("");
         postCodeField.setText("");
-        sceneLabel.setText("Add Customer");
+        sceneLabel.setText(controller.getResourceBundle().getString("add") + " " +
+                controller.getResourceBundle().getString("customer"));
         countryAndDivisionsCombos.reset();
         submitButton.setText(CustomerConstants.ADD_CUSTOMER);
 		newCustomer = true;
 		customerToEdit = null;
     }//clearAll
 
-    public void clearErrors()
-    {
+    public void clearErrors() {
         nameErrorLabel.setText("");
-        //cityErrorLabel.setText("");
         phoneErrorLabel.setText("");
         addressErrorLabel.setText("");
         postCodeErrorLabel.setText("");
@@ -243,12 +233,12 @@ public class AddEditCustomer extends BorderPane
 				phoneField.setText(c.getPhone());
 				addressArea.setText(c.getAddress());
 				postCodeField.setText(c.getPostCode());
-				//cityField.setText(c.getCity());
 				countryAndDivisionsCombos.setSelectedCountry(c.getCountry());
 				countryAndDivisionsCombos.setSelectedDivision(c.getDivision());
 				newCustomer = false;
-				submitButton.setText("Update");
-				sceneLabel.setText("Edit Customer");
+				submitButton.setText(controller.getResourceBundle().getString("update"));
+				sceneLabel.setText(controller.getResourceBundle().getString("edit") + " " +
+                        controller.getResourceBundle().getString("cusotmer"));
 			} catch(NullPointerException e) {
 				clearAll();
 				controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
@@ -262,9 +252,10 @@ public class AddEditCustomer extends BorderPane
 
     public void loadNewCustomer() {
         idField.setText("" + controller.getNextCustomerId());
-        sceneLabel.setText("Add Customer");
+        sceneLabel.setText(controller.getResourceBundle().getString("add") + " " +
+                controller.getResourceBundle().getString("customer"));
 		newCustomer = true;
-		submitButton.setText("Add");
+		submitButton.setText(controller.getResourceBundle().getString("add"));
     }//loadNewCustomer
 
     /**
@@ -306,16 +297,6 @@ public class AddEditCustomer extends BorderPane
             }
 		}
 
-		//Check city
-		/*tempString = cityField.getText();
-		if(!customerToEdit.getCity().equals(tempString)) {
-            changesMade = true;
-            if(commitChanges) {
-                controller.addCustomerUpdate(CustomerFieldCode.CITY_FIELD, tempString);
-			    customerToEdit.setCity(tempString);
-            }
-		}*/
-
         //Check postal code
 		tempString = postCodeField.getText();
 		if(!customerToEdit.getPostCode().equals(tempString)) {
@@ -325,16 +306,6 @@ public class AddEditCustomer extends BorderPane
                 customerToEdit.setPostCode(tempString);
             }
 		}
-
-		//Check country
-		/* Country tempCountry = countryAndDivisionsCombos.getSelectedCountry();
-		if(!customerToEdit.getCountry().equals(tempCountry)) {
-            changesMade = true;
-            if(commitChanges) {
-                controller.addCustomerUpdate(CustomerFieldCode.COUNTRY_BOX, "" + tempCountry.getCountryId());
-                customerToEdit.setCountry(tempCountry);
-            }
-		} */
 
 		//Check division
         try {
@@ -352,6 +323,27 @@ public class AddEditCustomer extends BorderPane
 
 		return changesMade;
 	}//processChanges
+
+    public void refresh() {
+        setElementText();
+    }
+
+    private void setElementText() {
+	    if(newCustomer) {
+            sceneLabel.setText(controller.getResourceBundle().getString("add") + " " +
+                    controller.getResourceBundle().getString("customer"));
+            submitButton.setText(controller.getResourceBundle().getString("add"));
+        } else {
+            sceneLabel.setText(controller.getResourceBundle().getString("edit") + " " +
+                    controller.getResourceBundle().getString("customer"));
+            submitButton.setText(controller.getResourceBundle().getString("update"));
+        }
+	    cancelButton.setText(controller.getResourceBundle().getString("cancel"));
+	    nameLabel.setText(controller.getResourceBundle().getString("name"));
+	    phoneLabel.setText(controller.getResourceBundle().getString("phone"));
+	    addressLabel.setText(controller.getResourceBundle().getString("address"));
+	    postCodeLabel.setText(controller.getResourceBundle().getString("postal_code"));
+    }
 
     /**
      *	Checks that the information entered into the form fields are valid. Returns true if all fields are valid and false otherwise.
@@ -415,9 +407,6 @@ public class AddEditCustomer extends BorderPane
                 break;
             case ADDRESS_FIELD :
                 addressErrorLabel.setText(message);
-                break;
-            case CITY_FIELD :
-                //cityErrorLabel.setText(message);
                 break;
             case POST_CODE_FIELD :
                 postCodeErrorLabel.setText(message);

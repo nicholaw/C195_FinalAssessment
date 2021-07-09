@@ -11,9 +11,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import sceneUtils.ErrorLabel;
 import sceneUtils.ErrorMessage;
-import sceneUtils.Refreshable;
 
-public class LoginPage extends BorderPane implements Refreshable {
+public class LoginPage extends BorderPane {
     private Controller      controller;
     private TextField       usernameField;
     private PasswordField   passwordField;
@@ -75,14 +74,7 @@ public class LoginPage extends BorderPane implements Refreshable {
     public void clearAll() {
         usernameField.setText("");
         passwordField.setText("");
-        errorMessageLabel.setText("");
-    }
-
-    /**
-     * Driver method for the clearAll method
-     */
-    public void clear() {
-        this.clearAll();
+        errorMessageLabel.clear();
     }
 
     /**
