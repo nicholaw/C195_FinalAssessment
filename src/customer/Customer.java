@@ -1,6 +1,5 @@
 package customer;
 
-import appointment.Appointment;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -24,7 +23,7 @@ public class Customer
 	private StringProperty countryName;
 	private StringProperty divisionName;
 	private IntegerProperty scheduledAppointments;
-	private ObservableList<Appointment> appointments;
+	private ObservableList<appointment.Appointment> appointments;
     private Country country;
     private Division division;
 
@@ -51,7 +50,7 @@ public class Customer
     }//constructor
 
 	public Customer(long id, String name, String phone, String address, String postCode, Country country,
-					Division div, Collection<Appointment> appointments) {
+					Division div, Collection<appointment.Appointment> appointments) {
 		this.customerId		=	new SimpleLongProperty(this, "customerId", id);
 		this.name 			= 	new SimpleStringProperty(this, name);
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
@@ -79,7 +78,7 @@ public class Customer
 		}
 	}//constructor
 
-	public void setAppointments(Collection<Appointment> coll) {
+	public void setAppointments(Collection<appointment.Appointment> coll) {
 		if(coll == null)
 			appointments = null;
 		else {
@@ -88,7 +87,7 @@ public class Customer
 		}
 	}
 
-	public boolean addAppointment(Appointment a) {
+	public boolean addAppointment(appointment.Appointment a) {
 		if(appointments.contains(a))
 			return false;
 		else {
@@ -134,7 +133,7 @@ public class Customer
 		return scheduledAppointments;
 	}
 
-	public ObservableList<Appointment> getAppointments() {
+	public ObservableList<appointment.Appointment> getAppointments() {
 		return appointments;
 	}
 
@@ -174,7 +173,7 @@ public class Customer
 		return postCode.get();
 	}
 
-	public void removeAppointment(Appointment a) {
+	public void removeAppointment(appointment.Appointment a) {
 		appointments.remove(a);
 		scheduledAppointments.setValue(appointments.size());
 	}

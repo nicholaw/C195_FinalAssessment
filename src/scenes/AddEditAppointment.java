@@ -1,6 +1,5 @@
 package scenes;
 
-import appointment.Appointment;
 import appointment.AppointmentConstants;
 import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
@@ -29,7 +28,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
     private Button 		submitButton;		private Button 			cancelButton;
 	private Label		titleErrorLabel;	private Label			timeErrorLabel;
 	private DateTimeBox dateTimePane;		private Label descErrorLabel;
-	private Appointment appointmentToEdit;	private Label			sceneLabel;
+	private appointment.Appointment appointmentToEdit;	private Label			sceneLabel;
 
     public AddEditAppointment(Controller controller) {
         this.controller = controller;
@@ -70,7 +69,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			clearErrors();
 			if(this.validateForm()) {
 				if(newAppointment) {
-					Appointment a = new Appointment(Integer.parseInt(apptIdField.getText()), apptTitleField.getText(), descriptionArea.getText(),
+					appointment.Appointment a = new appointment.Appointment(Integer.parseInt(apptIdField.getText()), apptTitleField.getText(), descriptionArea.getText(),
 							apptTypeCombo.getValue().toString(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
 							(Location)locationBox.getValue());
 					controller.addAppointment(a);
@@ -246,7 +245,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 	}//flag
 
-    public void loadAppointmentInfo(Appointment a) {
+    public void loadAppointmentInfo(appointment.Appointment a) {
 		if(a != null) {
 			apptIdField.setText("" + a.getAppointmentId());
 			apptTitleField.setText(a.getTitle());
@@ -400,11 +399,11 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 
 		//Check that meeting does not overlap another existing appointment
 		Customer c = customerInfo.getCustomer();
-		var overlappingAppts = new HashSet<Appointment>();
+		var overlappingAppts = new HashSet<appointment.Appointment>();
 		if(c.getAppointments() == null) {
 			c.setAppointments(controller.getCustomerAppointments(customerInfo.getCustomer()));
 		}
-		for(Appointment a : c.getAppointments()) {
+		for(appointment.Appointment a : c.getAppointments()) {
 			if(a.overlaps(start, end)) {
 				if(newAppointment) {
 					overlappingAppts.add(a);
@@ -417,7 +416,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		if(overlappingAppts.size() > 0) {
 			valid = false;
 			String message = "- Appointment overlaps the following existing appointments:\n";
-			for(Appointment a : overlappingAppts) {
+			for(appointment.Appointment a : overlappingAppts) {
 				message += "\t" + a.getAppointmentId() + "(" + a.getTitle() + ")\n";
 			}
 			flag(AppointmentFieldCode.START_TIME, message);

@@ -1,6 +1,5 @@
 package controller;
 
-import appointment.Appointment;
 import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
 import customer.Customer;
@@ -18,7 +17,6 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Stream;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
@@ -76,7 +74,7 @@ public class Controller {
 	/**
      *
      */
-	public boolean addAppointment(Appointment a) {
+	public boolean addAppointment(appointment.Appointment a) {
 		if(dbConnection.insertAppointment(a, currentUser,
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			nextAppointmentId++;
@@ -189,8 +187,8 @@ public class Controller {
 				contentPane.setCenter(editCust);
 				break;
 			case EDIT_APPOINTMENT:
-				if(participant instanceof Appointment)
-					editAppt.loadAppointmentInfo((Appointment)participant);
+				if(participant instanceof appointment.Appointment)
+					editAppt.loadAppointmentInfo((appointment.Appointment)participant);
 				else
 					editAppt.loadNewAppointment();
 				editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
@@ -246,7 +244,7 @@ public class Controller {
 	/**
      *
      */
-    public boolean deleteAppointment(Appointment a) {
+    public boolean deleteAppointment(appointment.Appointment a) {
 		return dbConnection.deleteAppointment(a.getAppointmentId());
     }//deleteAppointment
 
@@ -261,7 +259,7 @@ public class Controller {
 			messageAlert.setTitle("Delete Customer");
 			String message = "Cannot delete customer " + c.getName() + "(#" + c.getCustomerId() + ") because " +
 					"they still have the following " + c.getAppointments().size() + " appointments:\n";
-			for(Appointment a : c.getAppointments()) {
+			for(appointment.Appointment a : c.getAppointments()) {
 				message += ("\t" + a.getAppointmentId() + "\n");
 			}
 			messageAlert.setContentText(message);
@@ -375,7 +373,7 @@ public class Controller {
      * @param c
      * @return
      */
-    public ObservableList<Appointment> getCustomerAppointments(Customer c)
+    public ObservableList<appointment.Appointment> getCustomerAppointments(Customer c)
     {
         return FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId()));
     }//getCustomerAppointments

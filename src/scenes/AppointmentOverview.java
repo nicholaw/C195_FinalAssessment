@@ -5,55 +5,33 @@ import controller.Controller;
 import customer.Customer;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import sceneUtils.AppointmentOverviewTable;
 import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 import sceneUtils.CustomerHeader;
 import java.util.ResourceBundle;
 
 public class AppointmentOverview  extends BorderPane implements Refreshable {
-    private Controller controller;
-    private Label sceneLabel;
-    private CustomerHeader customerInfo;	private TableView<Appointment> appointmentsTable;
-    private Button scheduleButton;          private Button editButton;
-    private Button deleteButton;            private Button returnButton;
-    private Appointment selectedAppointment;
+    private Controller controller;              private Label sceneLabel;
+    private CustomerHeader customerInfo;	    private AppointmentOverviewTable appointmentsTable;
+    private Button scheduleButton;              private Button editButton;
+    private Button deleteButton;                private Button returnButton;
     private Customer customerToDisplay;
 
     public AppointmentOverview(Controller controller) {
         //Instantiate scene elements
         this.controller 	= 	controller;
-        //this.header 		= 	this.controller.getHeader();
-        sceneLabel 			= 	new Label("Appointment Overview");
+        sceneLabel 			= 	new Label("");
         customerInfo        =   new CustomerHeader();
-        appointmentsTable 	= 	new TableView<>();
-        scheduleButton 		= 	new Button("Schedule Appointment");
-        editButton 			= 	new Button("Edit Appointment");
-        deleteButton 		= 	new Button("Delete Appointment");
-        returnButton 		= 	new Button("Return");
-        selectedAppointment	=	null;
-
-        //Instantiate table columns
-        TableColumn<Appointment, Integer> 	idCol 			= 	new TableColumn<>("ID");
-        TableColumn<Appointment, String> 	titleCol 		= 	new TableColumn<>("Title");
-        TableColumn<Appointment, String> 	typeCol 		= 	new TableColumn<>("Type");
-        TableColumn<Appointment, String>	startDateCol	= 	new TableColumn<>("Start Date");
-		TableColumn<Appointment, String>	endDateCol		= 	new TableColumn<>("End Date");
-		TableColumn<Appointment, String>	startTimeCol	= 	new TableColumn<>("Start Time");
-		TableColumn<Appointment, String>	endTimeCol		= 	new TableColumn<>("End Time");
-        TableColumn<Appointment, String> 	descCol 		= 	new TableColumn<>("Description");
-		idCol.setCellValueFactory		(new PropertyValueFactory<>("appointmentId"));
-		titleCol.setCellValueFactory	(new PropertyValueFactory<>("title"));
-		typeCol.setCellValueFactory		(new PropertyValueFactory<>("type"));
-		startDateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-		endDateCol.setCellValueFactory	(new PropertyValueFactory<>("endDate"));
-		startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
-		endTimeCol.setCellValueFactory	(new PropertyValueFactory<>("endTime"));
-		descCol.setCellValueFactory		(new PropertyValueFactory<>("description"));
-		appointmentsTable.getColumns().setAll(idCol, titleCol, typeCol, startDateCol, endDateCol, startTimeCol, endTimeCol, descCol);
+        appointmentsTable 	= 	new AppointmentOverviewTable(this.controller.getResourceBundle());
+        scheduleButton 		= 	new Button("");
+        editButton 			= 	new Button("");
+        deleteButton 		= 	new Button("");
+        returnButton 		= 	new Button("");
+        setElementText();
 
         //Set initial states for scene elements
         deleteButton.setDisable(true);
@@ -64,14 +42,14 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
             controller.changeScene(SceneCode.EDIT_APPOINTMENT, null);
         });
         editButton.setOnAction(event -> {
-            controller.changeScene(SceneCode.EDIT_APPOINTMENT, selectedAppointment);
+            controller.changeScene(SceneCode.EDIT_APPOINTMENT, appointmentsTable.getSelectedAppointment());
         });
         deleteButton.setOnAction(event -> {
             if(controller.displayConfirmationAlert("Confirm Delete", "Are you sure you would " +
                     "like to delete this appointment?")) {
-                if(controller.deleteAppointment(selectedAppointment)) {
-                    customerInfo.getCustomer().removeAppointment(selectedAppointment);
-                    selectedAppointment = null;
+                Appointment appt = appointmentsTable.getSelectedAppointment();
+                if(controller.deleteAppointment(appt)) {
+                    customerInfo.getCustomer().removeAppointment(appt);
                 }
                 appointmentsTable.refresh();
             }
@@ -81,13 +59,9 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
             controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
         });
         appointmentsTable.setOnMouseClicked(event -> {
-            Object obj = appointmentsTable.getSelectionModel().getSelectedItem();
-            if(obj != null) {
-                if(obj instanceof Appointment) {
-                    selectedAppointment = (Appointment)obj;
+            if(appointmentsTable.getSelectedAppointment() != null) {
                     deleteButton.setDisable(false);
                     editButton.setDisable(false);
-                }
             }
         });
 
@@ -113,7 +87,6 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         tablePane.setVgap(10);
         buttonPane.setSpacing(10);
         sceneLabel.getStyleClass().add("scene-label");
-
     }//constructor
 
     /**
@@ -121,7 +94,6 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
      */
     private void clear() {
         customerInfo.clear();
-        selectedAppointment = null;
         deleteButton.setDisable(true);
         editButton.setDisable(true);
     }//clear
@@ -135,8 +107,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
 		    customerInfo.setCustomer(customerToDisplay);
             if(c.getAppointments() == null)
                 c.setAppointments(controller.getCustomerAppointments(c));
-            appointmentsTable.setItems(c.getAppointments());
-            appointmentsTable.refresh();
+            appointmentsTable.setAppointments(c.getAppointments());
         }
 	}//loadOverview
 
@@ -145,6 +116,16 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
     }//getCustomerToDisplay
 
     public void refresh(ResourceBundle rb) {
+        setElementText();
+        appointmentsTable.setResourceBundle(rb);
+    }
 
+    private void setElementText() {
+	    sceneLabel.setText(controller.getResourceBundle().getString("appointment_overview"));
+	    returnButton.setText(controller.getResourceBundle().getString("return"));
+	    scheduleButton.setText(controller.getResourceBundle().getString("schedule_appointment"));
+        deleteButton.setText(controller.getResourceBundle().getString("delete") + " " +
+                controller.getResourceBundle().getString("appointment"));
+        editButton.setText(controller.getResourceBundle().getString("update_appointment"));
     }
 }//class AppointmentOverview

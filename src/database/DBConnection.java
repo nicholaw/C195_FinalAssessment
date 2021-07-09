@@ -1,6 +1,5 @@
 package database;
 
-import appointment.Appointment;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
@@ -171,9 +170,9 @@ public class DBConnection
      * @param id    Id of the customer
      * @return  The collection of appointments
      */
-    public Collection<Appointment> getCustomerAppointments(long id)
+    public Collection<appointment.Appointment> getCustomerAppointments(long id)
     {
-        var list = new LinkedHashSet<Appointment>();
+        var list = new LinkedHashSet<appointment.Appointment>();
         String sql =    "SELECT "                                           +
                             "appointment_id, "                              +
                             "title, "                                       +
@@ -198,7 +197,7 @@ public class DBConnection
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
-                list.add(new Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
+                list.add(new appointment.Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
                         id, controller.getContact(result.getInt("contact")), controller.getLocation(result.getString("location"))));
             }
@@ -307,7 +306,7 @@ public class DBConnection
      * @param timestamp
      * @return
      */
-    public boolean insertAppointment(Appointment a, User user, String timestamp) {
+    public boolean insertAppointment(appointment.Appointment a, User user, String timestamp) {
 		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, " +
 							"Created_By, Last_Update, Last_Updated_By, Customer_Id, User_Id, Contact_Id) " + 
 						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
