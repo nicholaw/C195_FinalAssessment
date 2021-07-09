@@ -42,11 +42,11 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		timeErrorLabel		= 	new ErrorLabel(this.controller.getResourceBundle());
 		titleErrorLabel		= 	new ErrorLabel(this.controller.getResourceBundle());
 		descErrorLabel 		= 	new ErrorLabel(this.controller.getResourceBundle());
-        dateTimePane		= 	new DateTimeBox(timeErrorLabel);
+        dateTimePane		= 	new DateTimeBox(this.controller.getResourceBundle(), timeErrorLabel);
         apptTypeCombo 	 	= 	new ComboBox<>(this.controller.getAppointmentTypes());
         locationLabel		= 	new Label("");
         locationBox			= 	new ComboBox<>(this.controller.getLocations());
-		contactBox 			= 	new ContactBox(this.controller.getContacts());
+		contactBox 			= 	new ContactBox(this.controller.getResourceBundle(), this.controller.getContacts());
         descriptionLabel	= 	new Label("");
         descriptionArea 	= 	new TextField("");
         submitButton 	 	= 	new Button("");
@@ -188,10 +188,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		customerInfo.clear();
 		this.clearCombo(apptTypeCombo);
 		this.clearCombo(locationBox);
-		appointmentToEdit = null;
-		newAppointment = true;
-		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
-		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
+		loadNewAppointment();
 		clearErrors();
 	}//clear
 	
@@ -242,6 +239,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 
     public void loadNewAppointment() {
 		dateTimePane.setDateTime(LocalDateTime.now());
+		appointmentToEdit = null;
 		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
 		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
 		newAppointment = true;
@@ -325,6 +323,11 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	@Override
 	public void refresh(ResourceBundle rb) {
 		setElementText();
+		titleErrorLabel.setResourceBundle(rb);
+		descErrorLabel.setResourceBundle(rb);
+		timeErrorLabel.setResourceBundle(rb);
+		contactBox.setResourceBundle(rb);
+		dateTimePane.setResourceBundle(rb);
 	}
 
 	private void setElementText() {

@@ -8,7 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.ResourceBundle;
 
 public class AppointmentOverviewTable extends TableView<Appointment> {
-    private TableColumn<Appointment, String> idCol;
+    private TableColumn<Appointment, Long> idCol;
     private TableColumn<Appointment, String> titleCol;
     private TableColumn<Appointment, String> typeCol;
     private TableColumn<Appointment, String> dateCol;

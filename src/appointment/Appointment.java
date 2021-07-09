@@ -1,9 +1,7 @@
 package appointment;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import java.time.LocalDateTime;
@@ -11,9 +9,8 @@ import java.time.format.DateTimeFormatter;
 import utils.Contact;
 import utils.Location;
 
-public class Appointment
-{
-	private IntegerProperty	appointmentId;
+public class Appointment {
+	private LongProperty	appointmentId;
 	private StringProperty	title;
 	private StringProperty	description;
 	private StringProperty	type;
@@ -26,25 +23,23 @@ public class Appointment
 	private Contact			contact;
 	private Location		location;
 
-    public Appointment(String title, String description, String type, LocalDateTime startDateTime, 
-						LocalDateTime endDateTime, int customerId, Contact contact, Location location) {
-        this.title 			= 	new SimpleStringProperty(this, "title", title);
-        this.description 	= 	new SimpleStringProperty(this, "description", description);
-        this.type 			= 	new SimpleStringProperty(this, "type", type);
-        this.startDateTime	= 	startDateTime;
-		this.date 			= 	new SimpleStringProperty(this, "date", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
-		this.start	 		= 	new SimpleStringProperty(this, "start", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.endDateTime 	= 	endDateTime;
-		this.end	 		= 	new SimpleStringProperty(this, "end", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-        this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
-		this.contact 		= 	contact;
-		this.location		=	location;
-    }//constructor
-
-    public Appointment(int appointmentId, String title, String description, String type, 
+	/**
+	 * For existing appointments
+	 *
+	 * @param appointmentId
+	 * @param title
+	 * @param description
+	 * @param type
+	 * @param startDateTime
+	 * @param endDateTime
+	 * @param customerId
+	 * @param contact
+	 * @param location
+	 */
+    public Appointment(long appointmentId, String title, String description, String type,
 						LocalDateTime startDateTime, LocalDateTime endDateTime,
 						long customerId, Contact contact, Location location) {
-        this.appointmentId	=	new SimpleIntegerProperty(this, "appointmentId", appointmentId);
+        this.appointmentId	=	new SimpleLongProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, "title", title);
 		this.description 	= 	new SimpleStringProperty(this, "description", description);
 		this.type 			= 	new SimpleStringProperty(this, "type", type);
@@ -58,7 +53,7 @@ public class Appointment
 		this.location		=	location;
     }//constructor
 
-	public IntegerProperty appointmentIdProperty() {
+	public LongProperty appointmentIdProperty() {
 		return appointmentId;
 	}
 	
@@ -102,7 +97,7 @@ public class Appointment
 		return new SimpleStringProperty(this, "contactEmail", contact.getEmail());
 	}
 
-    public int getAppointmentId() {
+    public long getAppointmentId() {
         return appointmentId.get();
     }//getAppointmentId
 

@@ -12,13 +12,11 @@ import utils.Country;
 import utils.Division;
 import java.util.Collection;
 
-public class Customer
-{
+public class Customer {
 	private LongProperty customerId;
     private StringProperty name;
 	private StringProperty phone;
 	private StringProperty address;
-	//private StringProperty city;
 	private StringProperty postCode;
 	private StringProperty countryName;
 	private StringProperty divisionName;
@@ -33,7 +31,6 @@ public class Customer
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
 		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
 		this.address		= 	new SimpleStringProperty(this, "address", address);
-		//this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	div;
@@ -56,7 +53,6 @@ public class Customer
 		this.name 			= 	new SimpleStringProperty(this, "name", name);
 		this.phone 			= 	new SimpleStringProperty(this, "phone", phone);
 		this.address		= 	new SimpleStringProperty(this, "address", address);
-		//this.city 			= 	new SimpleStringProperty(this, "city", city);
 		this.postCode 		= 	new SimpleStringProperty(this, "postCode", postCode);
 		this.country		=	country;
 		this.division		=	div;
@@ -101,10 +97,6 @@ public class Customer
 		return address;
 	}
 	
-	/*public StringProperty cityProperty() {
-		return city;
-	}*/
-	
 	public LongProperty customerIdProperty() {
 		return customerId;
 	}
@@ -145,10 +137,6 @@ public class Customer
 		return address.get();
 	}
 	
-	/*public String getCity() {
-		return city.get();
-	}*/
-	
 	public Country getCountry() {
 		return country;
 	}
@@ -181,10 +169,6 @@ public class Customer
 	public void setAddress(String str) {
 		address = new SimpleStringProperty(this, "address", str);
 	}
-	
-	/*public void setCity(String str) {
-		city = new SimpleStringProperty(this, "city", str);
-	}*/
 	
 	private void setCountry(Country c) {
 		country = c;

@@ -1,5 +1,6 @@
 package database;
 
+import appointment.Appointment;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
@@ -32,13 +33,13 @@ public class DBConnection
         }
     }//constructor
 
-    public boolean deleteAppointment(int id) {
+    public boolean deleteAppointment(long id) {
 		String sql =	"DELETE FROM " 				+ 
 							"appointments " 		+
 						"WHERE " 					+ 
 							"Appointment_ID = ?";
 		try(var stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+			stmt.setLong(1, id);
 			return (stmt.executeUpdate() > 0);
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -118,15 +119,13 @@ public class DBConnection
      *
      * @return The collection of customers
      */
-    public Collection<Customer> getCustomers()
-    {
+    public Collection<Customer> getCustomers() {
         var list = new LinkedHashSet<Customer>();
         String sql =    "SELECT "                                                                               +
                             "customers.Customer_ID AS id, "                                                     +
                             "Customer_Name AS name, "                                                           +
                             "Phone AS phone, "                                                                  +
                             "Address AS address, "                                                              +
-                            //"City AS city, "                                                                  +
                             "Postal_Code AS postcode, "                                                         +
                             "countrynames.Country_ID AS country, "                                              +
                             "countrynames.Division_ID AS division, "                                            +
@@ -197,7 +196,7 @@ public class DBConnection
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
-                list.add(new appointment.Appointment(result.getInt("appointment_id"), result.getString("title"), result.getString("description"),
+                list.add(new appointment.Appointment(result.getLong("appointment_id"), result.getString("title"), result.getString("description"),
                         result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
                         id, controller.getContact(result.getInt("contact")), controller.getLocation(result.getString("location"))));
             }
@@ -306,12 +305,12 @@ public class DBConnection
      * @param timestamp
      * @return
      */
-    public boolean insertAppointment(appointment.Appointment a, User user, String timestamp) {
+    public boolean insertAppointment(Appointment a, User user, String timestamp) {
 		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, " +
 							"Created_By, Last_Update, Last_Updated_By, Customer_Id, User_Id, Contact_Id) " + 
 						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try(var stmt = conn.prepareStatement(sql)) {
-			stmt.setInt		(1, a.getAppointmentId());
+			stmt.setLong	(1, a.getAppointmentId());
 			stmt.setString	(2, a.getTitle());
 			stmt.setString	(3, a.getDescription());
 			stmt.setString  (4, a.getLocation().getLocation());
@@ -360,8 +359,7 @@ public class DBConnection
      * @param timestamp
      * @return
      */
-    public boolean insertCustomer(Customer c, String creator, String timestamp)
-    {
+    public boolean insertCustomer(Customer c, String creator, String timestamp) {
         String sql = "INSERT INTO customers (customer_id, customer_name, address, postal_code, phone, " +
                 "create_date, created_by, last_update, last_updated_by, division_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -396,7 +394,7 @@ public class DBConnection
             var result = stmt.executeQuery();
             while(result.next()) {
                 try {
-                    System.out.println(result.getString(1));
+                    System.out.printf("%s\t%s\n", result.getString(1), result.getString(2));
                 } catch (NullPointerException e) {
                     System.out.println("NullPointerException thrown");
                 }
@@ -458,7 +456,7 @@ public class DBConnection
      * @param appointmentId Id of customer to be updated
      * @return  True if at least one table row was affected
      */
-    public boolean updateAppointment(HashMap<String, String> updates, int appointmentId) {
+    public boolean updateAppointment(HashMap<String, String> updates, long appointmentId) {
         if(updates != null) {
             String sql = "UPDATE appointments SET ";
             var keys = updates.keySet();
@@ -484,7 +482,7 @@ public class DBConnection
                     }
                     bindIndex++;
                 }//for str:values
-                stmt.setInt(bindIndex, appointmentId);
+                stmt.setLong(bindIndex, appointmentId);
                 return (stmt.executeUpdate() > 0);
             } catch(SQLException e) {
                 e.printStackTrace();
@@ -502,7 +500,7 @@ public class DBConnection
      * @param customerId Id of customer to be updated
      * @return  true if at least one table row was affected
      */
-    public boolean updateCustomer(HashMap<String, String> updates, int customerId) {
+    public boolean updateCustomer(HashMap<String, String> updates, long customerId) {
         if(updates != null) {
             String sql = "UPDATE customers SET ";
             var keys = updates.keySet();
@@ -527,7 +525,7 @@ public class DBConnection
                     }
                     bindIndex++;
                 }//for str:values
-                stmt.setInt(bindIndex, customerId);
+                stmt.setLong(bindIndex, customerId);
                 return (stmt.executeUpdate() > 0);
             } catch(SQLException e) {
                 e.printStackTrace();

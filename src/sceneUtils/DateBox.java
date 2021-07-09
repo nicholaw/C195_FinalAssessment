@@ -2,16 +2,17 @@ package sceneUtils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import java.time.LocalDateTime;
-
+import java.util.ResourceBundle;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import utils.Month;
 
 public class DateBox extends GridPane {
+    private Label dateLabel;
+    private ResourceBundle rb;
     private ComboBox<Month>   monthCombo;
     private ComboBox<Integer> dayCombo;
     private ComboBox<Integer> yearCombo;
@@ -20,39 +21,19 @@ public class DateBox extends GridPane {
             11,	12,	13,	14,	15,	16,	17,	18,	19,	20,
             21,	22,	23,	24,	25,	26,	27,	28,	29,	30});
 
-    public DateBox(LocalDateTime date) {
+    public DateBox(ResourceBundle rb, LocalDateTime date, Label error) {
+        dateLabel   =   new Label("");
         monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
         dayCombo	=	new ComboBox<>(days);
         yearCombo   =   new ComboBox<>(FXCollections.observableArrayList(date.getYear(), date.getYear() + 1));
         setDateTime(date);
+        setResourceBundle(rb);
         monthCombo.setOnAction(event -> {
             updateDays();
         });
 
         //Add elements
-        this.add(new Label("Date"), 0, 0);
-        var comboPane = new GridPane();
-        comboPane.add(monthCombo, 0, 0);
-        comboPane.add(dayCombo, 1, 0);
-        comboPane.add(yearCombo, 2, 0);
-        this.add(comboPane, 0, 1);
-
-        //Style elements
-        this.setVgap(10);
-        comboPane.setHgap(10);
-    }//constructor
-
-    public DateBox(LocalDateTime date, Label error) {
-        monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
-        dayCombo	=	new ComboBox<>(days);
-        yearCombo   =   new ComboBox<>(FXCollections.observableArrayList(date.getYear(), date.getYear() + 1));
-        setDateTime(date);
-        monthCombo.setOnAction(event -> {
-            updateDays();
-        });
-
-        //Add elements
-        var labelPane = new HBox(new Label("Date"), error);
+        var labelPane = new HBox(dateLabel, error);
         this.add(labelPane, 0, 0);
         var comboPane = new GridPane();
         comboPane.add(monthCombo, 0, 0);
@@ -91,6 +72,11 @@ public class DateBox extends GridPane {
             dayCombo.setValue(currentDate.getDayOfMonth());
         }
     }//setDateTime
+
+    public void setResourceBundle(ResourceBundle rb) {
+        this.rb = rb;
+        dateLabel.setText(this.rb.getString("date"));
+    }
 
     private void updateDays() {
         if(dayCombo.getItems().size() < monthCombo.getValue().getNumDays()) {

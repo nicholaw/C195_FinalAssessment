@@ -7,17 +7,19 @@ import javafx.scene.layout.GridPane;
 import utils.Contact;
 
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 public class ContactBox extends GridPane {
 	private Label contactLabel;
 	private ComboBox<Contact> contactsCombo;
 	private TextField emailField;
+	private ResourceBundle rb;
 	
-	public ContactBox(Collection<Contact> contacts) {
-		//Instantiate elements
-		contactLabel = new Label("Contact");
+	public ContactBox(ResourceBundle rb, Collection<Contact> contacts) {
+		contactLabel = new Label("");
 		contactsCombo = new ComboBox<>();
 		emailField = new TextField("");
+		setResourceBundle(rb);
 		
 		//Set initial values
 		contactsCombo.getItems().setAll(contacts);
@@ -43,6 +45,10 @@ public class ContactBox extends GridPane {
 		this.setVgap(10);
 	}//constructor
 
+	public Contact getSelectedContact() {
+		return contactsCombo.getValue();
+	}
+
 	public void reset() {
 		selectFirst();
 	}
@@ -55,6 +61,11 @@ public class ContactBox extends GridPane {
 		}
 		updateEmail();
 	}//selectFirst
+
+	public void setResourceBundle(ResourceBundle rb) {
+		this.rb = rb;
+		contactLabel.setText(this.rb.getString("contact"));
+	}
 	
 	private void updateEmail() {
 		if(contactsCombo.getValue() != null) {
@@ -63,8 +74,4 @@ public class ContactBox extends GridPane {
 			emailField.setText("");
 		}
 	}//updateEmail
-	
-	public Contact getSelectedContact() {
-		return contactsCombo.getValue();
-	}
 }

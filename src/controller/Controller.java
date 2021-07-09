@@ -1,5 +1,6 @@
 package controller;
 
+import appointment.Appointment;
 import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
 import customer.Customer;
@@ -24,10 +25,7 @@ import sceneUtils.HeaderPane;
 import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
 import scenes.*;
-import utils.Contact;
-import utils.Country;
-import utils.Location;
-import utils.User;
+import utils.*;
 
 public class Controller {
     //final attributes
@@ -45,8 +43,6 @@ public class Controller {
     //non-final attributes
     private User currentUser;
     private Alert messageAlert;
-    private long nextCustomerId;
-    private int nextAppointmentId;
 	private ResourceBundle rb;
 	private SceneCode currentScene;
     private ObservableList<Country> countries;
@@ -73,10 +69,9 @@ public class Controller {
 	/**
      *
      */
-	public boolean addAppointment(appointment.Appointment a) {
+	public boolean addAppointment(Appointment a) {
 		if(dbConnection.insertAppointment(a, currentUser,
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
-			nextAppointmentId++;
 			return true;
 		}
 		return false;
@@ -119,7 +114,6 @@ public class Controller {
 		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
 			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			customers.add(c);
-			nextCustomerId++;
 			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
 		} else {
@@ -381,8 +375,8 @@ public class Controller {
      *
      * @return
      */
-    public int getNextAppointmentId() {
-        return nextAppointmentId;
+    public long getNextAppointmentId() {
+        return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMQDDDYYYY")));
     }
 
     /**
@@ -390,7 +384,7 @@ public class Controller {
      * @return
      */
     public long getNextCustomerId() {
-        return nextCustomerId;
+        return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("kkMMmmddYY")));
     }
 
     public User getCurrentUser() {
@@ -457,39 +451,6 @@ public class Controller {
 			e.printStackTrace();
 		}
 	}//logLoginAttempt
-	
-	/**
-	 *
-	 */
-	private void initializeIds() {
-		//YEAR-CUSTOMER-APPOINTMENT
-		int currentYear = LocalDateTime.now().getYear();
-		var f = new File(ControllerConstants.ID_DESTINATION);
-		try(var fis = new FileInputStream(f);
-            var dis = new DataInputStream(fis)) {
-			//check year
-			try {
-				if(currentYear > dis.readInt()) {	//year has progressed; reset ids and save
-					int id = 100000;
-					nextCustomerId = Long.parseLong("" + currentYear + id);
-					dis.readInt();					//skip the currently stored customer id
-					nextAppointmentId = dis.readInt();
-					storeIds(currentYear);
-				} else {
-					nextCustomerId = Long.parseLong("" + currentYear + dis.readInt());
-					nextAppointmentId = dis.readInt();
-				}
-            } catch(EOFException e) {
-			    return; //TODO: not just return b/c not while loop
-            }
-		} catch(FileNotFoundException e) {
-			System.out.println("Could not find " + f.getAbsolutePath() + "\n");
-			e.printStackTrace();
-		} catch(IOException e) {
-			System.out.println("IOException reading customer and appointment id");
-			e.printStackTrace();
-		}
-	}//initializeIds
 
 	/**
 	 *
@@ -508,27 +469,6 @@ public class Controller {
 		rb = ResourceBundle.getBundle("localization.Localization", locale.getLocale());
 		refreshScenes();
 	}
-	
-	/**
-	 *
-	 *
-	 * @param year	The year (YYYY) as of the storage of the id's.
-	 */
-	public void storeIds(int year) {
-		String str = "" + nextCustomerId;
-		str = str.substring(4);
-		int id = Integer.parseInt(str);
-		var f = new File(ControllerConstants.ID_DESTINATION);
-		try(var fos = new FileOutputStream(f, false);
-			var dos = new DataOutputStream(fos)) {
-			//YEAR-CUSTOMER-APPOINTMENT
-			dos.writeInt(year);
-			dos.writeInt(id);
-			dos.writeInt(nextAppointmentId);
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-	}//storeIds
 
     /**
      * Updates an existing appointment in the database.
@@ -536,7 +476,7 @@ public class Controller {
      * @param appointmentId		Id of the appointment to update
      * @return	Whether the database was updated successfully
      */
-    public boolean updateAppointment(int appointmentId) {
+    public boolean updateAppointment(long appointmentId) {
 		if(appointmentUpdates != null) {
 			//add user and date to appointment updates for last updated by and last updated
 			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
@@ -552,7 +492,7 @@ public class Controller {
 	 * @param customerId  Id of the customer to update
 	 * @return  whether the database updated successfully
 	 */
-    public boolean updateCustomer(int customerId) {
+    public boolean updateCustomer(long customerId) {
 		if(customerUpdates != null) {
 			//add user and date to customer updates for last updated by and last updated
 			customerUpdates.put(CustomerColumns.CUSTOMER_UPDATE_BY.getColName(), currentUser.getUsername());
@@ -603,6 +543,5 @@ public class Controller {
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
-        initializeIds();
     }
 }//class Controller

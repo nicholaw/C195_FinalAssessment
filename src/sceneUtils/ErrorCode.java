@@ -2,10 +2,10 @@ package sceneUtils;
 
 public enum ErrorCode {
     APPOINTMENT_TITLE_REQUIRED_ERROR("title_error"),
-    APPOINTMENT_DESC_REQUIRED_ERROR("title_error"),
-    APPOINTMENT_BUSINESS_HOURS_ERROR("title_error"),
-    APPOINTMENT_START_END_ERROR("title_error"),
-    APPOINTMENT_OVERLAPS_EXISTING_ERROR("title_error"),
+    APPOINTMENT_DESC_REQUIRED_ERROR("description_error"),
+    APPOINTMENT_BUSINESS_HOURS_ERROR("hours_error"),
+    APPOINTMENT_START_END_ERROR("start_end_error"),
+    APPOINTMENT_OVERLAPS_EXISTING_ERROR("overlaps_error"),
     CUSTOMER_NAME_REQUIRED_ERROR("name_error"),
     CUSTOMER_PHONE_REQUIRED_ERROR("phone_error1"),
     CUSTOMER_PHONE_DIGITS_ERROR("phone_error2"),

@@ -9,10 +9,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
-
 import sceneUtils.*;
 import utils.Division;
 
@@ -21,8 +19,7 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
     private Controller controller;
 
     //Scene elements
-    private Label sceneLabel;
-    private Label idLabel;              private TextField idField;
+    private Label sceneLabel;           private TextField idField;
     private Label nameLabel;            private TextField nameField;      	private ErrorLabel nameErrorLabel;
     private Label phoneLabel;           private TextField phoneField;     	private ErrorLabel phoneErrorLabel;
     private Label addressLabel;         private TextArea addressArea;     	private ErrorLabel addressErrorLabel;
@@ -40,7 +37,6 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
 
         //Instantiate scene elements
         sceneLabel			= new Label("");
-        idLabel				= new Label("");
         idField				= new TextField("");
         nameLabel			= new Label("");
         nameField			= new TextField("");
@@ -66,12 +62,12 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
             this.setDisable(true);
 			if(this.validateForm()) {
                 if(newCustomer) {
-					controller.addCustomer(new Customer(Long.parseLong(idField.getText()), nameField.getText(), phoneField.getText(),
+					controller.addCustomer(new Customer(this.controller.getNextCustomerId(), nameField.getText(), phoneField.getText(),
                             addressArea.getText(), postCodeField.getText(), countryAndDivisionsCombos.getSelectedCountry(),
                             countryAndDivisionsCombos.getSelectedDivision(), null));
                 } else {
 					processChanges(true);
-					controller.updateCustomer(Integer.parseInt(idField.getText()));
+					controller.updateCustomer(customerToEdit.getCustomerId());
 					controller.clearCustomerUpdates();
                 }
                 controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
