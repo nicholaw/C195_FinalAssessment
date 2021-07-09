@@ -1,5 +1,6 @@
 package scenes;
 
+import appointment.Appointment;
 import appointment.AppointmentConstants;
 import appointment.AppointmentFieldCode;
 import appointment.AppointmentType;
@@ -19,44 +20,41 @@ import java.util.ResourceBundle;
 
 public class AddEditAppointment extends BorderPane implements Refreshable {
     private Controller	controller;			private boolean			newAppointment;
-    private Label 		apptIdLabel;      	private TextField		apptIdField;
-    private Label 		apptTitleLabel;   	private TextField		apptTitleField;
-    private Label 		apptTypeLabel;    	private ComboBox		apptTypeCombo;
-    private Label		locationLabel;		private ComboBox		locationBox;
-    private ContactBox 	contactBox;  		private CustomerHeader	customerInfo;
-    private Label 		descriptionLabel; 	private TextField 		descriptionArea;
+	private Label 		sceneLabel;			private Label 			apptTitleLabel;
+	private Label 		apptTypeLabel;		private Label			locationLabel;
+	private Label 		descriptionLabel;	private CustomerHeader	customerInfo;
+    private TextField	apptTitleField;		private TextField 		descriptionArea;
+    private ComboBox	apptTypeCombo;		private ComboBox		locationBox;
+    private ContactBox 	contactBox;			private DateTimeBox 	dateTimePane;
     private Button 		submitButton;		private Button 			cancelButton;
-	private Label		titleErrorLabel;	private Label			timeErrorLabel;
-	private DateTimeBox dateTimePane;		private Label descErrorLabel;
-	private appointment.Appointment appointmentToEdit;	private Label			sceneLabel;
+	private ErrorLabel	titleErrorLabel;	private ErrorLabel		timeErrorLabel;
+	private ErrorLabel 	descErrorLabel;		private Appointment 	appointmentToEdit;
 
     public AddEditAppointment(Controller controller) {
         this.controller = controller;
 
         //Instantiate scene elements
-        sceneLabel 			= new Label(this.controller.getResourceBundle().getString("schedule_appointment"));
-		customerInfo		= new CustomerHeader();
-        apptIdLabel 		= new Label(this.controller.getResourceBundle().getString("id"));
-        apptIdField 		= new TextField("" + controller.getNextAppointmentId());
-        apptTitleLabel 		= new Label(this.controller.getResourceBundle().getString("title"));
-        apptTitleField 		= new TextField("");
-        apptTypeLabel 		= new Label(this.controller.getResourceBundle().getString("type"));
-		timeErrorLabel		= new Label("");
-		titleErrorLabel		= new Label("");
-		descErrorLabel 		= new Label("");
-        dateTimePane		= new DateTimeBox(timeErrorLabel);
-        apptTypeCombo 	 	= new ComboBox<AppointmentType>(this.controller.getAppointmentTypes());
-        locationLabel		= new Label(this.controller.getResourceBundle().getString("location"));
-        locationBox			= new ComboBox<Location>(this.controller.getLocations());
-		contactBox 			= new ContactBox(this.controller.getContacts());
-        descriptionLabel	= new Label(this.controller.getResourceBundle().getString("description"));
-        descriptionArea 	= new TextField("");
-        submitButton 	 	= new Button(this.controller.getResourceBundle().getString("schedule"));
-        cancelButton 		= new Button(this.controller.getResourceBundle().getString("cancel"));
-        appointmentToEdit 	= null;
+        sceneLabel 			= 	new Label("");
+		customerInfo		= 	new CustomerHeader();
+        apptTitleLabel 		= 	new Label("");
+        apptTitleField 		= 	new TextField("");
+        apptTypeLabel 		= 	new Label("");
+		timeErrorLabel		= 	new ErrorLabel(this.controller.getResourceBundle());
+		titleErrorLabel		= 	new ErrorLabel(this.controller.getResourceBundle());
+		descErrorLabel 		= 	new ErrorLabel(this.controller.getResourceBundle());
+        dateTimePane		= 	new DateTimeBox(timeErrorLabel);
+        apptTypeCombo 	 	= 	new ComboBox<>(this.controller.getAppointmentTypes());
+        locationLabel		= 	new Label("");
+        locationBox			= 	new ComboBox<>(this.controller.getLocations());
+		contactBox 			= 	new ContactBox(this.controller.getContacts());
+        descriptionLabel	= 	new Label("");
+        descriptionArea 	= 	new TextField("");
+        submitButton 	 	= 	new Button("");
+        cancelButton 		= 	new Button("");
+        appointmentToEdit 	= 	null;
+        setElementText();
 
         //set initial states for scene elements
-        apptIdField.setDisable(true);
 		newAppointment = true;
 		if(locationBox.getItems().size() > 0)
 			locationBox.setValue(locationBox.getItems().get(0));
@@ -69,14 +67,14 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			clearErrors();
 			if(this.validateForm()) {
 				if(newAppointment) {
-					appointment.Appointment a = new appointment.Appointment(Integer.parseInt(apptIdField.getText()), apptTitleField.getText(), descriptionArea.getText(),
+					appointment.Appointment a = new appointment.Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
 							apptTypeCombo.getValue().toString(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
 							(Location)locationBox.getValue());
 					controller.addAppointment(a);
 					customerInfo.getCustomer().addAppointment(a);
 				} else {
 					processChanges(true);
-					controller.updateAppointment(Integer.parseInt(apptIdField.getText()));
+					controller.updateAppointment(appointmentToEdit.getAppointmentId());
 				}
 				clear();
 				controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, customerInfo.getCustomer());
@@ -184,7 +182,6 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	 *
 	 */
 	public void clear() {
-		apptIdField.setText("");
 		apptTitleField.setText("");
 		descriptionArea.setText("");
 		contactBox.reset();
@@ -219,35 +216,9 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		timeErrorLabel.setText("");
 		descErrorLabel.setText("");
 	}//clearErrors
-	
-	/**
-	 *
-	 */
-	private void flag(AppointmentFieldCode code, String message) {
-		switch(code) {
-			case TITLE_FIELD:
-				titleErrorLabel.setText(message);
-				break;
-			case START_TIME:
-				timeErrorLabel.setText(message);
-				break;
-			case END_TIME:
-				timeErrorLabel.setText(message);
-				break;
-			case DESC_AREA:
-				descErrorLabel.setText(message);
-				break;
-			default :
-				controller.getMessageAlert().setAlertType(Alert.AlertType.ERROR);
-				controller.getMessageAlert().setContentText("An unknown validation error occurred");
-				controller.getMessageAlert().setTitle("Unknown Error");
-				controller.getMessageAlert().showAndWait();
-		}
-	}//flag
 
     public void loadAppointmentInfo(appointment.Appointment a) {
 		if(a != null) {
-			apptIdField.setText("" + a.getAppointmentId());
 			apptTitleField.setText(a.getTitle());
 			apptTypeCombo.setValue(a.getType());
 			descriptionArea.setText(a.getDescription());
@@ -258,6 +229,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			sceneLabel.setText(this.controller.getResourceBundle().getString("update_appointment"));
 			newAppointment = false;
 		} else {
+			clear();
 			loadNewAppointment();
 		}
     }//loadAppointmentInfo
@@ -269,7 +241,6 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
     }//loadCustomerInfo
 
     public void loadNewAppointment() {
-		apptIdField.setText("" + controller.getNextAppointmentId());
 		dateTimePane.setDateTime(LocalDateTime.now());
 		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
 		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
@@ -353,7 +324,15 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 
 	@Override
 	public void refresh(ResourceBundle rb) {
+		setElementText();
+	}
 
+	private void setElementText() {
+		apptTitleLabel.setText(controller.getResourceBundle().getString("title"));
+		descriptionLabel.setText(controller.getResourceBundle().getString("description"));
+		apptTypeLabel.setText(controller.getResourceBundle().getString("type"));
+		locationLabel.setText(controller.getResourceBundle().getString("location"));
+		cancelButton.setText(controller.getResourceBundle().getString("cancel"));
 	}
 
 	/**
@@ -368,14 +347,14 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		tempString = apptTitleField.getText();
 		if(tempString.isBlank() || tempString.isEmpty()) {
 			valid = false;
-			flag(AppointmentFieldCode.TITLE_FIELD, "- Title is required");
+			titleErrorLabel.setError(ErrorCode.APPOINTMENT_TITLE_REQUIRED_ERROR);
 		}
 
 		//Check that description is not blank
 		tempString = descriptionArea.getText();
 		if(tempString.isBlank() || tempString.isEmpty()) {
 			valid = false;
-			flag(AppointmentFieldCode.DESC_AREA, "- Description is required");
+			descErrorLabel.setError(ErrorCode.APPOINTMENT_DESC_REQUIRED_ERROR);
 		}
 
 		//Check that start date\time is before end date\time
@@ -383,7 +362,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		var end = dateTimePane.endDateTime();
 		if(start.isAfter(end)) {
 			valid = false;
-			flag(AppointmentFieldCode.START_TIME, "- End time must be after start time");
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_START_END_ERROR);
 		}
 
 		//Check that meeting time is within business hours (08:00-22:00 EST)
@@ -391,10 +370,10 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		var endTime = LocalTime.of(end.getHour(), end.getMinute());
 		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
-			flag(AppointmentFieldCode.START_TIME, "- Appointment must be within the business hours of 08:00 - 22:00 EST");
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR);
 		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
-			flag(AppointmentFieldCode.START_TIME, "- Appointment must be within the business hours of 08:00 - 22:00 EST");
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR);
 		}
 
 		//Check that meeting does not overlap another existing appointment
@@ -415,11 +394,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 		if(overlappingAppts.size() > 0) {
 			valid = false;
-			String message = "- Appointment overlaps the following existing appointments:\n";
-			for(appointment.Appointment a : overlappingAppts) {
-				message += "\t" + a.getAppointmentId() + "(" + a.getTitle() + ")\n";
-			}
-			flag(AppointmentFieldCode.START_TIME, message);
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR);
 		}
 
 		return valid;

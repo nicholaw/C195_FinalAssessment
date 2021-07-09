@@ -61,7 +61,7 @@ public class AppointmentOverviewTable extends TableView<Appointment> {
         idCol.setText(rb.getString("appointment_id"));
         titleCol.setText(rb.getString("title"));
         typeCol.setText(rb.getString("type"));
-        dateCol.setText(rb.getString("delete"));
+        dateCol.setText(rb.getString("date"));
         startCol.setText(rb.getString("start"));
         endCol.setText(rb.getString("end"));
         descCol.setText(rb.getString("description"));

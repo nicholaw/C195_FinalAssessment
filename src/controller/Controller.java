@@ -17,7 +17,6 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import localization.SupportedLocale;
@@ -47,7 +46,7 @@ public class Controller {
     private User currentUser;
     private Alert messageAlert;
     private long nextCustomerId;
-    private long nextAppointmentId;
+    private int nextAppointmentId;
 	private ResourceBundle rb;
 	private SceneCode currentScene;
     private ObservableList<Country> countries;
@@ -382,7 +381,7 @@ public class Controller {
      *
      * @return
      */
-    public long getNextAppointmentId() {
+    public int getNextAppointmentId() {
         return nextAppointmentId;
     }
 
@@ -474,11 +473,11 @@ public class Controller {
 					int id = 100000;
 					nextCustomerId = Long.parseLong("" + currentYear + id);
 					dis.readInt();					//skip the currently stored customer id
-					nextAppointmentId = dis.readLong();
+					nextAppointmentId = dis.readInt();
 					storeIds(currentYear);
 				} else {
 					nextCustomerId = Long.parseLong("" + currentYear + dis.readInt());
-					nextAppointmentId = dis.readLong();
+					nextAppointmentId = dis.readInt();
 				}
             } catch(EOFException e) {
 			    return; //TODO: not just return b/c not while loop
@@ -525,7 +524,7 @@ public class Controller {
 			//YEAR-CUSTOMER-APPOINTMENT
 			dos.writeInt(year);
 			dos.writeInt(id);
-			dos.writeLong(nextAppointmentId);
+			dos.writeInt(nextAppointmentId);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
