@@ -20,8 +20,8 @@ public class CustomerHeader extends GridPane {
 	/**
 	 *
 	 */
-	public CustomerHeader() {
-		label		=	new Label("Customer");
+	public CustomerHeader(String labelText) {
+		label		=	new Label(labelText);
 		idField		=	new TextField("");
 		nameField	=	new TextField("");
 		phoneField	=	new TextField("");
@@ -57,6 +57,10 @@ public class CustomerHeader extends GridPane {
 		idField.setText("" + customer.getCustomerId());
 		nameField.setText(customer.getName());
 		phoneField.setText(customer.getPhone());
+	}
+
+	public void setText(String labelText) {
+		label.setText(labelText);
 	}
 
 	/**

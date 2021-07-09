@@ -25,7 +25,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         //Instantiate scene elements
         this.controller 	= 	controller;
         sceneLabel 			= 	new Label("");
-        customerInfo        =   new CustomerHeader();
+        customerInfo        =   new CustomerHeader(this.controller.getResourceBundle().getString("customer"));
         appointmentsTable 	= 	new AppointmentOverviewTable(this.controller.getResourceBundle());
         scheduleButton 		= 	new Button("");
         editButton 			= 	new Button("");
@@ -117,6 +117,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
 
     public void refresh(ResourceBundle rb) {
         setElementText();
+        customerInfo.setText(rb.getString("customer"));
         appointmentsTable.setResourceBundle(rb);
     }
 

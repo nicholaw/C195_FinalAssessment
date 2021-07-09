@@ -35,7 +35,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 
         //Instantiate scene elements
         sceneLabel 			= 	new Label("");
-		customerInfo		= 	new CustomerHeader();
+		customerInfo		= 	new CustomerHeader(this.controller.getResourceBundle().getString("customer"));
         apptTitleLabel 		= 	new Label("");
         apptTitleField 		= 	new TextField("");
         apptTypeLabel 		= 	new Label("");
@@ -323,6 +323,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	@Override
 	public void refresh(ResourceBundle rb) {
 		setElementText();
+		customerInfo.setText(rb.getString("customer"));
 		titleErrorLabel.setResourceBundle(rb);
 		descErrorLabel.setResourceBundle(rb);
 		timeErrorLabel.setResourceBundle(rb);
