@@ -7,7 +7,7 @@
 .app-header{
 }
 .error-label{
-    /*-fx-color: #FA8072;*/
+    -fx-font-weight: bold;
     -fx-text-fill: rgb(250, 128, 114);
 }
 .scene-label{

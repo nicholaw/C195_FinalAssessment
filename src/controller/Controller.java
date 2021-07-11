@@ -299,7 +299,7 @@ public class Controller {
 
     public Location getLocation(String name) {
     	for(Location l : Location.values()) {
-    		if(l.equals(name))
+    		if(l.getLocation().equals(name))
     			return l;
 		}
     	return null;
@@ -312,14 +312,6 @@ public class Controller {
 	public ObservableList<Location> getLocations() {
     	return FXCollections.observableArrayList(Location.values());
 	}
-
-    /**
-     *
-     * @return
-     */
-    public Alert getMessageAlert() {
-        return messageAlert;
-    }//getMessageAlert
 
 	/**
      *
@@ -376,7 +368,7 @@ public class Controller {
      * @return
      */
     public long getNextAppointmentId() {
-        return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMQDDDYYYY")));
+        return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMQkkDDDmm")));
     }
 
     /**

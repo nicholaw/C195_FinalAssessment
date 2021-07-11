@@ -70,8 +70,8 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 					appointment.Appointment a = new appointment.Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
 							apptTypeCombo.getValue().toString(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
 							(Location)locationBox.getValue());
-					controller.addAppointment(a);
-					customerInfo.getCustomer().addAppointment(a);
+					if(controller.addAppointment(a))
+						customerInfo.getCustomer().addAppointment(a);
 				} else {
 					processChanges(true);
 					controller.updateAppointment(appointmentToEdit.getAppointmentId());
@@ -157,12 +157,12 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
     	String tempString;
 
     	tempString = apptTitleField.getText();
-    	if(!(tempString.isBlank() || tempString.isEmpty())) {
+    	if(!(tempString.isEmpty())) {
 			newInput = true;
 		}
 
     	tempString = descriptionArea.getText();
-    	if(!(tempString.isEmpty() || tempString.isBlank())) {
+    	if(!(tempString.isEmpty())) {
 			newInput = true;
 		}
 
@@ -222,6 +222,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			appointmentToEdit = a;
 			dateTimePane.setStart(a.getStartDateTime());
 			dateTimePane.setEnd(a.getEndDateTime());
+			locationBox.setValue(a.getLocation());
 			submitButton.setText(this.controller.getResourceBundle().getString("update"));
 			sceneLabel.setText(this.controller.getResourceBundle().getString("update_appointment"));
 			newAppointment = false;
@@ -270,7 +271,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//check for location change
-		if(appointmentToEdit.getLocation() != locationBox.getValue()) {
+		if(appointmentToEdit.getLocation() != locationBox.getSelectionModel().getSelectedItem()) {
 			changesMade = true;
 			if(commitChanges) {
 				controller.addAppointmentUpdate(AppointmentFieldCode.LOCATION_COMBO, locationBox.getValue().toString());
@@ -279,7 +280,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//check for type change
-		if(appointmentToEdit.getType() != apptTypeCombo.getValue()) {
+		if(appointmentToEdit.getType() != apptTypeCombo.getSelectionModel().getSelectedItem()) {
 			changesMade = true;
 			if(commitChanges) {
 				controller.addAppointmentUpdate(AppointmentFieldCode.TYPE_COMBO, apptTypeCombo.getValue().toString());
@@ -326,9 +327,28 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		customerInfo.setText(rb.getString("customer"));
 		titleErrorLabel.setResourceBundle(rb);
 		descErrorLabel.setResourceBundle(rb);
-		timeErrorLabel.setResourceBundle(rb);
 		contactBox.setResourceBundle(rb);
 		dateTimePane.setResourceBundle(rb);
+		refreshTimeError(rb);
+	}
+
+	private void refreshTimeError(ResourceBundle rb) {
+		String errorMessage;
+		String append = timeErrorLabel.getText().substring(controller.getResourceBundle().getString("overlaps_error").length() - 1);
+		timeErrorLabel.setResourceBundle(rb);
+		switch(timeErrorLabel.getError()) {
+			case APPOINTMENT_BUSINESS_HOURS_ERROR:
+				errorMessage = controller.getResourceBundle().getString("hours_error");
+				errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
+						controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+				timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
+				break;
+			case APPOINTMENT_OVERLAPS_EXISTING_ERROR:
+				errorMessage = controller.getResourceBundle().getString("overlaps_error");
+				errorMessage = errorMessage + "\n\t" + append;
+				timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR, errorMessage);
+				break;
+		}
 	}
 
 	private void setElementText() {
@@ -374,10 +394,16 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		var endTime = LocalTime.of(end.getHour(), end.getMinute());
 		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
-			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR);
+			String errorMessage = controller.getResourceBundle().getString("hours_error");
+			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
+					controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
 		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
 			valid = false;
-			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR);
+			String errorMessage = controller.getResourceBundle().getString("hours_error");
+			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
+					controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
 		}
 
 		//Check that meeting does not overlap another existing appointment
@@ -398,8 +424,15 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 		if(overlappingAppts.size() > 0) {
 			valid = false;
-			timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR);
+			String errorMessage = controller.getResourceBundle().getString("overlaps_error");
+			for(Appointment a : overlappingAppts) {
+				errorMessage += "\n\t";
+				errorMessage = errorMessage + a.getTitle() + "(" + a.getAppointmentId() + ")";
+			}
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR, errorMessage);
 		}
+
+		//Check that date/time is not in the past
 
 		return valid;
 	}//validateForm

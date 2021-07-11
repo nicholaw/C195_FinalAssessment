@@ -409,8 +409,8 @@ public class DBConnection
         try(var stmt = conn.prepareStatement(sql)) {
             var result = stmt.executeQuery();
             while(result.next()) {
-                System.out.printf("%d\t%s\t%d\n", result.getInt("appointment_id"),
-                        result.getString("title"), result.getInt("customer_id"));
+                System.out.printf("%d\t%s\t%d\t%s\n", result.getInt("appointment_id"),
+                        result.getString("title"), result.getInt("customer_id"), result.getString("location"));
             }
         } catch(SQLException e) {
             e.printStackTrace();

@@ -1,7 +1,6 @@
 package sceneUtils;
 
 import javafx.scene.control.Label;
-
 import java.util.ResourceBundle;
 
 public class ErrorLabel extends Label {
@@ -27,6 +26,11 @@ public class ErrorLabel extends Label {
     public void setError(ErrorCode error) {
         this.error = error;
         this.setText(rb.getString(this.error.getLocaleKey()));
+    }
+
+    public void setError(ErrorCode error, String str) {
+        this.error = error;
+        this.setText(str);
     }
 
     public void setResourceBundle(ResourceBundle rb) {
