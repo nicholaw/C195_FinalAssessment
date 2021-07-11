@@ -384,7 +384,7 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
         }
 
         //check that postal code is not blank and only contains digits
-        input = phoneField.getText().trim();
+        input = postCodeField.getText().trim();
         if(input.isEmpty() || input.isBlank()) {
             valid = false;
             postCodeErrorLabel.setError(ErrorCode.CUSTOMER_POSTCODE_REQUIRED_ERROR);

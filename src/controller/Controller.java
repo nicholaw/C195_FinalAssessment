@@ -246,7 +246,7 @@ public class Controller {
     public boolean deleteCustomer(Customer c) {
     	if(c.getAppointments() == null)
     		c.setAppointments(dbConnection.getCustomerAppointments(c.getCustomerId()));
-		if(c.getAppointments().size() > 0) { //TODO: filter past dated appointments
+		if(c.getAppointments().size() > 0) {
 			messageAlert.setAlertType(Alert.AlertType.INFORMATION);
 			messageAlert.setTitle("Delete Customer");
 			String message = "Cannot delete customer " + c.getName() + "(#" + c.getCustomerId() + ") because " +

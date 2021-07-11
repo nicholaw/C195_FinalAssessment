@@ -300,7 +300,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 
 		//check for end change
 		tempDateTime = dateTimePane.endDateTime();
-		if(!appointmentToEdit.getStartDateTime().equals(tempDateTime)) {
+		if(!appointmentToEdit.getEndDateTime().equals(tempDateTime)) {
 			changesMade = true;
 			if(commitChanges) {
 				controller.addAppointmentUpdate(AppointmentFieldCode.END_TIME, tempDateTime.format(ControllerConstants.TIMESTAMP_FORMAT));
