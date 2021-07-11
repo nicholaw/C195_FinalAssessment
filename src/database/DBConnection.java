@@ -1,13 +1,11 @@
 package database;
 
 import appointment.Appointment;
+import utils.*;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
-import utils.Contact;
-import utils.Country;
-import utils.Division;
-import utils.User;
+
 import javax.sql.DataSource;
 import java.io.*;
 import java.sql.Connection;
@@ -197,8 +195,8 @@ public class DBConnection
             var result = stmt.executeQuery();
             while(result.next()) {
                 list.add(new appointment.Appointment(result.getLong("appointment_id"), result.getString("title"), result.getString("description"),
-                        result.getString("type"), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
-                        id, controller.getContact(result.getInt("contact")), controller.getLocation(result.getString("location"))));
+                        Type.getType(result.getString("type")), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
+                        id, controller.getContact(result.getInt("contact")), Location.getLocation(result.getString("location"))));
             }
         }catch(SQLException e)
         {
@@ -314,7 +312,7 @@ public class DBConnection
 			stmt.setString	(2, a.getTitle());
 			stmt.setString	(3, a.getDescription());
 			stmt.setString  (4, a.getLocation().getLocation());
-			stmt.setString	(5, a.getType());
+			stmt.setString	(5, a.getType().getType());
 			stmt.setString	(6, a.getStartDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			stmt.setString	(7, a.getEndDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			stmt.setString	(8, timestamp);

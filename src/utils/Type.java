@@ -1,6 +1,6 @@
-package appointment;
+package utils;
 
-public enum AppointmentType {
+public enum Type {
 	BRIEFING("Briefing"),
     CONSULTATION("Consultation"),
 	DEBRIEFING("Debriefing"),
@@ -11,13 +11,21 @@ public enum AppointmentType {
 	
 	private final String type;
 	
-	AppointmentType(String type) {
+	Type(String type) {
 		this.type = type;
 	}//constructor
 	
 	public String getType() {
 		return this.type;
 	}//getType
+
+	public static Type getType(String str) {
+		for(Type t : Type.values()) {
+			if(str.equals(t.getType()))
+				return t;
+		}
+		return null;
+	}
 	
 	@Override
 	public String toString() {

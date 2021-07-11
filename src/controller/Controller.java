@@ -2,14 +2,13 @@ package controller;
 
 import appointment.Appointment;
 import appointment.AppointmentFieldCode;
-import appointment.AppointmentType;
+import utils.Type;
 import customer.Customer;
 import customer.CustomerFieldCode;
 import database.AppointmentColumns;
 import database.CustomerColumns;
 import database.DBConnection;
 import database.DBConstants;
-import io.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -58,7 +57,7 @@ public class Controller {
 		contentPane.setTop(header);
 		scn.getStylesheets().add(ControllerConstants.STYLE_DESTINATION);
 		scn.setRoot(contentPane);
-		loginAttemptDestinaiton = new File(IOConstants.LOGIN_ATTEMPT_DESTINATION);
+		loginAttemptDestinaiton = new File(ControllerConstants.LOGIN_ATTEMPT_DESTINATION);
         dbConnection = new DBConnection(this);
         scenes = new HashSet<>();
         scenes.add(login = new LoginPage(this));
@@ -200,17 +199,17 @@ public class Controller {
 	 */
 	private void checkForUpcomingAppointments() {
 		messageAlert.setAlertType(Alert.AlertType.INFORMATION);
-		messageAlert.setTitle("Upcoming Appointments");
+		messageAlert.setTitle(rb.getString("upcoming_appointments_title"));
 		String message = "";
 		Set<String> appointments = new HashSet<>(dbConnection.getUpcomingAppointments(LocalDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT));
 		if((appointments != null) && !(appointments.isEmpty())) {
-			message += "The following appointments will begin within the next fifteen minutes:";
+			message += rb.getString("upcoming_appointments_true");
 			message += "\n\n";
 			for(String str : appointments) {
 				message += str + "\n";
 			}
 		} else {
-			message += "There are no appointments beginning within the next fifteen minutes.";
+			message += rb.getString("upcoming_appointments_false");
 		}
 		messageAlert.setContentText(message);
 		messageAlert.showAndWait();
@@ -289,8 +288,8 @@ public class Controller {
 	 *
 	 * @return
 	 */
-	public ObservableList<AppointmentType> getAppointmentTypes() {
-		return FXCollections.observableArrayList(AppointmentType.values());
+	public ObservableList<Type> getAppointmentTypes() {
+		return FXCollections.observableArrayList(Type.values());
 	}
 
 	public Locale getCurrentLocale() {
@@ -431,12 +430,12 @@ public class Controller {
 		try(var fw = new FileWriter(loginAttemptDestinaiton, true);
 			var bw = new BufferedWriter(fw)) {
 			LocalDateTime currentTime = LocalDateTime.now();
-			String text = currentTime.format(DateTimeFormatter.ofPattern(IOConstants.DATE_TIME_FORMAT));
+			String text = currentTime.format(DateTimeFormatter.ofPattern(ControllerConstants.DATE_TIME_FORMAT));
 			text += (username + "\t");
 			if(valid)
-				text += IOConstants.SUCCESSFUL_LOGIN;
+				text += ControllerConstants.SUCCESSFUL_LOGIN;
 			else
-				text += IOConstants.FAILED_LOGIN;
+				text += ControllerConstants.FAILED_LOGIN;
 			bw.write(text);
 			bw.newLine();
 		} catch (IOException e) {

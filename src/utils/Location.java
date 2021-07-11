@@ -15,6 +15,15 @@ public enum Location {
         return this.location;
     }
 
+    public static Location getLocation(String str) {
+        for(Location l : Location.values()) {
+            if(str.equals(l.getLocation())) {
+                return l;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return this.location;

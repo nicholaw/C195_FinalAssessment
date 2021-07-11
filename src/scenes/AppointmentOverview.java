@@ -45,8 +45,8 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
             controller.changeScene(SceneCode.EDIT_APPOINTMENT, appointmentsTable.getSelectedAppointment());
         });
         deleteButton.setOnAction(event -> {
-            if(controller.displayConfirmationAlert("Confirm Delete", "Are you sure you would " +
-                    "like to delete this appointment?")) {
+            if(controller.displayConfirmationAlert(controller.getResourceBundle().getString("confirm_delete_title"),
+                    controller.getResourceBundle().getString("confirm_delete_appointment"))) {
                 Appointment appt = appointmentsTable.getSelectedAppointment();
                 if(controller.deleteAppointment(appt)) {
                     customerInfo.getCustomer().removeAppointment(appt);

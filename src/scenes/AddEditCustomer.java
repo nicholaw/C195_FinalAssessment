@@ -79,8 +79,8 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
         cancelButton.setOnAction(event -> {
             if(newCustomer) {
                 if(checkForInput()) {
-                    if(controller.displayConfirmationAlert("Confirm Navigation", "You have not finished " +
-                            "this customer. Are you sure you would like to cancel without saving?")) {
+                    if(controller.displayConfirmationAlert(controller.getResourceBundle().getString("confirm_navigation_title"),
+                            controller.getResourceBundle().getString("confirm_navigation_alert"))) {
                         clearAll();
                         controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                     }
@@ -89,8 +89,8 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
                     controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 }
             } else if(processChanges(false)) {
-                if(controller.displayConfirmationAlert("Confirm Navigation", "You have made changes to " +
-                        "this customer. Are you sure you would like to cancel without saving these changes?")) {
+                if(controller.displayConfirmationAlert(controller.getResourceBundle().getString("confirm_navigation_title"),
+                        controller.getResourceBundle().getString("confirm_navigation_alert"))) {
                     clearAll();
                     controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
                 }

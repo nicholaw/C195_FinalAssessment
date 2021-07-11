@@ -1,19 +1,17 @@
 package appointment;
 
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import utils.Contact;
 import utils.Location;
+import utils.Type;
 
 public class Appointment {
 	private LongProperty	appointmentId;
 	private StringProperty	title;
 	private StringProperty	description;
-	private StringProperty	type;
+	private ObjectProperty<Type> type;
 	private LocalDateTime	startDateTime;
 	private LocalDateTime	endDateTime;
 	private StringProperty	date;
@@ -36,13 +34,13 @@ public class Appointment {
 	 * @param contact
 	 * @param location
 	 */
-    public Appointment(long appointmentId, String title, String description, String type,
+    public Appointment(long appointmentId, String title, String description, Type type,
 						LocalDateTime startDateTime, LocalDateTime endDateTime,
 						long customerId, Contact contact, Location location) {
         this.appointmentId	=	new SimpleLongProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, "title", title);
 		this.description 	= 	new SimpleStringProperty(this, "description", description);
-		this.type 			= 	new SimpleStringProperty(this, "type", type);
+		this.type 			= 	new SimpleObjectProperty<>(this, "type", type);
 		this.startDateTime	= 	startDateTime;
 		this.date 			= 	new SimpleStringProperty(this, "date", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.start	 		= 	new SimpleStringProperty(this, "start", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
@@ -65,7 +63,7 @@ public class Appointment {
 		return description;
 	}
 	
-	public StringProperty typeProperty() {
+	public ObjectProperty typeProperty() {
 		return type;
 	}
 	
@@ -129,7 +127,7 @@ public class Appointment {
         return title.get();
     }//getTitle
 
-    public String getType() {
+    public Type getType() {
         return type.get();
     }//getType
 	
@@ -172,8 +170,8 @@ public class Appointment {
     	this.contact = c;
 	}
 
-	public void setType(AppointmentType t) {
-    	this.type.setValue(t.getType());
+	public void setType(Type t) {
+    	this.type.setValue(t);
 	}
 
 	/**

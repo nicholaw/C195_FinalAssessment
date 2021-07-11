@@ -3,7 +3,7 @@ package scenes;
 import appointment.Appointment;
 import appointment.AppointmentConstants;
 import appointment.AppointmentFieldCode;
-import appointment.AppointmentType;
+import utils.Type;
 import controller.Controller;
 import controller.ControllerConstants;
 import customer.Customer;
@@ -19,16 +19,16 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class AddEditAppointment extends BorderPane implements Refreshable {
-    private Controller	controller;			private boolean			newAppointment;
-	private Label 		sceneLabel;			private Label 			apptTitleLabel;
-	private Label 		apptTypeLabel;		private Label			locationLabel;
-	private Label 		descriptionLabel;	private CustomerHeader	customerInfo;
-    private TextField	apptTitleField;		private TextField 		descriptionArea;
-    private ComboBox	apptTypeCombo;		private ComboBox		locationBox;
-    private ContactBox 	contactBox;			private DateTimeBox 	dateTimePane;
-    private Button 		submitButton;		private Button 			cancelButton;
-	private ErrorLabel	titleErrorLabel;	private ErrorLabel		timeErrorLabel;
-	private ErrorLabel 	descErrorLabel;		private Appointment 	appointmentToEdit;
+    private final Controller	controller;			private final ErrorLabel 		descErrorLabel;
+	private final Label 		sceneLabel;			private final Label 			apptTitleLabel;
+	private final Label 		apptTypeLabel;		private final Label				locationLabel;
+	private final Label 		descriptionLabel;	private final CustomerHeader	customerInfo;
+    private final TextField		apptTitleField;		private final TextField 		descriptionArea;
+    private final ContactBox 	contactBox;			private final DateTimeBox 		dateTimePane;
+    private final Button 		submitButton;		private final Button 			cancelButton;
+	private final ErrorLabel	titleErrorLabel;	private final ErrorLabel		timeErrorLabel;
+	private Appointment 		appointmentToEdit;	private boolean					newAppointment;
+	private final ComboBox<Location>locationBox;	private final ComboBox<Type>apptTypeCombo;
 
     public AddEditAppointment(Controller controller) {
         this.controller = controller;
@@ -68,7 +68,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			if(this.validateForm()) {
 				if(newAppointment) {
 					appointment.Appointment a = new appointment.Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
-							apptTypeCombo.getValue().toString(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
+							apptTypeCombo.getValue(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
 							(Location)locationBox.getValue());
 					if(controller.addAppointment(a))
 						customerInfo.getCustomer().addAppointment(a);
@@ -84,8 +84,8 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		cancelButton.setOnAction(event -> {
 			if(newAppointment) {
 				if(checkForInput()) {
-					if(controller.displayConfirmationAlert("Confirm Navigation", "You have not finished scheduling this appointment. Are you sure you would like to " +
-							"leave without finishing?")) {
+					if(controller.displayConfirmationAlert(controller.getResourceBundle().getString("confirm_navigation_title"),
+							controller.getResourceBundle().getString("confirm_navigation_alert"))) {
 						clear();
 						controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
 					}
@@ -95,8 +95,8 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 				}
 			} else {
 				if(processChanges(false)) {
-					if(controller.displayConfirmationAlert("Confirm Navigation", "You have made changes to this appointment. Are you sure you would like to " +
-							"leave without saving these changes?")) {
+					if(controller.displayConfirmationAlert(controller.getResourceBundle().getString("confirm_navigation_title"),
+							controller.getResourceBundle().getString("confirm_navigation_alert"))) {
 						clear();
 						controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, null);
 					}
@@ -214,7 +214,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		descErrorLabel.setText("");
 	}//clearErrors
 
-    public void loadAppointmentInfo(appointment.Appointment a) {
+    public void loadAppointmentInfo(Appointment a) {
 		if(a != null) {
 			apptTitleField.setText(a.getTitle());
 			apptTypeCombo.setValue(a.getType());
@@ -284,7 +284,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			changesMade = true;
 			if(commitChanges) {
 				controller.addAppointmentUpdate(AppointmentFieldCode.TYPE_COMBO, apptTypeCombo.getValue().toString());
-				appointmentToEdit.setType((AppointmentType) apptTypeCombo.getValue());
+				appointmentToEdit.setType((Type) apptTypeCombo.getValue());
 			}
 		}
 
@@ -330,26 +330,28 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		contactBox.setResourceBundle(rb);
 		dateTimePane.setResourceBundle(rb);
 		refreshTimeError(rb);
-	}
+	}//refresh
 
 	private void refreshTimeError(ResourceBundle rb) {
-		String errorMessage;
-		String append = timeErrorLabel.getText().substring(controller.getResourceBundle().getString("overlaps_error").length() - 1);
-		timeErrorLabel.setResourceBundle(rb);
-		switch(timeErrorLabel.getError()) {
-			case APPOINTMENT_BUSINESS_HOURS_ERROR:
-				errorMessage = controller.getResourceBundle().getString("hours_error");
-				errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
-						controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
-				timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
-				break;
-			case APPOINTMENT_OVERLAPS_EXISTING_ERROR:
-				errorMessage = controller.getResourceBundle().getString("overlaps_error");
-				errorMessage = errorMessage + "\n\t" + append;
-				timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR, errorMessage);
-				break;
-		}
-	}
+		if(timeErrorLabel.getError() != null) {
+			String errorMessage;
+			String append = timeErrorLabel.getText().substring(controller.getResourceBundle().getString("overlaps_error").length() - 1);
+			timeErrorLabel.setResourceBundle(rb);
+			switch(timeErrorLabel.getError()) {
+				case APPOINTMENT_BUSINESS_HOURS_ERROR:
+					errorMessage = controller.getResourceBundle().getString("hours_error");
+					errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
+							controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+					timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
+					break;
+				case APPOINTMENT_OVERLAPS_EXISTING_ERROR:
+					errorMessage = controller.getResourceBundle().getString("overlaps_error");
+					errorMessage = errorMessage + "\n\t" + append;
+					timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR, errorMessage);
+					break;
+			}//switch
+		}//if
+	}//refreshTimeError
 
 	private void setElementText() {
 		apptTitleLabel.setText(controller.getResourceBundle().getString("title"));
@@ -357,7 +359,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		apptTypeLabel.setText(controller.getResourceBundle().getString("type"));
 		locationLabel.setText(controller.getResourceBundle().getString("location"));
 		cancelButton.setText(controller.getResourceBundle().getString("cancel"));
-	}
+	}//setElementText
 
 	/**
 	 *
