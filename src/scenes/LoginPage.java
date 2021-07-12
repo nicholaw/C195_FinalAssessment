@@ -12,9 +12,11 @@ import javafx.scene.layout.*;
 import sceneUtils.ErrorLabel;
 import sceneUtils.ErrorCode;
 import sceneUtils.Refreshable;
-
 import java.util.ResourceBundle;
 
+/**
+ * Represents the scene which allows a user to log on to the application.
+ */
 public class LoginPage extends BorderPane implements Refreshable {
     private Controller      controller;
     private TextField       usernameField;
@@ -24,6 +26,10 @@ public class LoginPage extends BorderPane implements Refreshable {
     private Label           passwordLabel;
     private ErrorLabel      errorMessageLabel;
 
+    /**
+     * Constructs this scene
+     * @param controller -the controller
+     */
     public LoginPage(Controller controller) {
         //Initialize fields
         this.controller = controller;
@@ -72,7 +78,7 @@ public class LoginPage extends BorderPane implements Refreshable {
     }//constructor
 
     /**
-     *
+     * Sets the text of each label on this scene to the empty string.
      */
     public void clearAll() {
         usernameField.setText("");
@@ -81,23 +87,22 @@ public class LoginPage extends BorderPane implements Refreshable {
     }
 
     /**
-     *
+     * Sets the text of each error label on this scene to the empty string
      */
     private void clearErrorMessage() {
         errorMessageLabel.clear();
     }
 
     /**
-     *
+     * Displays an error message informing the user that the credentials they entered did
+     * not match any credentials stored in the database.
      */
     public void invalidLogin() {
         passwordField.setText("");
         errorMessageLabel.setError(ErrorCode.LOGIN_INVALID_CREDENTIAL_ERROR);
     }
 
-    /**
-     *
-     */
+    @Override
     public void refresh(ResourceBundle rb) {
         usernameLabel.setText(this.controller.getResourceBundle().getString("username"));
         passwordLabel.setText(this.controller.getResourceBundle().getString("password"));
@@ -106,7 +111,7 @@ public class LoginPage extends BorderPane implements Refreshable {
     }
 
     /**
-     *
+     * Submits this form for validation and transition to the next scene if the form is valid.
      */
     private void submitForm() {
         this.setDisable(true);
@@ -122,7 +127,7 @@ public class LoginPage extends BorderPane implements Refreshable {
     /**
      * Checks that the input provided on this form is valid. Returns ture if the
      * input is valid and false otherwise.
-     * @return  Whether the input is valid.
+     * @return  -whether the input is valid.
      */
     private boolean validateForm() {
         boolean valid = true;

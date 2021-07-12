@@ -14,6 +14,10 @@ import java.util.regex.Pattern;
 import sceneUtils.*;
 import utils.Division;
 
+/**
+ * Represents the scene which allows the user to insert a new customer into the database or edit
+ * an existing one.
+ */
 public class AddEditCustomer extends BorderPane implements Refreshable {
     //Controller
     private Controller controller;
@@ -31,6 +35,10 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
 	private boolean newCustomer;
 	private Customer customerToEdit;
 
+    /**
+     * Constructs this scene.
+     * @param controller	-the controller
+     */
     public AddEditCustomer(Controller controller){
         //Set Controller
         this.controller = controller;
@@ -165,8 +173,10 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
     }//constructor
 
     /**
-     *
-     * @return
+     * Checks if the user has made any new input when adding a new customer. Used for
+     * confirming navigation away from a page with unsaved changes. Returns true if any fields
+     * contain new input and false otherwise.
+     * @return -whether this scene's fields contain any new input
      */
     private boolean checkForInput() {
        if(!nameField.getText().isBlank())
@@ -181,6 +191,13 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
            return false;
     }
 
+    /**
+     * Checks that the given TextInputControl does not contain more than the number of characters allowed
+     * by the database for that field. Set's the control's text to a permissible substring if the number of
+     * characters is over the provided limit.
+     * @param inputElement	-the TextInputControl to check
+     * @param maximum		-the maximum number of characters allowed
+     */
     private void checkForMaximumCharacters(TextInputControl inputElement, int maximum) {
         String oldString = inputElement.getText();
         if(oldString.length() > maximum) {
@@ -190,7 +207,9 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
         }
     }//checkForMaximumCharacters
 
-    //Clears all values from input fields
+    /**
+     * Clears all the input and error messages present on this scene.
+     */
     public void clearAll() {
         nameField.setText("");
         phoneField.setText("");
@@ -205,6 +224,9 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
 		clearErrors();
     }//clearAll
 
+    /**
+     * Sets the text of each error label to the empty string.
+     */
     public void clearErrors() {
         nameErrorLabel.clear();
         phoneErrorLabel.clear();
@@ -243,6 +265,9 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
 		}
     }//loadCustomerInfo
 
+    /**
+     * Prepares this scene for scheduling a new appointment.
+     */
     public void loadNewCustomer() {
         idField.setText("" + controller.getNextCustomerId());
         sceneLabel.setText(controller.getResourceBundle().getString("add") + " " +
@@ -252,9 +277,11 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
     }//loadNewCustomer
 
     /**
-     *
-     * @param commitChanges
-     * @return
+     * Checks that the value of each input control matches the values stored in the given customer. Used to
+     * confirm navigation away from a scene with unsaved changes and to record changes for update in the
+     * database. Returns true if any input fields do not match saved values and false otherwise.
+     * @param commitChanges	-whether changes should be made in the database
+     * @return	-whether any input fields do not match saved values
      */
 	private boolean processChanges(boolean commitChanges) {
         boolean changesMade = false;
@@ -317,10 +344,7 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
 		return changesMade;
 	}//processChanges
 
-    /**
-     *
-     * @param rb
-     */
+    @Override
     public void refresh(ResourceBundle rb) {
         setElementText();
         nameErrorLabel.setResourceBundle(rb);
@@ -331,7 +355,7 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
     }
 
     /**
-     *
+     * Sets the text for each label and button on this scene based on the user-selected language.
      */
     private void setElementText() {
 	    if(newCustomer) {
@@ -351,8 +375,9 @@ public class AddEditCustomer extends BorderPane implements Refreshable {
     }
 
     /**
-     *	Checks that the information entered into the form fields are valid. Returns true if all fields are valid and false otherwise.
-     *	@return	validity of the form
+     * Checks the the value of each of the input controls is valid and displays appropriate error messages
+     * for any invalid input. Returns true if every field contains valid input and false otherwise.
+     * @return -whether each input field contains valid input
      */
     private boolean validateForm() {
         clearErrors();

@@ -11,9 +11,12 @@ import javafx.scene.layout.HBox;
 import sceneUtils.CustomerOverviewTable;
 import sceneUtils.Refreshable;
 import sceneUtils.SceneCode;
-
 import java.util.ResourceBundle;
 
+/**
+ * Scene which displays an overview of customers stored in the database. Scene contains
+ * buttons which allow user to edit or delete a displayed customer or insert a new one.
+ */
 public class CustomerOverview  extends BorderPane implements Refreshable {
     Controller controller;
     Label sceneLabel;
@@ -24,6 +27,10 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
     Button deleteCustomerButton;
     Button logoutButton;
 
+    /**
+     * Constructs this scene.
+     * @param controller -the application controller
+     */
     public CustomerOverview(Controller controller) {
         this.controller = controller;
 
@@ -101,11 +108,15 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         sceneLabel.getStyleClass().add("scene-label");
     }//constructor
 
+    @Override
     public void refresh(ResourceBundle rb) {
         setElementText();
         customersTable.setResourceBundle(controller.getResourceBundle());
     }
 
+    /**
+     * Sets the text for each label and button on this scene based on the user-selected language.
+     */
     private void setElementText() {
         sceneLabel.setText(this.controller.getResourceBundle().getString("customer_overview"));
         addCustomerButton.setText(this.controller.getResourceBundle().getString("add") + " " +
@@ -119,6 +130,9 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
     }
 
+    /**
+     * Clears the controls for displaying customer information and disables and relevant buttons.
+     */
     public void clear() {
 		editCustomerButton.setDisable(true);
 		viewAppointmentsButton.setDisable(true);
@@ -126,6 +140,9 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
 		customersTable.refresh();
 	}
 
+    /**
+     * Refreshes the TableView which displays the list of customers.
+     */
 	public void refreshCustomersTable() {
         customersTable.refresh();
     }

@@ -14,6 +14,10 @@ import sceneUtils.SceneCode;
 import sceneUtils.CustomerHeader;
 import java.util.ResourceBundle;
 
+/**
+ * Scene which displays an overview of scheduled appointments for a given customer. Scene contains
+ * buttons which allow user to edit or delete a displayed appointment or schedule a new one.
+ */
 public class AppointmentOverview  extends BorderPane implements Refreshable {
     private Controller controller;              private Label sceneLabel;
     private CustomerHeader customerInfo;	    private AppointmentOverviewTable appointmentsTable;
@@ -21,6 +25,10 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
     private Button deleteButton;                private Button returnButton;
     private Customer customerToDisplay;
 
+    /**
+     * Constructs this scene.
+     * @param controller -the application controller
+     */
     public AppointmentOverview(Controller controller) {
         //Instantiate scene elements
         this.controller 	= 	controller;
@@ -90,7 +98,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
     }//constructor
 
     /**
-	 *
+	 * Clears the controls for displaying customer information and disables and relevant buttons.
      */
     private void clear() {
         customerInfo.clear();
@@ -99,7 +107,9 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
     }//clear
 
 	/**
-	 *
+	 * Displays the given customers information and sets the TableView's items to the list
+     * of appointments scheduled by the given customer.
+     * @param c -the customer to display
 	 */
 	public void loadOverview(Customer c) {
 		if(c != null) {
@@ -111,16 +121,24 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         }
 	}//loadOverview
 
+    /**
+     * Returns the customer whose appointment's are on display.
+     * @return -the customer being displayed
+     */
     public Customer getCustomerToDisplay() {
         return customerToDisplay;
     }//getCustomerToDisplay
 
+    @Override
     public void refresh(ResourceBundle rb) {
         setElementText();
         customerInfo.setText(rb.getString("customer"));
         appointmentsTable.setResourceBundle(rb);
     }
 
+    /**
+     * Sets the text for each label and button on this scene based on the user-selected language.
+     */
     private void setElementText() {
 	    sceneLabel.setText(controller.getResourceBundle().getString("appointment_overview"));
 	    returnButton.setText(controller.getResourceBundle().getString("return"));

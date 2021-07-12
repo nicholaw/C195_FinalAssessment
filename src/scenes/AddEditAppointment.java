@@ -18,6 +18,9 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
+/**
+ * Represents the scene which allows the user to schedule a new appointment or edit an existing one.
+ */
 public class AddEditAppointment extends BorderPane implements Refreshable {
     private final Controller	controller;			private final ErrorLabel 		descErrorLabel;
 	private final Label 		sceneLabel;			private final Label 			apptTitleLabel;
@@ -30,6 +33,10 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	private Appointment 		appointmentToEdit;	private boolean					newAppointment;
 	private final ComboBox<Location>locationBox;	private final ComboBox<Type>apptTypeCombo;
 
+	/**
+	 * Constructs this scene.
+	 * @param controller	-the controller
+	 */
     public AddEditAppointment(Controller controller) {
         this.controller = controller;
 
@@ -152,6 +159,12 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		descErrorLabel.getStyleClass().add("error-label");
     }//constructor
 
+	/**
+	 * Checks if the user has made any new input when scheduling a new appointment. Used for
+	 * confirming navigation away from a page with unsaved changes. Returns true if any fields
+	 * contain new input and false otherwise.
+	 * @return -whether this scene's fields contain any new input
+	 */
 	private boolean checkForInput() {
     	boolean newInput = false;
     	String tempString;
@@ -169,6 +182,13 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
     	return newInput;
 	}
 
+	/**
+	 * Checks that the given TextInputControl does not contain more than the number of characters allowed
+	 * by the database for that field. Set's the control's text to a permissible substring if the number of
+	 * characters is over the provided limit.
+	 * @param inputElement	-the TextInputControl to check
+	 * @param maximum		-the maximum number of characters allowed
+	 */
 	private void checkForMaximumCharacters(TextInputControl inputElement, int maximum) {
 		String oldString = inputElement.getText();
 		if(oldString.length() > maximum) {
@@ -179,7 +199,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	}//checkForMaximumCharacters
 
 	/**
-	 *
+	 * Clears all the input and error messages present on this scene.
 	 */
 	public void clear() {
 		apptTitleField.setText("");
@@ -193,7 +213,8 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	}//clear
 	
 	/**
-	 *
+	 * Set the value of the given ComboBox to the first element in its list of items or null
+	 * if that list is null or has no items.
 	 */
 	private void clearCombo(ComboBox box) {
 		if(box != null) {
@@ -206,7 +227,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	}//clearCombo
 
 	/**
-	 *
+	 * Sets the text of each error label to the empty string.
 	 */
 	private void clearErrors() {
 		titleErrorLabel.setText("");
@@ -214,6 +235,11 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		descErrorLabel.setText("");
 	}//clearErrors
 
+	/**
+	 * Displays an existing appointment on this scene by setting the appropriate value of each input to match
+	 * the given appointment.
+	 * @param a	-the appointment to display
+	 */
     public void loadAppointmentInfo(Appointment a) {
 		if(a != null) {
 			apptTitleField.setText(a.getTitle());
@@ -232,12 +258,20 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
     }//loadAppointmentInfo
 
+	/**
+	 * Displays the information of the customer for whom an appointment is being scheduled or who owns
+	 * the appointment being edited.
+	 * @param c -the customer to display
+	 */
     public void loadCustomerInfo(Customer c) {
 		if(c != null) {
 			customerInfo.setCustomer(c);
 		}
     }//loadCustomerInfo
 
+	/**
+	 * Prepares this scene for scheduling a new appointment.
+	 */
     public void loadNewAppointment() {
 		dateTimePane.setDateTime(LocalDateTime.now());
 		appointmentToEdit = null;
@@ -245,7 +279,14 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
 		newAppointment = true;
     }//loadNewAppointment
-	
+
+	/**
+	 * Checks that the value of each input control matches the values stored in the given appointment. Used to
+	 * confirm navigation away from a scene with unsaved changes and to record changes for update in the
+	 * database. Returns true if any input fields do not match saved values and false otherwise.
+	 * @param commitChanges	-whether changes should be made in the database
+	 * @return	-whether any input fields do not match saved values
+	 */
 	private boolean processChanges(boolean commitChanges) {
 		boolean changesMade = false;
 		String tempString = "";
@@ -332,6 +373,10 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		refreshTimeError(rb);
 	}//refresh
 
+	/**
+	 * Changes the text on this scene's timeError label to match the language selected by the user.
+	 * @param rb -the ResourceBundle to use for retrieving localized text
+	 */
 	private void refreshTimeError(ResourceBundle rb) {
 		if(timeErrorLabel.getError() != null) {
 			String errorMessage;
@@ -353,6 +398,9 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}//if
 	}//refreshTimeError
 
+	/**
+	 * Sets the text for each label and button on this scene based on the user-selected language.
+	 */
 	private void setElementText() {
 		apptTitleLabel.setText(controller.getResourceBundle().getString("title"));
 		descriptionLabel.setText(controller.getResourceBundle().getString("description"));
@@ -362,8 +410,9 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	}//setElementText
 
 	/**
-	 *
-	 * @return
+	 * Checks the the value of each of the input controls is valid and displays appropriate error messages
+	 * for any invalid input. Returns true if every field contains valid input and false otherwise.
+	 * @return -whether each input field contains valid input
 	 */
 	private boolean validateForm() {
 		boolean valid = true;
