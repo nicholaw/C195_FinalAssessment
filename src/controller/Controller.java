@@ -26,6 +26,10 @@ import sceneUtils.SceneCode;
 import scenes.*;
 import utils.*;
 
+/**
+ * Master controller the the C195 appointment scheduler application. This controller is mainly responsible
+ * for communicating with the database and transitioning scenes.
+ */
 public class Controller {
     //final attributes
     private final HeaderPane header;
@@ -50,6 +54,10 @@ public class Controller {
 	private HashMap<String, String> customerUpdates;
 	private HashMap<String, String> appointmentUpdates;
 
+	/**
+	 * Constructs this controller. Established connection with the database and displays the login scene.
+	 * @param scn -the main scene for this application
+	 */
     public Controller(Scene scn) {
     	rb = ResourceBundle.getBundle("localization.Localization", Locale.ENGLISH);
 		contentPane = new BorderPane();
@@ -66,8 +74,11 @@ public class Controller {
     }//constructor
 
 	/**
-     *
-     */
+	 * Adds an appointment to the database. Returns true if the appointment was successfully inserted and
+	 * false otherwise.
+	 * @param a	-the appointment to be inserted into the database
+	 * @return	-whether the given appointment was successfully inserted
+	 */
 	public boolean addAppointment(Appointment a) {
 		if(dbConnection.insertAppointment(a, currentUser,
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
@@ -75,10 +86,12 @@ public class Controller {
 		}
 		return false;
 	}//addAppointment
-	
+
 	/**
-     *
-     */
+	 * Adds an appointment update to a collection of updates to be executed in the database.
+	 * @param code		-code denoting which appointment field is to be updated
+	 * @param update	-the updated to be added
+	 */
 	public void addAppointmentUpdate(AppointmentFieldCode code, String update) {
 		switch(code) {
 			case TITLE_FIELD:
@@ -107,8 +120,11 @@ public class Controller {
 	}//addAppointmentUpdate
 
 	/**
-     *
-     */
+	 * Adds a customer to the database. Returns true if the given customer was successfully inserted into the
+	 * database and false otherwise.
+	 * @param c	-the customer to be inserted into the database
+	 * @return	-whether the customer was successfully inserted into the database
+	 */
     public boolean addCustomer(Customer c) {
 		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
 			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
@@ -122,7 +138,9 @@ public class Controller {
     }//addCustomer
 
 	/**
-	 *
+	 * Adds a customer update to a collection of updates to be executed in the database.
+	 * @param code		-code denoting which customer field is to be updated
+	 * @param update	-the updated to be added
 	 */
 	public void addCustomerUpdate(CustomerFieldCode code, String update)
 	{
@@ -152,9 +170,14 @@ public class Controller {
 		}
 	}//addCustomerUpdate
 
+	/**
+	 * Changes the scene the user is viewing by setting the center node of the scene's root
+	 * node to the scene denoted by the given code.
+	 * @param code			-code denoting which scene to chang to
+	 * @param participant	-appointment or customer to be displayed in the next scene when applicable
+	 */
 	public void changeScene(SceneCode code, Object participant) {
-		switch(code)
-		{
+		switch(code) {
 			case LOGIN:
 				contentPane.setCenter(login);
 				currentUser = null;
@@ -179,8 +202,8 @@ public class Controller {
 				contentPane.setCenter(editCust);
 				break;
 			case EDIT_APPOINTMENT:
-				if(participant instanceof appointment.Appointment)
-					editAppt.loadAppointmentInfo((appointment.Appointment)participant);
+				if(participant instanceof Appointment)
+					editAppt.loadAppointmentInfo((Appointment)participant);
 				else
 					editAppt.loadNewAppointment();
 				editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
@@ -216,7 +239,7 @@ public class Controller {
 	}//checkForUpcomingAppointments
 	
 	/**
-     *
+     *	Clears all updates from the collection of appointment updates to be implemented in the database.
      */
 	public void clearAppointmentUpdates() {
 		for(String str : appointmentUpdates.keySet()) {
@@ -225,7 +248,7 @@ public class Controller {
 	}
 
     /**
-     *
+     *	Clears all updates from the collection of customer updates to be implemented in the database.
      */
 	public void clearCustomerUpdates() {
 		for(String str : customerUpdates.keySet()) {
@@ -234,15 +257,22 @@ public class Controller {
 	}
 
 	/**
-     *
-     */
-    public boolean deleteAppointment(appointment.Appointment a) {
+	 * Removes the given appointment from the database. Returns true if the appointment was successfully
+	 * deleted and false otherwise.
+	 * @param a	-the appointment to be removed
+	 * @return	-whether the appointment was successfully removed
+	 */
+    public boolean deleteAppointment(Appointment a) {
 		return dbConnection.deleteAppointment(a.getAppointmentId());
     }//deleteAppointment
 
 	/**
-     *
-     */
+	 * Checks that the given customer has no outstanding appointments and either informs ths user that the
+	 * given customer is not eligible to be deleted or removes the given customer from the database. Returns
+	 * true if the customer was successfully deleted and false otherwise.
+	 * @param c	-the customer to be deleted
+	 * @return	-whether the customer was successfully deleted
+	 */
     public boolean deleteCustomer(Customer c) {
     	if(c.getAppointments() == null)
     		c.setAppointments(dbConnection.getCustomerAppointments(c.getCustomerId()));
@@ -271,10 +301,9 @@ public class Controller {
 	/**
 	 * Displays a confirmation alert with the provided title and message. Returns true if the user selects the 'OK'
 	 * button and false otherwise.
-	 *
-	 * @param title
-	 * @param message
-	 * @return
+	 * @param title		-title of the alert
+	 * @param message	-content text of the alert
+	 * @return			-whether the user selected 'OK'
 	 */
 	public boolean displayConfirmationAlert(String title, String message) {
     	messageAlert.setAlertType(Alert.AlertType.CONFIRMATION);
@@ -285,35 +314,35 @@ public class Controller {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Returns an ObservableList of the types of appointments offered by this application. Used for populating
+	 * the 'Type' ComboBox on the add/edit appointment form.
+	 * @return	-list of appointment types offered by this application
 	 */
 	public ObservableList<Type> getAppointmentTypes() {
 		return FXCollections.observableArrayList(Type.values());
 	}
 
+	/**
+	 * Returns the currently selected Locale.
+	 * @return	-the current Locale
+	 */
 	public Locale getCurrentLocale() {
 		return rb.getLocale();
 	}
 
-    public Location getLocation(String name) {
-    	for(Location l : Location.values()) {
-    		if(l.getLocation().equals(name))
-    			return l;
-		}
-    	return null;
-	}
-
 	/**
-	 *
-	 * @return
+	 * Returns an ObservableList of the locations for appointments offered by this application. Used for populating
+	 * the 'Location' ComboBox on the add/edit appointment form.
+	 * @return	-list of appointment locations offered by this application
 	 */
 	public ObservableList<Location> getLocations() {
     	return FXCollections.observableArrayList(Location.values());
 	}
 
 	/**
-     *
+     * Returns the Contact with given contact id. Returns null if no contact with that id is found.
+	 * @param id 	-id of the Contact to return
+	 * @return		-Contact with the given id
      */
     public Contact getContact(int id) {
         for(Contact c : contacts) {
@@ -322,19 +351,28 @@ public class Controller {
         }
         return null;
     }//getContact
-	
+
+	/**
+	 * Returns an ObservableList of contacts who can be assigned to appointments.
+	 * @return	-the list of contacts
+	 */
 	public ObservableList<Contact> getContacts() {
 		return contacts;
 	}//getContacts
 
     /**
-     *
-     * @return
+     * Returns an ObservableList of countries supported by this application.
+     * @return -the list of countries
      */
     public ObservableList<Country> getCountries() {
         return countries;
     }//getCountries
 
+	/**
+	 * Returns the Country whose id matches the given id. Returns null if no such country is found.
+	 * @param id 	-id of the country to return
+	 * @return		-the country whose id matches the given id
+	 */
     public Country getCountry(int id) {
         for(Country c : countries) {
             if(c.getCountryId() == id)
@@ -344,52 +382,53 @@ public class Controller {
     }//getCountry
 
     /**
-     *
-     * @return
+     * Returns an ObservableList of the customers stored in the database. Used for displaying customers in
+	 * the customer overview scene.
+     * @return	-the list of customers
      */
-    public ObservableList<Customer> getCustomers()
-    {
+    public ObservableList<Customer> getCustomers() {
         return customers;
     }//getCustomers
 
-    /**
-     *
-     * @param c
-     * @return
-     */
-    public ObservableList<appointment.Appointment> getCustomerAppointments(Customer c)
-    {
+
+	/**
+	 * Returns an ObservableList of all the appointments the given customer has scheduled.
+	 * @param c	-the customer
+	 * @return	-appointments scheduled for the given customer
+	 */
+    public ObservableList<Appointment> getCustomerAppointments(Customer c) {
         return FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId()));
     }//getCustomerAppointments
 
     /**
-     *
-     * @return
+     * Returns the next appointment id for creating a new appointment
+     * @return -the next available id
      */
     public long getNextAppointmentId() {
         return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMQkkDDDmm")));
     }
 
-    /**
-     *
-     * @return
-     */
+	/**
+	 * Returns the next available customer id for creating a new appointment
+	 * @return -the next available id
+	 */
     public long getNextCustomerId() {
         return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("kkMMmmddYY")));
     }
 
-    public User getCurrentUser() {
-        return currentUser;
-    }//getSessionUser
-
+	/**
+	 * Returns the ResourceBundle currently being used by this application.
+	 * @return	-the ResourceBundle
+	 */
 	public ResourceBundle getResourceBundle() {
     	return rb;
 	}
 
 	/**
-	 *
-	 * @param password
-	 * @return
+	 * Hashes the password entered by the user in the password field on the login form. Used for
+	 * comparing entered password to hashed passwords stored in the database.
+	 * @param password	-password entered by the user
+	 * @return			-hash of the given password
 	 */
     public static CharSequence pseudoHashPassword(CharSequence password) {
         //TODO: Make a real hash
@@ -401,7 +440,7 @@ public class Controller {
     }//pseudoHashPassword
 
     /**
-     * Initializes the HashMap for tracking changes to an existing customer
+     * Initializes the HashMap for tracking changes to an existing customer.
      */
     private void initializeCustomerUpdates() {
         customerUpdates = new HashMap<>();
@@ -411,7 +450,7 @@ public class Controller {
     }//initializeCustomerUpdates
 
     /**
-     * Initializes the Hashmap for tracking changes to an existing appointment
+     * Initializes the Hashmap for tracking changes to an existing appointment.
      */
     private void initializeAppointmentUpdates() {
 		appointmentUpdates = new HashMap<>();
@@ -422,9 +461,8 @@ public class Controller {
 
 	/**
 	 * Writes login attempt information to a text file
-	 *
-	 * @param username	username entered for the login attempt
-	 * @param valid		whether the login attempt was successful
+	 * @param username	-username entered for the login attempt
+	 * @param valid		-whether the login attempt was successful
 	 */
     private void logLoginAttempt(String username, boolean valid) {
 		try(var fw = new FileWriter(loginAttemptDestinaiton, true);
@@ -444,7 +482,7 @@ public class Controller {
 	}//logLoginAttempt
 
 	/**
-	 *
+	 * Refreshes each scene after the applications ResourceBundle has been changed.
 	 */
 	private void refreshScenes() {
 		for(Refreshable scene : scenes) {
@@ -453,8 +491,8 @@ public class Controller {
 	}
 
 	/**
-	 *
-	 * @param locale
+	 * Sets the Locale of this application's ResourceBundle to the given SupportedLocale
+	 * @param locale -the locale to be set
 	 */
 	public void setLocale(SupportedLocale locale) {
 		rb = ResourceBundle.getBundle("localization.Localization", locale.getLocale());
@@ -463,9 +501,8 @@ public class Controller {
 
     /**
      * Updates an existing appointment in the database.
-	 *
-     * @param appointmentId		Id of the appointment to update
-     * @return	Whether the database was updated successfully
+     * @param appointmentId	-id of the appointment to update
+     * @return				-whether the database was updated successfully
      */
     public boolean updateAppointment(long appointmentId) {
 		if(appointmentUpdates != null) {
@@ -479,9 +516,8 @@ public class Controller {
 
 	/**
 	 * Updates an existing customer in the database.
-	 *
-	 * @param customerId  Id of the customer to update
-	 * @return  whether the database updated successfully
+	 * @param customerId	-id of the customer to update
+	 * @return  			-whether the database updated successfully
 	 */
     public boolean updateCustomer(long customerId) {
 		if(customerUpdates != null) {
@@ -494,10 +530,9 @@ public class Controller {
     }//updateCustomer
 
     /**
-     * Driver method for validating login credentials.
-     *
-     * @param username  Username entered in the login form
-     * @param password  Password entered in the login form
+     * Checks that the credentials entered by the user on the login form are valid.
+     * @param username  -username entered in the login form
+     * @param password  -password entered in the login form
      */
     public void validateLoginCredentials(String username, CharSequence password) {
     	try {
@@ -516,8 +551,8 @@ public class Controller {
     }//validateLoginCredentials
 
 	/**
-	 *
-	 * @param username name of the user who successfully logged on
+	 * Instantiates the rest of this application after a successful login attempt.
+	 * @param username -username entered on the login form
 	 */
     private void validLogin(String username) {
         login.clearAll();

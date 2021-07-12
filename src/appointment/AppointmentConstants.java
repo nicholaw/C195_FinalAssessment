@@ -2,6 +2,10 @@ package appointment;
 
 import java.time.LocalTime;
 
+/**
+ * Constants regarding certain properties of appointments such as
+ * the maximum allowed characters in an appointment title.
+ */
 public class AppointmentConstants {
     //Date/Time formats
     public static final String DATE_FORMAT = "YYYY.MM.dd";

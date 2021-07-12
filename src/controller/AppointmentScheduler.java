@@ -4,18 +4,19 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import java.time.LocalDateTime;
 
+/**
+ * Application which allows a user to add, edit, and delete customers and their
+ * appointments to a linked database.
+ */
 public class AppointmentScheduler extends Application {
-    private final static String STYLE_URL = "styles\\style.css";
-    private Controller controller;
 
     @Override
     public void start(Stage stage) {
         Scene scene = new Scene(new Label("Launch Error"));
         stage.setScene(scene);
         stage.setTitle("Appointment Scheduler");
-        controller = new Controller(scene);
+        new Controller(scene);
         stage.show();
     }
 
