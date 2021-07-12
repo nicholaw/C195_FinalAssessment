@@ -5,7 +5,6 @@ import utils.*;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
 import customer.Customer;
-
 import javax.sql.DataSource;
 import java.io.*;
 import java.sql.Connection;
@@ -14,23 +13,35 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class DBConnection
-{
+/**
+ * Establishes a connection with the database and performs database operations such as inserting, deleting,
+ * and updating customers and appointments.
+ */
+public class DBConnection {
     Connection conn;
     Controller controller;
 
+    /**
+     * Constructs this DBConnection.
+     * @param controller
+     */
     public DBConnection(Controller controller) {
         this.controller = controller;
 
         try {
             conn = getDataSource().getConnection();
-            //this.printDbMetaData();
         } catch (SQLException e) {
             conn = null;
             e.printStackTrace();
         }
     }//constructor
 
+    /**
+     * Deletes an appointment from the database. Returns true if at least one row was affected by the update
+     * and false otherwise.
+     * @param id    -id of the appointment to delete
+     * @return      -whether a row was affected
+     */
     public boolean deleteAppointment(long id) {
 		String sql =	"DELETE FROM " 				+ 
 							"appointments " 		+
@@ -44,26 +55,31 @@ public class DBConnection
 			return false;
 		}
     }//deleteAppointment
-	
+
+    /**
+     * Deletes a customer from the database. Returns true if at least one row was affected by the update
+     * and false otherwise.
+     * @param id    -id of the customer to delete
+     * @return      -whether a row was affected
+     */
     public boolean deleteCustomer(long id) {
         String sql =	"DELETE FROM " 			+ 
 							"customers " 		+
 						"WHERE " 				+ 
 							"Customer_ID = ?";
-		try(var stmt = conn.prepareStatement(sql))
-		{
+		try(var stmt = conn.prepareStatement(sql)) {
 			stmt.setLong(1, id);
 			return (stmt.executeUpdate() > 0);
-		} catch(SQLException e)
-		{
+		} catch(SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
     }//deleteCustomer
-	
-	/**
-	 *
-	 */
+
+    /**
+     * Returns a collection of all contacts stored in the database.
+     * @return  -the contacts stored in the database.
+     */
 	public Collection<Contact> getContacts() {
 		var contacts = new LinkedHashSet<Contact>();
 		String sql =	"SELECT " 				+ 
@@ -88,15 +104,14 @@ public class DBConnection
     /**
      * Returns a collection of all the countries in the database to be displayed in the combo box for selecting
      * a customer's country.
-     *
-     * @return The collection of countries
+     * @return -the collection of countries
      */
     public Collection<Country> getCountries() {
         String sql =    "SELECT "               +
                             "Country_ID, "      +
                             "Country "          +
                         "FROM countries "       +
-                        "WHERE Country IN(\'United States\', \'United Kingdom\', \'Canada\') " +
+                        "WHERE Country IN(" + DBConstants.SUPPORTED_COUNTRIES + ") " +
                         "ORDER BY Country";
         try(var stmt = conn.prepareStatement(sql)) {
             var result = stmt.executeQuery();
@@ -114,8 +129,7 @@ public class DBConnection
 
     /**
      * Returns a collection of all the customers in the database to be displayed on the customer overview scene.
-     *
-     * @return The collection of customers
+     * @return -the collection of customers
      */
     public Collection<Customer> getCustomers() {
         var list = new LinkedHashSet<Customer>();
@@ -163,9 +177,8 @@ public class DBConnection
 
     /**
      * Returns a collection of all the appointments currently scheduled by the given customer.
-     *
-     * @param id    Id of the customer
-     * @return  The collection of appointments
+     * @param id    -id of the customer
+     * @return      -the collection of appointments
      */
     public Collection<appointment.Appointment> getCustomerAppointments(long id)
     {
@@ -189,8 +202,7 @@ public class DBConnection
                             "appts.customer_id = ? "                        +
                         "ORDER BY "                                         +
                             "start";
-        try(var stmt = conn.prepareStatement(sql))
-        {
+        try(var stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
@@ -198,28 +210,26 @@ public class DBConnection
                         Type.getType(result.getString("type")), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
                         id, controller.getContact(result.getInt("contact")), Location.getLocation(result.getString("location"))));
             }
-        }catch(SQLException e)
-        {
+        }catch(SQLException e) {
             e.printStackTrace();
         }
         return list;
     }//getCustomerAppointments
 
 	/**
-	 *
+	 * Establishes a connection with the company database.
+     * @return  -the datasource for connecting to the database
 	 */
     private static DataSource getDataSource() {
         Properties properties = new Properties();
         MysqlDataSource mysqlDS = null;
-        try (var fis = new FileInputStream(new File("src\\database\\db.properties")))
-        {
+        try (var fis = new FileInputStream(new File("src\\database\\db.properties"))) {
             properties.load(fis);
             mysqlDS = new MysqlDataSource();
             mysqlDS.setURL(properties.getProperty("URL"));
             mysqlDS.setUser(properties.getProperty("USERNAME"));
             mysqlDS.setPassword(properties.getProperty("PASSWORD"));
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return mysqlDS;
@@ -228,11 +238,10 @@ public class DBConnection
 	/**
 	 *	Returns a collection of Strings describing appointments in the database which start
 	 *  withing fifteen minutes of the given date and time.
-	 *
-	 *  @param dateTime
-	 *  @param interval
-     *  @param units
-	 *  return
+	 *  @param dateTime -the current date and time
+	 *  @param interval -the amount of time in which to look for existing appointments
+     *  @param units    -the unit of time in which to count the interval of time
+	 *  return          -the collection of upcoming appointments
 	 */
 	public Collection<String> getUpcomingAppointments(LocalDateTime dateTime, int interval, String units) {
 		Collection<String> appointments = new HashSet<>();
@@ -270,10 +279,13 @@ public class DBConnection
 		}
 		return appointments;
 	} //getUpcomingAppointments
-	
-	/**
-	 *
-	 */
+
+    /**
+     * Returns the user from the database whose unique username matches the provided String. Returns null
+     * if no such customer is found.
+     * @param username  -the username to search for
+     * @return          -the User whose name matches the provided String
+     */
 	public User getUser(String username) {
 		String sql =	"SELECT " + 
 							"User_Id, " +
@@ -297,11 +309,12 @@ public class DBConnection
 	}//getUser
 
     /**
-     *
-     * @param a
-     * @param user
-     * @param timestamp
-     * @return
+     * Inserts the provided new appointment into the database. Returns true if at least one row was
+     * affected by the update and false otherwise.
+     * @param a -the appointment to be inserted
+     * @param user  -the user inserting the appointment
+     * @param timestamp -the time at insertion
+     * @return  -whether the appointment was successfully inserted
      */
     public boolean insertAppointment(Appointment a, User user, String timestamp) {
 		String sql = 	"INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, " +
@@ -331,11 +344,12 @@ public class DBConnection
     }//insertAppointment
 
     /**
-     *
-     * @param id
-     * @param name
-     * @param email
-     * @return
+     * Inserts the provided new contact into the database. Returns true if at least one row was
+     * affected by the update and false otherwise.
+     * @param id    -id of the contact to insert
+     * @param name  -name of the contact to insert
+     * @param email -email of the contact to insert
+     * @return  -whether any rows were affected by the update
      */
     private boolean insertContact(long id, String name, String email) {
         String sql = "INSERT INTO contacts (Contact_ID, Contact_Name, Email) VALUES (?, ?, ?)";
@@ -351,11 +365,12 @@ public class DBConnection
     }
 
     /**
-     *
-     * @param c
-     * @param creator
-     * @param timestamp
-     * @return
+     * Inserts the provided new customer into the database. Returns true if at least one row was affected
+     * by the update and false otherwise.
+     * @param c -the customer to insert
+     * @param creator   -the user who inserted the customer
+     * @param timestamp -the time the user was inserted
+     * @return  -whether any rows were affected by the update
      */
     public boolean insertCustomer(Customer c, String creator, String timestamp) {
         String sql = "INSERT INTO customers (customer_id, customer_name, address, postal_code, phone, " +
@@ -381,10 +396,10 @@ public class DBConnection
     }//insertCustomer
 
     /**
-     *
-     * @param tableName
+     *  Prints the meta data of the database table whose name matches the provided String.
+     * @param tableName -name of the table whose metadata to print
      */
-    public void getDBMetaData(String tableName) {
+    private void getDBMetaData(String tableName) {
 	    System.out.println("----" + tableName + "----");
         String sql = "SHOW COLUMNS FROM " + tableName;
         try(var stmt = conn.prepareStatement(sql)) {
@@ -402,23 +417,10 @@ public class DBConnection
         }
     }//getDbMetaData
 
-    public void printAppointments() {
-        String sql = "SELECT * FROM appointments ORDER BY customer_ID, appointment_ID";
-        try(var stmt = conn.prepareStatement(sql)) {
-            var result = stmt.executeQuery();
-            while(result.next()) {
-                System.out.printf("%d\t%s\t%d\t%s\n", result.getInt("appointment_id"),
-                        result.getString("title"), result.getInt("customer_id"), result.getString("location"));
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("");
-    }//printAppointments
-
     /**
-     *
-     * @param countries
+     * Assigns first-level-divisions in the database to each of the countries in the provided
+     * collection of countries.
+     * @param countries -the collection of countries
      */
     private void setCountryDivisions(Collection<Country> countries)
     {
@@ -449,7 +451,6 @@ public class DBConnection
     /**
      * Updates information of the given appointment in the database. Returns true if at least one table row
      * was affected and false otherwise.
-     *
      * @param updates Updates to be enacted
      * @param appointmentId Id of customer to be updated
      * @return  True if at least one table row was affected
@@ -493,7 +494,6 @@ public class DBConnection
     /**
      * Updates information of the given customer in the database. Returns true if at least one table row
      * was affected and false otherwise.
-     *
      * @param updates   Updates to be enacted
      * @param customerId Id of customer to be updated
      * @return  true if at least one table row was affected
@@ -535,7 +535,6 @@ public class DBConnection
 
     /**
      * Returns the given user's password if that user exists in the database.
-     *
      * @param username  Username of the user in question
      * @return  Password associated with the username if it exists and null otherwise
      */

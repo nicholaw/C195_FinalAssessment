@@ -1,7 +1,7 @@
 package database;
 
 /**
- *
+ * Represents the columns present in the 'customers' table in the database.
  */
 public enum CustomerColumns {
     CUSTOMER_ID("Customer_ID"),
@@ -18,6 +18,11 @@ public enum CustomerColumns {
 
     private final String colName;
 
+
+    /**
+     * Constructs this CustomerColumn by assigning its column name.
+     * @param colName   -the name to assign
+     */
     CustomerColumns(String colName) {
         this.colName = colName;
     }
@@ -25,9 +30,8 @@ public enum CustomerColumns {
     /**
      * Returns true if there is a customer column whose name equals the given string. Used for
      * sanitizing prepared statements.
-     *
-     * @param str
-     * @return
+     * @param str   -the String to check against
+     * @return      -the column whose name matches the given String
      */
     public static boolean contains(String str) {
         for(CustomerColumns col : CustomerColumns.values()) {
@@ -37,6 +41,10 @@ public enum CustomerColumns {
         return false;
     }//contains
 
+    /**
+     * Returns the name of this column.
+     * @return  -the name of this column
+     */
     public String getColName() {
         return this.colName;
     }

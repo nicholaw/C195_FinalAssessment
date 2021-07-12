@@ -1,7 +1,7 @@
 package database;
 
 /**
- *  Names of each of the columns in the Appointments table
+ *  Names of each of the columns in the Appointments table.
  */
 public enum AppointmentColumns {
     APPOINTMENT_ID("Appointment_ID"),
@@ -21,6 +21,10 @@ public enum AppointmentColumns {
 
     private final String colName;
 
+    /**
+     * Constructs an Appointment Column by assigning the column name.
+     * @param colName   -the name of this column
+     */
     AppointmentColumns(String colName) {
         this.colName = colName;
     }
@@ -28,9 +32,8 @@ public enum AppointmentColumns {
     /**
      * Returns true if there is an appointment column whose name equals the given string. Used for
      * sanitizing prepared statements.
-     *
-     * @param str
-     * @return
+     * @param str   -the String to check against
+     * @return      -the column whose name matches the given String
      */
     public static boolean contains(String str) {
         for(AppointmentColumns col : AppointmentColumns.values()) {
@@ -40,6 +43,10 @@ public enum AppointmentColumns {
         return false;
     }//contains
 
+    /**
+     * Returns the name of this column.
+     * @return  -the name of this column
+     */
     public String getColName() {
         return this.colName;
     }
