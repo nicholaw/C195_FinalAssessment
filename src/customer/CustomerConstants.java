@@ -1,7 +1,9 @@
 package customer;
 
-public class CustomerConstants
-{
+/**
+ * Constants used by the Customer class
+ */
+public class CustomerConstants {
     //Constants for button text
     public static final String ADD_CUSTOMER = "Add Customer";
     public static final String UPDATE_CUSTOMER = "Update Customer";
