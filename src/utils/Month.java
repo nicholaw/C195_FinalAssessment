@@ -1,5 +1,8 @@
 package utils;
 
+/**
+ * Represent a Month of the year. Used to track how many days in each month.
+ */
 public enum Month
 {
     JAN("Jan",	1,	31),
@@ -19,6 +22,12 @@ public enum Month
 	private final int monthOfYear;
     private final int numDays;
 
+    /**
+     * Constructs this Month with the provided name, month-of-year, and number of days.
+     * @param name  -name of this month
+     * @param monthOfYear   -month of year
+     * @param numDays   -number of days in this month
+     */
     Month(String name, int monthOfYear, int numDays) {
         this.name 		 = name;
 		this.monthOfYear = monthOfYear;
@@ -26,9 +35,10 @@ public enum Month
     }
 
     /**
-     *
-     * @param monthOfYear
-     * @return
+     * Returns the month which matches the provided month of the year. Returns null if no
+     * such month exists.
+     * @param monthOfYear   -month of the year
+     * @return  -the matching month
      */
     public static Month getMonth(int monthOfYear) {
         for(Month m : Month.values()) {
@@ -37,15 +47,27 @@ public enum Month
         }
         return null;
     }
-	
+
+    /**
+     * Returns the name of this month.
+     * @return  -the name of this month.
+     */
     public String getName() {
         return this.name;
     }
-	
+
+    /**
+     * Returns the month of the year of this month.
+     * @return  -the month-of-year
+     */
 	public int getMonthOfYear() {
 		return this.monthOfYear;
 	}
-	
+
+    /**
+     * Returns the number of days in this month.
+     * @return  -the number of days
+     */
     public int getNumDays() {
         return this.numDays;
     }

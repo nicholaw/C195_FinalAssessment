@@ -1,5 +1,9 @@
 package utils;
 
+/**
+ * Represents an hour of the day. Used for displaying the hour with a leading
+ * zero for the 24-hour clock.
+ */
 public enum Hour {
 	TWENTY_FOUR	("00", 0),
 	ONE			("01", 1),
@@ -28,12 +32,22 @@ public enum Hour {
 	
 	private final String hour;
 	private final int hourOfDay;
-	
+
+	/**
+	 * Constructs this hour with the given name and hour-of-day.
+	 * @param hour	-String name of the hour
+	 * @param hourOfDay	-hour of the day
+	 */
 	Hour(String hour, int hourOfDay) {
 		this.hour = hour;
 		this.hourOfDay = hourOfDay;
 	}
 
+	/**
+	 * Returns the name of the hour which matches the given hour-of-day
+	 * @param hourOfDay -the hour of day
+	 * @return	-name of the hour
+	 */
 	public static Hour getHour(int hourOfDay) {
 		for(Hour h : Hour.values()) {
 			if(h.getHourOfDay() == hourOfDay)
@@ -41,11 +55,11 @@ public enum Hour {
 		}
 		return null;
 	}
-	
-	public String getHourString() {
-		return this.hour;
-	}
-	
+
+	/**
+	 * Returns the hour of day.
+	 * @return	-the hour of day
+	 */
 	public int getHourOfDay() {
 		return this.hourOfDay;
 	}
@@ -54,4 +68,4 @@ public enum Hour {
 	public String toString() {
 		return this.hour;
 	}
-}
+}//Hour
