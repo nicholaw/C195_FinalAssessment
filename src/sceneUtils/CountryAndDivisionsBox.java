@@ -10,6 +10,10 @@ import utils.Country;
 import utils.Division;
 import java.util.ResourceBundle;
 
+/**
+ * Displays ComboBoxes for selecting the country and region when adding or editing
+ * a Customer.
+ */
 public class CountryAndDivisionsBox extends GridPane {
     private ComboBox<Country> countryCombo;
     private ComboBox<Division> firstLevelDivisionsCombo;
@@ -17,6 +21,11 @@ public class CountryAndDivisionsBox extends GridPane {
     private final Label divisionLabel;
     private ResourceBundle rb;
 
+    /**
+     * Constructs this Object with the given list of countries and the given resource bundle.
+     * @param countries -the list of supported countries
+     * @param rb -the provided ResourceBundle
+     */
     public CountryAndDivisionsBox(ObservableList<Country> countries, ResourceBundle rb) {
         this.rb = rb;
 
@@ -52,16 +61,29 @@ public class CountryAndDivisionsBox extends GridPane {
         this.setVgap(10);
     }//constructor
 
+    /**
+     * Returns the country selected by the user via the country combo box.
+     * @return -the selected country
+     */
     public Country getSelectedCountry()
     {
         return countryCombo.getValue();
     }
 
+    /**
+     * Returns the first-level-division selected by the user via the first-level-division
+     * combo box.
+     * @return  -the selected division
+     */
     public Division getSelectedDivision()
     {
         return firstLevelDivisionsCombo.getValue();
     }
 
+    /**
+     * Sets the selected values of the country and division combo boxes to the first item in each
+     * box. Sets the value to null if no such items exist.
+     */
     public void reset() {
         if(countryCombo.getItems().size() > 0) {
             countryCombo.setValue(countryCombo.getItems().get(0));
@@ -72,19 +94,27 @@ public class CountryAndDivisionsBox extends GridPane {
         }
     }//reset
 
+    /**
+     * Sets the text of each label in this scene element according to the ResourceBundle being used.
+     */
     private void setLabelText() {
         countryLabel.setText(rb.getString("country"));
         divisionLabel.setText(rb.getString("first_level_division"));
     }
 
+    /**
+     * Sets the ResourceBundle being used by this scene element.
+     * @param rb    -the ResourceBundle to use
+     */
     public void setResourceBundle(ResourceBundle rb) {
         this.rb = rb;
         setLabelText();
     }
 
     /**
-     *
-     * @param c
+     * Sets the value of the country combo box to the given country. Sets the value of the country combo box
+     * to null if the combo box does not contain any such country.
+     * @param c -the country to set
      */
     public void setSelectedCountry(Country c) {
         if(c != null) {
@@ -100,8 +130,9 @@ public class CountryAndDivisionsBox extends GridPane {
     }//setSelectedCountry
 
     /**
-     *
-     * @param div
+     * Sets the value of the division combo box to the given first-level-division. Sets the value of the division
+     * combo box to null if the combo box does not contain any such division.
+     * @param div -the first-level-division to set
      */
     public void setSelectedDivision(Division div) {
         if(div != null) {
@@ -116,7 +147,7 @@ public class CountryAndDivisionsBox extends GridPane {
     }//setSelectedDivision
 
     /**
-     *
+     * Updates the first-level-division combo box to match the selected value of the country combo box.
      */
     private void updateFirstDivisions() {
         //Set items to first-level divisions of the selected country

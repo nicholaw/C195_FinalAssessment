@@ -7,6 +7,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.ResourceBundle;
 
+/**
+ * TableView for displaying appointment information for a chosen customer on the
+ * appointment overview page.
+ */
 public class AppointmentOverviewTable extends TableView<Appointment> {
     private TableColumn<Appointment, Long> idCol;
     private TableColumn<Appointment, String> titleCol;
@@ -17,6 +21,10 @@ public class AppointmentOverviewTable extends TableView<Appointment> {
     private TableColumn<Appointment, String> descCol;
     private ResourceBundle rb;
 
+    /**
+     * Constructs the AppointmentOverviewTable with the given ResourceBundle.
+     * @param rb -the ResourceBundle
+     */
     public AppointmentOverviewTable(ResourceBundle rb) {
         this.rb = rb;
 
@@ -43,20 +51,35 @@ public class AppointmentOverviewTable extends TableView<Appointment> {
         this.getColumns().setAll(idCol, titleCol, typeCol, dateCol, startCol, endCol, descCol);
     }
 
+    /**
+     * Returns the appointment the user has selected from the TableView.
+     * @return  -the selected appointment
+     */
     public Appointment getSelectedAppointment() {
         return getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * Sets the items for this TableView to the provided ObservableList of appointments.
+     * @param appointments  -the provided appointments
+     */
     public void setAppointments(ObservableList<Appointment> appointments) {
         this.setItems(appointments);
         this.refresh();
     }
 
+    /**
+     * Sets the ResourceBundle for this class to use.
+     * @param rb -the ResourceBundle
+     */
     public void setResourceBundle(ResourceBundle rb) {
         this.rb = rb;
         setColumnNames();
     }
 
+    /**
+     * Sets the names of each of the columns in this TableView.
+     */
     private void setColumnNames() {
         idCol.setText(rb.getString("appointment_id"));
         titleCol.setText(rb.getString("title"));

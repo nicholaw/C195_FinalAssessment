@@ -1,5 +1,10 @@
 package sceneUtils;
 
+/**
+ * Codes for each error which can be encountered when validating forms. Each code
+ * also specifies the locale key for the error message to be displayed when that
+ * error is encountered.
+ */
 public enum ErrorCode {
     APPOINTMENT_TITLE_REQUIRED_ERROR("title_error"),
     APPOINTMENT_DESC_REQUIRED_ERROR("description_error"),
@@ -18,10 +23,18 @@ public enum ErrorCode {
 
     private final String localeKey;
 
+    /**
+     * Constructor for this object
+     * @param localeKey -the error code's locale key
+     */
     ErrorCode(String localeKey) {
         this.localeKey = localeKey;
     }
 
+    /**
+     * Returns the locale key for this error code.
+     * @return -the locale key
+     */
     public String getLocaleKey() {
         return localeKey;
     }

@@ -9,12 +9,21 @@ import utils.Contact;
 import java.util.Collection;
 import java.util.ResourceBundle;
 
+/**
+ * Displays contact information (name and email address) and allows user
+ * to select a contact when scheduling or editing an appointment.
+ */
 public class ContactBox extends GridPane {
 	private Label contactLabel;
 	private ComboBox<Contact> contactsCombo;
 	private TextField emailField;
 	private ResourceBundle rb;
-	
+
+	/**
+	 * Constructs this ContactBox with the given ResourceBundle and ObservableList of contacts.
+	 * @param rb	-the ResourceBundle
+	 * @param contacts	-the list of available contacts
+	 */
 	public ContactBox(ResourceBundle rb, Collection<Contact> contacts) {
 		contactLabel = new Label("");
 		contactsCombo = new ComboBox<>();
@@ -23,7 +32,7 @@ public class ContactBox extends GridPane {
 		
 		//Set initial values
 		contactsCombo.getItems().setAll(contacts);
-		selectFirst();
+		reset();
 		emailField.setDisable(true);
 
 		//Add event handler to contact combo
@@ -45,15 +54,20 @@ public class ContactBox extends GridPane {
 		this.setVgap(10);
 	}//constructor
 
+	/**
+	 * Returns the contact whom has been selected by the user in the
+	 * ComboBox.
+	 * @return	-the selected Contact
+	 */
 	public Contact getSelectedContact() {
 		return contactsCombo.getValue();
 	}
 
+	/**
+	 * Sets the value of the contact ComboBox to the first Contact in the box's
+	 * items. Sets the value to null if not such items exist.
+	 */
 	public void reset() {
-		selectFirst();
-	}
-	
-	private void selectFirst() {
 		if(contactsCombo.getItems().size() > 0) {
 			contactsCombo.setValue(contactsCombo.getItems().get(0));
 		} else {
@@ -62,11 +76,19 @@ public class ContactBox extends GridPane {
 		updateEmail();
 	}//selectFirst
 
+	/**
+	 * Sets the ResourceBundle used by this scene element.
+	 * @param rb -the ResourceBundle
+	 */
 	public void setResourceBundle(ResourceBundle rb) {
 		this.rb = rb;
 		contactLabel.setText(this.rb.getString("contact"));
 	}
-	
+
+	/**
+	 * Updates the email being displayed to match the contact selected by the user
+	 * via the ComboBox.
+	 */
 	private void updateEmail() {
 		if(contactsCombo.getValue() != null) {
 			emailField.setText(contactsCombo.getValue().getEmail());

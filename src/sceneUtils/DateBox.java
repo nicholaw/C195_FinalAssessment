@@ -10,6 +10,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import utils.Month;
 
+/**
+ * Displays combo boxes and labels which allow the user to select the date of an appointment
+ * when scheduling or editing an appointment.
+ */
 public class DateBox extends GridPane {
     private Label dateLabel;
     private ResourceBundle rb;
@@ -21,6 +25,12 @@ public class DateBox extends GridPane {
             11,	12,	13,	14,	15,	16,	17,	18,	19,	20,
             21,	22,	23,	24,	25,	26,	27,	28,	29,	30});
 
+    /**
+     * Constructs this scene element with the given ResourceBundle and LocalDateTime.
+     * @param rb    -the ResourceBundle to use
+     * @param date  -the LocalDateTime to use
+     * @param error -the error label used to inform the user of any invalid date selections
+     */
     public DateBox(ResourceBundle rb, LocalDateTime date, Label error) {
         dateLabel   =   new Label("");
         monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
@@ -47,22 +57,33 @@ public class DateBox extends GridPane {
         comboPane.setHgap(10);
     }//constructor
 
+    /**
+     * Returns the user-selected day of the month.
+     * @return -the selected day
+     */
     public int getDayOfMonth() {
         return dayCombo.getValue();
     }
 
+    /**
+     * Returns the user-selected month.
+     * @return -the selected month
+     */
     public int getMonthOfYear() {
         return monthCombo.getValue().getMonthOfYear();
     }
 
+    /**
+     * Returns the user-selected year
+     * @return -the selected year
+     */
     public int getYear() {
         return yearCombo.getValue();
     }
 
     /**
      * Sets the combo boxes to match the given LocalDateTime.
-     *
-     * @param currentDate	The provided LocalDateTime
+     * @param currentDate	-the provided LocalDateTime
      */
     public void setDateTime(LocalDateTime currentDate) {
         if(currentDate != null) {
@@ -73,11 +94,18 @@ public class DateBox extends GridPane {
         }
     }//setDateTime
 
+    /**
+     * Sets the ResourceBundle used by this scene element.
+     * @param rb -the ResourceBundle to use
+     */
     public void setResourceBundle(ResourceBundle rb) {
         this.rb = rb;
         dateLabel.setText(this.rb.getString("date"));
     }
 
+    /**
+     * Updates the number of days in the day combo box to match the number of days in the selected month.
+     */
     private void updateDays() {
         if(dayCombo.getItems().size() < monthCombo.getValue().getNumDays()) {
             days.add(dayCombo.getItems().size() + 1);

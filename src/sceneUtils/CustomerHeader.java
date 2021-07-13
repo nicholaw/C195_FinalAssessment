@@ -7,8 +7,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 /**
- * Displays customer information to inform the user which customer for
- * which they are creating or editing an appointment
+ * Displays customer information matching the customer for which the user is scheduling
+ * or editing an appointment.
  */
 public class CustomerHeader extends GridPane {
 	private final Label label;
@@ -18,7 +18,7 @@ public class CustomerHeader extends GridPane {
 	private Customer customer;
 	
 	/**
-	 *
+	 * Constructs this scene element
 	 */
 	public CustomerHeader(String labelText) {
 		label		=	new Label(labelText);
@@ -40,8 +40,8 @@ public class CustomerHeader extends GridPane {
 	}//constructor
 
 	/**
-	 *
-	 * @param c
+	 * Set the customer whose information is to be displayed.
+	 * @param c	-the customer to be displayed
 	 */
 	public void setCustomer(Customer c) {
 		if(c != null) {
@@ -51,7 +51,7 @@ public class CustomerHeader extends GridPane {
 	}//setCustomerInfo
 
 	/**
-	 *
+	 * Sets the text of each scene element to the information of the customer to display.
 	 */
 	private void setCustomerInfo() {
 		idField.setText("" + customer.getCustomerId());
@@ -64,16 +64,16 @@ public class CustomerHeader extends GridPane {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Returns the customer whose information is on display
+	 * @return	-the customer being displayed
 	 */
 	public Customer getCustomer() {
 		return customer;
 	}
 
 	/**
-	 *
-	 * @return
+	 * Returns the id of the customer on display.
+	 * @return -the id of the customer being displayed
 	 */
 	public long getCustomerId() {
 		if(customer != null)
@@ -83,7 +83,8 @@ public class CustomerHeader extends GridPane {
 	}
 	
 	/**
-	 *
+	 * Set the text of each scene element to the empty string and sets the
+	 * customer on display to null.
 	 */
 	public void clear() {
 		idField.setText("");
