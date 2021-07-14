@@ -213,6 +213,7 @@ public class Controller {
 			case REPORT_OVERVIEW:
 				reportOverview.initiate();
 				contentPane.setCenter(reportOverview);
+				break;
 			default:
 				System.out.println("ERROR: Scene code was not recognized");
 				contentPane.setCenter(custOverview);
@@ -403,6 +404,15 @@ public class Controller {
     public ObservableList<Appointment> getCustomerAppointments(Customer c) {
         return FXCollections.observableArrayList(dbConnection.getCustomerAppointments(c.getCustomerId()));
     }//getCustomerAppointments
+
+	/**
+	 * Returns and array of the reports by location and type for the given LocalDateTime.
+	 * @param monthToReport -the month for which to get reports
+	 * @return -the reports for the provided month (LocalDateTime)
+	 */
+	public HashMap[] getMonthlyReports(LocalDateTime monthToReport) {
+    	return dbConnection.getMonthlyReports(monthToReport);
+	}
 
     /**
      * Returns the next appointment id for creating a new appointment

@@ -1,6 +1,8 @@
 package scenes;
 
 import controller.Controller;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -13,8 +15,8 @@ import javafx.scene.layout.HBox;
 import sceneUtils.Refreshable;
 import sceneUtils.Report;
 import sceneUtils.SceneCode;
-import utils.Month;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 /**
@@ -26,7 +28,7 @@ public class ReportOverview extends BorderPane implements Refreshable {
     private ToggleGroup selectionGroup;
     private RadioButton byTypeToggle;
     private RadioButton byLocationToggle;
-    private ComboBox<String> months;
+    private ComboBox<MonthlyReport> months;
     private Button returnButton;
     private Report appointmentReport;
 
@@ -50,11 +52,7 @@ public class ReportOverview extends BorderPane implements Refreshable {
         byTypeToggle.setToggleGroup(selectionGroup);
         byLocationToggle.setToggleGroup(selectionGroup);
         selectionGroup.selectToggle(byTypeToggle);
-        var currentDate = LocalDateTime.now();
-        for(Month m : Month.values()) {
-            months.getItems().add(m.getName() + " " + currentDate.getYear());
-        }
-        months.setValue(Month.getMonth(currentDate.getMonthValue()).getName() + " " + currentDate.getYear());
+        months.setItems(MonthlyReport.getMonths());
         setElementText();
 
         //Add event listeners to button and toggles
@@ -62,11 +60,19 @@ public class ReportOverview extends BorderPane implements Refreshable {
             this.clear();
             controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
         });
+        months.setOnAction(event -> {
+            HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport());
+            appointmentReport.generateReports(reports[0], reports[1]);
+            if(byTypeToggle.isSelected())
+                appointmentReport.displayByType();
+            else
+                appointmentReport.displayByLocation();
+        });
         byTypeToggle.setOnAction(event -> {
-
+            appointmentReport.displayByType();
         });
         byLocationToggle.setOnAction(event -> {
-
+            appointmentReport.displayByLocation();
         });
 
         //Add elements to containers
@@ -99,7 +105,15 @@ public class ReportOverview extends BorderPane implements Refreshable {
      * to this scene.
      */
     public void initiate() {
-
+        //set value of months to the current month
+        months.setValue(MonthlyReport.getMonthToReport(LocalDateTime.now().getMonthValue()));
+        //set byType toggle as selected
+        byTypeToggle.setSelected(true);
+        //get reports form db and generate gridPanes to display them
+        HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport());
+        appointmentReport.generateReports(reports[0], reports[1]);
+        //display the reports by type
+        appointmentReport.displayByType();
     }//initiate
 
     @Override
@@ -116,4 +130,67 @@ public class ReportOverview extends BorderPane implements Refreshable {
         byLocationToggle.setText(controller.getResourceBundle().getString("by_location"));
         returnButton.setText(controller.getResourceBundle().getString("return"));
     }//setElementText
+
+    /**
+     * Represents a monthly report which can be generated and displayed on the report overview scene.
+     */
+    private enum MonthlyReport {
+        JAN(1),
+        FEB(2),
+        MAR(3),
+        APR(4),
+        MAY(5),
+        JUN(6),
+        JUL(7),
+        AUG(8),
+        SEP(9),
+        OCT(10),
+        NOV(11),
+        DEC(12);
+
+        private LocalDateTime monthToReport;
+
+        /**
+         * Constructs this MonthlyReport for the given month of the year.
+         * @param monthOfYear -the month of the year
+         */
+        MonthlyReport(int monthOfYear) {
+            monthToReport = LocalDateTime.of(LocalDateTime.now().getYear(), monthOfYear, 1, 0, 0);
+        }
+
+        /**
+         * Returns the LocalDateTime associated with this MonthlyReport.
+         * @return -the month to report
+         */
+        public LocalDateTime getMonthToReport() {
+            return monthToReport;
+        }
+
+        /**
+         * Returns the MonthlyReport whose monthToReport matches the provided month of the year. Returns
+         * MonthlyReport for January if no such month exists.
+         * @param monthOfYear -the month of the year to match
+         * @return -the matching MonthlyReport
+         */
+        public static MonthlyReport getMonthToReport(int monthOfYear) {
+            for(MonthlyReport m : MonthlyReport.values()) {
+                if(m.monthToReport.getMonthValue() == monthOfYear)
+                    return m;
+            }
+            return JAN;
+        }//getMonthToReport
+
+        /**
+         * Returns an ObservableList of all the months which can be reported.
+         * @return -the list of reportable months
+         */
+        public static ObservableList<MonthlyReport> getMonths() {
+            return FXCollections.observableArrayList(MonthlyReport.values());
+        }
+
+        @Override
+        public String toString() {
+            return monthToReport.getMonth().toString() + ", " + monthToReport.getYear();
+        }
+    }//MonthlyReport
 }//ReportOverview

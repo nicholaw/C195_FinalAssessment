@@ -234,6 +234,91 @@ public class DBConnection {
         }
         return mysqlDS;
     }//getDataSource
+
+    /**
+     * Returns an array of the reports of number of appointments for each type and location during
+     * the given month.
+     * @param month -the month to be reported
+     * @return  -the array of reports
+     */
+    public HashMap[] getMonthlyReports(LocalDateTime month) {
+        var mapArray = new HashMap[2];
+        mapArray[0] = getMonthlyReportByType(month);
+        mapArray[1] = getMonthlyReportByLocation(month);
+        return mapArray;
+    }//getMonthlyReports
+
+    /**
+     * Returns a HashMap containing the number of appointments for each location for the given month.
+     * @param month -the month to be reported
+     * @return  -the number of unique appointments for each location
+     */
+    private HashMap<Location, Integer> getMonthlyReportByLocation(LocalDateTime month) {
+        var map = new HashMap<Location, Integer>();
+        for(Location l : Location.values()) {
+            map.put(l, 0);
+        }
+        String sql =    "SELECT "                               +
+                            "location, "                        +
+                            "COUNT(Appointment_ID) AS count "   +
+                        "FROM appointments "                    +
+                        "WHERE start BETWEEN ? AND ? "          +
+                        "GROUP BY location "                    +
+                        "ORDER BY location";
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            month.plusMonths(1);
+            month.minusDays(1);
+            stmt.setString(2, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            var result = stmt.executeQuery();
+            Location l;
+            while(result.next()) {
+                l = Location.getLocation(result.getString("location"));
+                if(l != null) {
+                    map.put(l, result.getInt("count"));
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }//getMonthlyReportByLocation
+
+    /**
+     * Returns a HashMap containing the number of appointments for each type for the given month.
+     * @param month -the month to be reported
+     * @return  -the number of unique appointments for each type
+     */
+    private HashMap<Type, Integer> getMonthlyReportByType(LocalDateTime month) {
+        var map = new HashMap<Type, Integer>();
+        for(Type t : Type.values()) {
+            map.put(t, 0);
+        }
+        String sql =    "SELECT "                                   +
+                            "type, "                                +
+                            "COUNT(Appointment_ID) AS count "       +
+                        "FROM appointments "                        +
+                        "WHERE start BETWEEN ? AND ? "              +
+                        "GROUP BY type "                            +
+                        "ORDER BY type";
+        try(var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            month.plusMonths(1);
+            month.minusDays(1);
+            stmt.setString(2, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            var result = stmt.executeQuery();
+            Type t;
+            while(result.next()) {
+                t = Type.getType(result.getString("location"));
+                if(t != null) {
+                    map.put(t, result.getInt("count"));
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }//getMonthlyReportByType
 	
 	/**
 	 *	Returns a collection of Strings describing appointments in the database which start
