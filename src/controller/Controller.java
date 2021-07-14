@@ -39,6 +39,7 @@ public class Controller {
     private AddEditCustomer editCust;
     private CustomerOverview custOverview;
     private AppointmentOverview apptOverview;
+    private ReportOverview reportOverview;
     private final DBConnection dbConnection;
 	private final File loginAttemptDestinaiton;
 	private final Set<Refreshable> scenes;
@@ -209,6 +210,9 @@ public class Controller {
 				editAppt.loadCustomerInfo(apptOverview.getCustomerToDisplay());
 				contentPane.setCenter(editAppt);
 				break;
+			case REPORT_OVERVIEW:
+				reportOverview.initiate();
+				contentPane.setCenter(reportOverview);
 			default:
 				System.out.println("ERROR: Scene code was not recognized");
 				contentPane.setCenter(custOverview);
@@ -565,6 +569,7 @@ public class Controller {
         scenes.add(editCust = new AddEditCustomer(this));
 		scenes.add(custOverview = new CustomerOverview(this));
 		scenes.add(apptOverview = new AppointmentOverview(this));
+		scenes.add(reportOverview = new ReportOverview(this));
         messageAlert = new Alert(Alert.AlertType.NONE);
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);

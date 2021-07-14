@@ -26,6 +26,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
     Button viewAppointmentsButton;
     Button deleteCustomerButton;
     Button logoutButton;
+    Button reportButton;
 
     /**
      * Constructs this scene.
@@ -42,6 +43,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         deleteCustomerButton    = new   Button("");
         logoutButton            = new   Button("");
         editCustomerButton      = new   Button("");
+        reportButton            = new   Button("");
         setElementText();
 		
 		//set initial states for buttons
@@ -73,6 +75,9 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
                 }
             }
         });//deleteCustomerButton
+        reportButton.setOnAction(event -> {
+            controller.changeScene(SceneCode.REPORT_OVERVIEW, null);
+        });
         logoutButton.setOnAction(event -> {
 			this.clear();
             controller.changeScene(SceneCode.LOGIN, null);
@@ -87,7 +92,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
 
         //Add scene elements to containers
         var buttonPane = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, deleteCustomerButton);
-        var logoutPane = new HBox(logoutButton);
+        var logoutPane = new HBox(reportButton, logoutButton);
         var tablePane = new GridPane();
         tablePane.add(customersTable, 0, 0);
         tablePane.add(buttonPane, 0, 1);
@@ -104,6 +109,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         tablePane.setVgap(10);
         contentPane.setVgap(20);
         buttonPane.setSpacing(10);
+        logoutPane.setSpacing(10);
         logoutPane.setPadding(new Insets(10, 10, 10, 10));
         sceneLabel.getStyleClass().add("scene-label");
     }//constructor
@@ -128,6 +134,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         deleteCustomerButton.setText(this.controller.getResourceBundle().getString("delete") + " " +
                 this.controller.getResourceBundle().getString("customer"));
         logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
+        reportButton.setText(controller.getResourceBundle().getString("generate_report"));
     }
 
     /**

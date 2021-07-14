@@ -46,7 +46,7 @@ public enum Month
                 return m;
         }
         return null;
-    }
+    }//getMonth
 
     /**
      * Returns the name of this month.

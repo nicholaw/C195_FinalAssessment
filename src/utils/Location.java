@@ -6,7 +6,8 @@ package utils;
 public enum Location {
     LONDON("London, UK"),
     NEW_YORK("New York City, US"),
-    QUEBEC("Quebec, CA");
+    PHOENIX("Phoenix, USA"),
+    QUEBEC("Quebec, CA"); //TODO: change to montreal
 
     private final String location;
 
