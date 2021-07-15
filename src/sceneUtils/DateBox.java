@@ -3,7 +3,8 @@ package sceneUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import java.time.LocalDateTime;
+
+import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -31,7 +32,7 @@ public class DateBox extends GridPane {
      * @param date  -the LocalDateTime to use
      * @param error -the error label used to inform the user of any invalid date selections
      */
-    public DateBox(ResourceBundle rb, LocalDateTime date, Label error) {
+    public DateBox(ResourceBundle rb, ZonedDateTime date, Label error) {
         dateLabel   =   new Label("");
         monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
         dayCombo	=	new ComboBox<>(days);
@@ -85,7 +86,7 @@ public class DateBox extends GridPane {
      * Sets the combo boxes to match the given LocalDateTime.
      * @param currentDate	-the provided LocalDateTime
      */
-    public void setDateTime(LocalDateTime currentDate) {
+    public void setDateTime(ZonedDateTime currentDate) {
         if(currentDate != null) {
             yearCombo.setValue(currentDate.getYear());
             monthCombo.setValue(Month.getMonth(currentDate.getMonthValue()));

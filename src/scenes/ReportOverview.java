@@ -16,6 +16,9 @@ import sceneUtils.Refreshable;
 import sceneUtils.Report;
 import sceneUtils.SceneCode;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -148,21 +151,21 @@ public class ReportOverview extends BorderPane implements Refreshable {
         NOV(11),
         DEC(12);
 
-        private LocalDateTime monthToReport;
+        private ZonedDateTime monthToReport;
 
         /**
          * Constructs this MonthlyReport for the given month of the year.
          * @param monthOfYear -the month of the year
          */
         MonthlyReport(int monthOfYear) {
-            monthToReport = LocalDateTime.of(LocalDateTime.now().getYear(), monthOfYear, 1, 0, 0);
+            monthToReport = ZonedDateTime.of(LocalDateTime.of(LocalDateTime.now().getYear(), monthOfYear, 1, 0, 0), ZoneId.ofOffset("UTC", ZoneOffset.UTC));
         }
 
         /**
          * Returns the LocalDateTime associated with this MonthlyReport.
          * @return -the month to report
          */
-        public LocalDateTime getMonthToReport() {
+        public ZonedDateTime getMonthToReport() {
             return monthToReport;
         }
 

@@ -9,7 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import localization.SupportedLocale;
-import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class HeaderPane extends BorderPane {
@@ -21,7 +22,7 @@ public class HeaderPane extends BorderPane {
 
     public HeaderPane(Controller controller, ObservableList<SupportedLocale> supportedLocales, SupportedLocale defaultLocale) {
         this.controller = controller;
-        clock = new Label(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        clock = new Label(ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         timeZoneCombo = new ComboBox<String>();
         timeZoneCombo.getItems().setAll("EST", "GMT");
         timeZoneCombo.setValue(timeZoneCombo.getItems().get(0));

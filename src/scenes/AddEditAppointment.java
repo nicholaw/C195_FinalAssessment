@@ -15,6 +15,8 @@ import utils.Contact;
 import utils.Location;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
@@ -273,7 +275,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	 * Prepares this scene for scheduling a new appointment.
 	 */
     public void loadNewAppointment() {
-		dateTimePane.setDateTime(LocalDateTime.now());
+		dateTimePane.setDateTime(ZonedDateTime.now(ZoneId.systemDefault()));
 		appointmentToEdit = null;
 		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
 		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
@@ -330,7 +332,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//check for start change
-		LocalDateTime tempDateTime = dateTimePane.startDateTime();
+		ZonedDateTime tempDateTime = dateTimePane.startDateTime();
 		if(!appointmentToEdit.getStartDateTime().equals(tempDateTime)) {
 			changesMade = true;
 			if(commitChanges) {

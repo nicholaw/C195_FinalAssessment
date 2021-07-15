@@ -2,6 +2,8 @@ package appointment;
 
 import javafx.beans.property.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import utils.Contact;
 import utils.Location;
@@ -16,8 +18,8 @@ public class Appointment {
 	private StringProperty	title;
 	private StringProperty	description;
 	private ObjectProperty<Type> type;
-	private LocalDateTime	startDateTime;
-	private LocalDateTime	endDateTime;
+	private ZonedDateTime 	startDateTime;
+	private ZonedDateTime	endDateTime;
 	private StringProperty	date;
 	private StringProperty	start;
 	private StringProperty	end;
@@ -27,8 +29,8 @@ public class Appointment {
 
 	/**
 	 * Constructor for an appointment.
-	 * @param appointmentId	-the unique id of this appointment
-	 * @param title	-the title of this appointment
+	 * @param appointmentId    -the unique id of this appointment
+	 * @param title    -the title of this appointment
 	 * @param description -a brief description of this appointment
 	 * @param type -the category of this appointment
 	 * @param startDateTime -the starting date and time of this appointment
@@ -38,8 +40,8 @@ public class Appointment {
 	 * @param location -the location of this appointment
 	 */
     public Appointment(long appointmentId, String title, String description, Type type,
-						LocalDateTime startDateTime, LocalDateTime endDateTime,
-						long customerId, Contact contact, Location location) {
+					   ZonedDateTime startDateTime, ZonedDateTime endDateTime,
+					   long customerId, Contact contact, Location location) {
         this.appointmentId	=	new SimpleLongProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, "title", title);
 		this.description 	= 	new SimpleStringProperty(this, "description", description);
@@ -178,7 +180,7 @@ public class Appointment {
 	 * Returns the end date and time of this appointment.
 	 * @return	-this appointment's end date and time
 	 */
-    public LocalDateTime getEndDateTime() {
+    public ZonedDateTime getEndDateTime() {
         return endDateTime;
     }//getEndDateTime
 
@@ -194,7 +196,7 @@ public class Appointment {
 	 * Returns the starting date and time of this appointment.
 	 * @return	-this appointment's starting date and time
 	 */
-    public LocalDateTime getStartDateTime() {
+    public ZonedDateTime getStartDateTime() {
         return startDateTime;
     }//getStartDateTime
 
@@ -255,7 +257,7 @@ public class Appointment {
 	 * Sets the starting date and time of this appointment to the given LocalDateTime.
 	 * @param start -the starting date and time to set
 	 */
-	public void setStartDateTime(LocalDateTime start) {
+	public void setStartDateTime(ZonedDateTime start) {
     	this.startDateTime = start;
     	date.setValue(start.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
 		this.start.setValue(start.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
@@ -265,7 +267,8 @@ public class Appointment {
 	 * Sets the ending date and time of this appointment to the given LocalDateTime.
 	 * @param end -the end date and time to set
 	 */
-	public void setEndDateTime(LocalDateTime end) {
+	public void setEndDateTime(ZonedDateTime end) {
+
 		this.endDateTime = end;
 		this.end.setValue(end.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
 	}//setEndDateTime
@@ -301,7 +304,7 @@ public class Appointment {
 	 * @param end	-the end time to be checked against
 	 * @return	-whether this appointment overlaps the given start and end times
 	 */
-	public boolean overlaps(LocalDateTime start, LocalDateTime end) {
+	public boolean overlaps(ZonedDateTime start, ZonedDateTime end) {
 		if(start != null && end != null) {
 			if(start.isAfter(startDateTime) && start.isBefore(endDateTime))
 				return true;

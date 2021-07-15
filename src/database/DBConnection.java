@@ -10,6 +10,8 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -206,9 +208,13 @@ public class DBConnection {
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
-                list.add(new appointment.Appointment(result.getLong("appointment_id"), result.getString("title"), result.getString("description"),
-                        Type.getType(result.getString("type")), (LocalDateTime)result.getObject("start"), (LocalDateTime)result.getObject("end"),
-                        id, controller.getContact(result.getInt("contact")), Location.getLocation(result.getString("location"))));
+                var start = ZonedDateTime.of((LocalDateTime)result.getObject("start"), ZoneId.systemDefault());
+                var end = ZonedDateTime.of((LocalDateTime)result.getObject("end"), ZoneId.systemDefault());
+                list.add(new appointment.Appointment(result.getLong("appointment_id"),
+                        result.getString("title"), result.getString("description"),
+                        Type.getType(result.getString("type")), start, end, id,
+                        controller.getContact(result.getInt("contact")),
+                        Location.getLocation(result.getString("location"))));
             }
         }catch(SQLException e) {
             e.printStackTrace();
@@ -241,7 +247,7 @@ public class DBConnection {
      * @param month -the month to be reported
      * @return  -the array of reports
      */
-    public HashMap[] getMonthlyReports(LocalDateTime month) {
+    public HashMap[] getMonthlyReports(ZonedDateTime month) {
         var mapArray = new HashMap[2];
         mapArray[0] = getMonthlyReportByType(month);
         mapArray[1] = getMonthlyReportByLocation(month);
@@ -253,7 +259,7 @@ public class DBConnection {
      * @param month -the month to be reported
      * @return  -the number of unique appointments for each location
      */
-    private HashMap<Location, Integer> getMonthlyReportByLocation(LocalDateTime month) {
+    private HashMap<Location, Integer> getMonthlyReportByLocation(ZonedDateTime month) {
         var map = new HashMap<Location, Integer>();
         for(Location l : Location.values()) {
             map.put(l, 0);
@@ -276,8 +282,6 @@ public class DBConnection {
             System.out.println("THE QUERY WAS EXECUTED\t");
             Location l;
             while(result.next()) {
-                System.out.println("ENTERED THE WHILE LOOP");
-                System.out.printf("%s\t%d\n", result.getString("location"), result.getInt("count"));
                 l = Location.getLocation(result.getString("location"));
                 if(l != null) {
                     map.replace(l, result.getInt("count"));
@@ -295,7 +299,7 @@ public class DBConnection {
      * @param month -the month to be reported
      * @return  -the number of unique appointments for each type
      */
-    private HashMap<Type, Integer> getMonthlyReportByType(LocalDateTime month) {
+    private HashMap<Type, Integer> getMonthlyReportByType(ZonedDateTime month) {
         var map = new HashMap<Type, Integer>();
         for(Type t : Type.values()) {
             map.put(t, 0);
@@ -336,7 +340,7 @@ public class DBConnection {
      *  @param units    -the unit of time in which to count the interval of time
 	 *  return          -the collection of upcoming appointments
 	 */
-	public Collection<String> getUpcomingAppointments(LocalDateTime dateTime, int interval, String units) {
+	public Collection<String> getUpcomingAppointments(ZonedDateTime dateTime, int interval, String units) {
 		Collection<String> appointments = new HashSet<>();
 		String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
 		String sql =	"SELECT " 													+ 

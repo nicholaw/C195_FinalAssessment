@@ -14,7 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import java.io.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import javafx.scene.control.ButtonType;
@@ -82,7 +82,7 @@ public class Controller {
 	 */
 	public boolean addAppointment(Appointment a) {
 		if(dbConnection.insertAppointment(a, currentUser,
-				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
+				ZonedDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			return true;
 		}
 		return false;
@@ -127,8 +127,8 @@ public class Controller {
 	 * @return	-whether the customer was successfully inserted into the database
 	 */
     public boolean addCustomer(Customer c) {
-		if(dbConnection.insertCustomer(c, currentUser.getUsername(), 
-			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
+		if(dbConnection.insertCustomer(c, currentUser.getUsername(),
+				ZonedDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			customers.add(c);
 			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
@@ -229,7 +229,7 @@ public class Controller {
 		messageAlert.setAlertType(Alert.AlertType.INFORMATION);
 		messageAlert.setTitle(rb.getString("upcoming_appointments_title"));
 		String message = "";
-		Set<String> appointments = new HashSet<>(dbConnection.getUpcomingAppointments(LocalDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT));
+		Set<String> appointments = new HashSet<>(dbConnection.getUpcomingAppointments(ZonedDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT));
 		if((appointments != null) && !(appointments.isEmpty())) {
 			message += rb.getString("upcoming_appointments_true");
 			message += "\n\n";
@@ -410,7 +410,7 @@ public class Controller {
 	 * @param monthToReport -the month for which to get reports
 	 * @return -the reports for the provided month (LocalDateTime)
 	 */
-	public HashMap[] getMonthlyReports(LocalDateTime monthToReport) {
+	public HashMap[] getMonthlyReports(ZonedDateTime monthToReport) {
     	return dbConnection.getMonthlyReports(monthToReport);
 	}
 
@@ -419,7 +419,7 @@ public class Controller {
      * @return -the next available id
      */
     public long getNextAppointmentId() {
-        return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMQkkDDDmm")));
+        return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("MMQkkDDDmm")));
     }
 
 	/**
@@ -427,7 +427,7 @@ public class Controller {
 	 * @return -the next available id
 	 */
     public long getNextCustomerId() {
-        return Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("kkMMmmddYY")));
+        return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("kkMMmmddYY")));
     }
 
 	/**
@@ -481,7 +481,7 @@ public class Controller {
     private void logLoginAttempt(String username, boolean valid) {
 		try(var fw = new FileWriter(loginAttemptDestinaiton, true);
 			var bw = new BufferedWriter(fw)) {
-			LocalDateTime currentTime = LocalDateTime.now();
+			ZonedDateTime currentTime = ZonedDateTime.now();
 			String text = currentTime.format(DateTimeFormatter.ofPattern(ControllerConstants.DATE_TIME_FORMAT));
 			text += (username + "\t");
 			if(valid)
@@ -522,7 +522,7 @@ public class Controller {
 		if(appointmentUpdates != null) {
 			//add user and date to appointment updates for last updated by and last updated
 			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
-			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATE_DATE.getColName(), LocalDateTime.now().format(ControllerConstants.TIMESTAMP_FORMAT));
+			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATE_DATE.getColName(), ZonedDateTime.now().format(ControllerConstants.TIMESTAMP_FORMAT));
 			return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
 		}
         return false;
@@ -537,7 +537,7 @@ public class Controller {
 		if(customerUpdates != null) {
 			//add user and date to customer updates for last updated by and last updated
 			customerUpdates.put(CustomerColumns.CUSTOMER_UPDATE_BY.getColName(), currentUser.getUsername());
-			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), ZonedDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			return dbConnection.updateCustomer(customerUpdates, customerId);
 		}
         return false;
