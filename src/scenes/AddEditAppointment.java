@@ -31,7 +31,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
     private final Button 		submitButton;		private final Button 			cancelButton;
 	private final ErrorLabel	titleErrorLabel;	private final ErrorLabel		timeErrorLabel;
 	private Appointment 		appointmentToEdit;	private boolean					newAppointment;
-	private final ComboBox<Location>locationBox;	private final ComboBox<Type>apptTypeCombo;
+	private final ComboBox<Location> locationBox;	private final ComboBox<Type>	apptTypeCombo;
 
 	/**
 	 * Constructs this scene.

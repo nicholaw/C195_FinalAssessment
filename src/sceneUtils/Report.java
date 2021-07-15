@@ -15,15 +15,6 @@ public class Report extends BorderPane {
     private GridPane byType;
     private GridPane byLocation;
 
-    public Report() {
-        byType = new GridPane();
-        byLocation = new GridPane();
-
-        //style elements
-        byType.setVgap(10);
-        byLocation.setVgap(10);
-    }//constructor
-
     /**
      * Displays the GridPane with the number of appointments by location.
      */
@@ -43,11 +34,14 @@ public class Report extends BorderPane {
      * @param locations -the number of appointments by location
      */
     private void generateByLocation(HashMap<Location, Integer> locations) {
+        byLocation = new GridPane();
         int row = 0;
         for(Location l : locations.keySet()) {
             byLocation.addRow(row, new Label(l.getLocation()), new Label("" + locations.get(l)));
             row++;
         }
+        byLocation.setVgap(10);
+        byLocation.setHgap(20);
     }//generateByLocation
 
     /**
@@ -55,11 +49,14 @@ public class Report extends BorderPane {
      * @param types -the number of appointments by type
      */
     private void generateByType(HashMap<Type, Integer> types) {
+        byType = new GridPane();
         int row = 0;
         for(Type t : types.keySet()) {
             byType.addRow(row, new Label(t.getType()), new Label("" + types.get(t)));
             row++;
         }
+        byType.setVgap(10);
+        byType.setHgap(20);
     }//generateByType
 
     /**

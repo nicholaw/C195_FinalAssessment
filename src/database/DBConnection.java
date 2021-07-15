@@ -258,27 +258,33 @@ public class DBConnection {
         for(Location l : Location.values()) {
             map.put(l, 0);
         }
-        String sql =    "SELECT "                               +
-                            "location, "                        +
-                            "COUNT(Appointment_ID) AS count "   +
-                        "FROM appointments "                    +
-                        "WHERE start BETWEEN ? AND ? "          +
-                        "GROUP BY location "                    +
+        String sql =    "SELECT "                                   +
+                            "location, "                            +
+                            "COUNT(Appointment_ID) AS count "       +
+                        "FROM appointments "                        +
+                        "WHERE "                                    +
+                            "start BETWEEN ? "                      +
+                            "AND DATE_ADD(?, INTERVAL ? MONTH) "    +
+                        "GROUP BY location "                        +
                         "ORDER BY location";
         try(var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-            month.plusMonths(1);
-            month.minusDays(1);
-            stmt.setString(2, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            String formattedDateTime = month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
+            stmt.setString(1, formattedDateTime);
+            stmt.setString(2, formattedDateTime);
+            stmt.setInt(3, 1);
             var result = stmt.executeQuery();
+            System.out.println("THE QUERY WAS EXECUTED\t");
             Location l;
             while(result.next()) {
+                System.out.println("ENTERED THE WHILE LOOP");
+                System.out.printf("%s\t%d\n", result.getString("location"), result.getInt("count"));
                 l = Location.getLocation(result.getString("location"));
                 if(l != null) {
-                    map.put(l, result.getInt("count"));
+                    map.replace(l, result.getInt("count"));
                 }
             }
         } catch(SQLException e) {
+            System.out.println("AN EXCEPTION WAS CAUGHT");
             e.printStackTrace();
         }
         return map;
@@ -298,20 +304,22 @@ public class DBConnection {
                             "type, "                                +
                             "COUNT(Appointment_ID) AS count "       +
                         "FROM appointments "                        +
-                        "WHERE start BETWEEN ? AND ? "              +
+                        "WHERE "                                    +
+                            "start BETWEEN ? "                      +
+                            "AND DATE_ADD(?, INTERVAL ? MONTH) "    +
                         "GROUP BY type "                            +
                         "ORDER BY type";
         try(var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-            month.plusMonths(1);
-            month.minusDays(1);
-            stmt.setString(2, month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+            String formattedDateTime = month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
+            stmt.setString(1, formattedDateTime);
+            stmt.setString(2, formattedDateTime);
+            stmt.setInt(3, 1);
             var result = stmt.executeQuery();
             Type t;
             while(result.next()) {
-                t = Type.getType(result.getString("location"));
+                t = Type.getType(result.getString("type"));
                 if(t != null) {
-                    map.put(t, result.getInt("count"));
+                    map.replace(t, result.getInt("count"));
                 }
             }
         } catch(SQLException e) {
