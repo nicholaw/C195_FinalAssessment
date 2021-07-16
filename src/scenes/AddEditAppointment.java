@@ -380,21 +380,28 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	 * @param rb -the ResourceBundle to use for retrieving localized text
 	 */
 	private void refreshTimeError(ResourceBundle rb) {
+		timeErrorLabel.setResourceBundle(rb);
 		if(timeErrorLabel.getError() != null) {
 			String errorMessage;
-			String append = timeErrorLabel.getText().substring(controller.getResourceBundle().getString("overlaps_error").length() - 1);
-			timeErrorLabel.setResourceBundle(rb);
 			switch(timeErrorLabel.getError()) {
 				case APPOINTMENT_BUSINESS_HOURS_ERROR:
 					errorMessage = controller.getResourceBundle().getString("hours_error");
-					errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
-							controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+					errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS.toLocalTime() + " " +
+							controller.getResourceBundle().getString("to") + " " +
+							AppointmentConstants.CLOSE_HOURS.toLocalTime() + " EST";
 					timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
 					break;
 				case APPOINTMENT_OVERLAPS_EXISTING_ERROR:
+					String append = timeErrorLabel.getText().substring(controller.getResourceBundle().getString("overlaps_error").length() - 1);
 					errorMessage = controller.getResourceBundle().getString("overlaps_error");
 					errorMessage = errorMessage + "\n\t" + append;
 					timeErrorLabel.setError(ErrorCode.APPOINTMENT_OVERLAPS_EXISTING_ERROR, errorMessage);
+					break;
+				case APPOINTMENT_IN_PAST_ERROR:
+					timeErrorLabel.setError(ErrorCode.APPOINTMENT_IN_PAST_ERROR);
+					break;
+				case APPOINTMENT_START_END_ERROR:
+					timeErrorLabel.setError(ErrorCode.APPOINTMENT_START_END_ERROR);
 					break;
 			}//switch
 		}//if
@@ -447,15 +454,17 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		var endTime = LocalTime.of(end.getHour(), end.getMinute());
 		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS.toLocalTime()) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime())) {
 			valid = false;
-			String errorMessage = controller.getResourceBundle().getString("hours_error");
-			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
-					controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+			String errorMessage = controller.getResourceBundle().getString("hours_error"); //TODO: create a method for this to prevent repetition
+			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS.toLocalTime() + " " +
+					controller.getResourceBundle().getString("to") + " " +
+					AppointmentConstants.CLOSE_HOURS.toLocalTime() + " EST";
 			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
 		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime())) {
 			valid = false;
 			String errorMessage = controller.getResourceBundle().getString("hours_error");
-			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
-					controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
+			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS.toLocalTime() + " " +
+					controller.getResourceBundle().getString("to") + " " +
+					AppointmentConstants.CLOSE_HOURS.toLocalTime() + " EST";
 			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
 		}
 

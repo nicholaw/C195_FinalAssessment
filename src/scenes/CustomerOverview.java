@@ -65,7 +65,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
             if(customersTable.getSelectedCustomer() != null) {
                 Customer selectedCustomer = customersTable.getSelectedCustomer();
                 if(controller.displayConfirmationAlert(controller.getResourceBundle().getString("confirm_delete_title"),
-                        controller.getResourceBundle().getString("confirm_delete_appointment"))) {
+                        controller.getResourceBundle().getString("confirm_delete_customer"))) {
                     if(controller.deleteCustomer(selectedCustomer)) {
                         viewAppointmentsButton.setDisable(true);
                         editCustomerButton.setDisable(true);

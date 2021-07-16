@@ -282,12 +282,9 @@ public class Controller {
     		c.setAppointments(dbConnection.getCustomerAppointments(c.getCustomerId()));
 		if(c.getAppointments().size() > 0) {
 			messageAlert.setAlertType(Alert.AlertType.INFORMATION);
-			messageAlert.setTitle("Delete Customer");
-			String message = "Cannot delete customer " + c.getName() + "(#" + c.getCustomerId() + ") because " +
-					"they still have the following " + c.getAppointments().size() + " appointments:\n";
-			for(appointment.Appointment a : c.getAppointments()) {
-				message += ("\t" + a.getAppointmentId() + "\n");
-			}
+			messageAlert.setTitle(rb.getString("failed_delete_title"));
+			String message = rb.getString("failed_delete_customer1") + " " +
+					c.getName() + " (#" + c.getCustomerId() + ") " + rb.getString("failed_delete_customer2");
 			messageAlert.setContentText(message);
 			messageAlert.showAndWait();
 			return false;

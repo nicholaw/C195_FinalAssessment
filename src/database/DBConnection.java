@@ -1,6 +1,7 @@
 package database;
 
 import appointment.Appointment;
+import appointment.AppointmentConstants;
 import utils.*;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
@@ -36,20 +37,8 @@ public class DBConnection {
             e.printStackTrace();
         }
 
-        /////////////FOR TESTING///////////////////////////////
-        String sql = "SELECT appointment_id, title, start, end FROM appointments";
-        try(var stmt = conn.prepareStatement(sql)) {
-            var result = stmt.executeQuery();
-            while(result.next()) {
-                System.out.printf("%d\t%s\t%s\t%s",
-                        result.getLong("appointment_id"),
-                        result.getString("title"),
-                        result.getTimestamp("start").toString(),
-                        result.getTimestamp("end").toString());
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
+        System.out.println(AppointmentConstants.OPEN_HOURS.toLocalTime());
+        System.out.println(AppointmentConstants.CLOSE_HOURS.toLocalTime());
     }//constructor
 
     /**
