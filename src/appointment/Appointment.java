@@ -28,7 +28,7 @@ public class Appointment {
 	private Location		location;
 
 	/**
-	 * Constructor for an appointment.
+	 * Constructs this appointment from two provided ZonedDateTimes representing the start and end of this appointment.
 	 * @param appointmentId    -the unique id of this appointment
 	 * @param title    -the title of this appointment
 	 * @param description -a brief description of this appointment
@@ -46,15 +46,53 @@ public class Appointment {
 		this.title 			= 	new SimpleStringProperty(this, "title", title);
 		this.description 	= 	new SimpleStringProperty(this, "description", description);
 		this.type 			= 	new SimpleObjectProperty<>(this, "type", type);
-		this.startDateTime	= 	startDateTime;
-		this.date 			= 	new SimpleStringProperty(this, "date", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
-		this.start	 		= 	new SimpleStringProperty(this, "start", startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
-		this.endDateTime 	= 	endDateTime;
-		this.end	 		= 	new SimpleStringProperty(this, "end", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		if(!startDateTime.getZone().equals(AppointmentConstants.ZONE_UTC)) {
+			this.startDateTime	= 	ZonedDateTime.ofInstant(startDateTime.toInstant(), AppointmentConstants.ZONE_UTC);
+		} else {
+			this.startDateTime 	=	startDateTime;
+		}
+		if(!endDateTime.getZone().equals(AppointmentConstants.ZONE_UTC)) {
+			this.endDateTime	= 	ZonedDateTime.ofInstant(startDateTime.toInstant(), AppointmentConstants.ZONE_UTC);
+		} else {
+			this.endDateTime 	=	startDateTime;
+		}
+		this.date 			= 	new SimpleStringProperty(this, "date", this.startDateTime.toLocalDateTime().format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.start	 		= 	new SimpleStringProperty(this, "start", this.startDateTime.toLocalDateTime().format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.endDateTime 	= 	ZonedDateTime.ofInstant(endDateTime.toInstant(), AppointmentConstants.ZONE_UTC);
+		this.end	 		= 	new SimpleStringProperty(this, "end", this.endDateTime.toLocalDateTime().format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
 		this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
 		this.location		=	location;
     }//constructor
+
+	/**
+	 * Constructs this appointment from two provided LocalDateTimes representing the start and end of this appointment.
+	 * @param appointmentId    -the unique id of this appointment
+	 * @param title    -the title of this appointment
+	 * @param description -a brief description of this appointment
+	 * @param type -the category of this appointment
+	 * @param startDateTime -the starting date and time of this appointment
+	 * @param endDateTime -the ending date and time of this appointment
+	 * @param customerId -the id of the customer to whom this appointment belongs
+	 * @param contact -the employee contact assigned to this appointment
+	 * @param location -the location of this appointment
+	 */
+	public Appointment(long appointmentId, String title, String description, Type type,
+					   LocalDateTime startDateTime, LocalDateTime endDateTime,
+					   long customerId, Contact contact, Location location) {
+		this.appointmentId	=	new SimpleLongProperty(this, "appointmentId", appointmentId);
+		this.title 			= 	new SimpleStringProperty(this, "title", title);
+		this.description 	= 	new SimpleStringProperty(this, "description", description);
+		this.type 			= 	new SimpleObjectProperty<>(this, "type", type);
+		this.startDateTime 	= 	ZonedDateTime.ofInstant(startDateTime.atZone(ZoneId.systemDefault()).toInstant(), AppointmentConstants.ZONE_UTC);
+		this.date 			= 	new SimpleStringProperty(this, "date", this.startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.start	 		= 	new SimpleStringProperty(this, "start", this.startDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.endDateTime 	= 	ZonedDateTime.ofInstant(endDateTime.atZone(ZoneId.systemDefault()).toInstant(), AppointmentConstants.ZONE_UTC);
+		this.end	 		= 	new SimpleStringProperty(this, "end", endDateTime.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+		this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
+		this.contact 		= 	contact;
+		this.location		=	location;
+	}//constructor
 
 	/**
 	 * Returns a LongProperty for displaying this appointment's id in a TableView.
@@ -180,8 +218,8 @@ public class Appointment {
 	 * Returns the end date and time of this appointment.
 	 * @return	-this appointment's end date and time
 	 */
-    public ZonedDateTime getEndDateTime() {
-        return endDateTime;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime.toLocalDateTime();
     }//getEndDateTime
 
 	/**
@@ -196,8 +234,8 @@ public class Appointment {
 	 * Returns the starting date and time of this appointment.
 	 * @return	-this appointment's starting date and time
 	 */
-    public ZonedDateTime getStartDateTime() {
-        return startDateTime;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime.toLocalDateTime();
     }//getStartDateTime
 
 	/**
@@ -254,7 +292,7 @@ public class Appointment {
 	}//setDescription
 
 	/**
-	 * Sets the starting date and time of this appointment to the given LocalDateTime.
+	 * Sets the starting date and time of this appointment to the given ZonedDateTime.
 	 * @param start -the starting date and time to set
 	 */
 	public void setStartDateTime(ZonedDateTime start) {
@@ -264,12 +302,30 @@ public class Appointment {
 	}//setStartDateTime
 
 	/**
-	 * Sets the ending date and time of this appointment to the given LocalDateTime.
+	 * Sets the starting date and time of this appointment to the given LocalDateTime converted to UTC.
+	 * @param start -the starting date and time to set
+	 */
+	public void setStartDateTime(LocalDateTime start) {
+		startDateTime = ZonedDateTime.ofInstant(start.atZone(ZoneId.systemDefault()).toInstant(), ZoneId.of("UTC"));
+		date.setValue(start.format(DateTimeFormatter.ofPattern(AppointmentConstants.DATE_FORMAT)));
+		this.start.setValue(start.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+	}
+
+	/**
+	 * Sets the ending date and time of this appointment to the given ZonedDateTime.
 	 * @param end -the end date and time to set
 	 */
 	public void setEndDateTime(ZonedDateTime end) {
-
 		this.endDateTime = end;
+		this.end.setValue(end.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
+	}//setEndDateTime
+
+	/**
+	 * Sets the ending date and time of this appointment to the given LocalDateTime converted to UTC.
+	 * @param end -the end date and time to set
+	 */
+	public void setEndDateTime(LocalDateTime end) {
+		endDateTime = ZonedDateTime.ofInstant(end.atZone(ZoneId.systemDefault()).toInstant(), ZoneId.of("UTC"));
 		this.end.setValue(end.format(DateTimeFormatter.ofPattern(AppointmentConstants.TIME_FORMAT)));
 	}//setEndDateTime
 
@@ -304,13 +360,13 @@ public class Appointment {
 	 * @param end	-the end time to be checked against
 	 * @return	-whether this appointment overlaps the given start and end times
 	 */
-	public boolean overlaps(ZonedDateTime start, ZonedDateTime end) {
+	public boolean overlaps(LocalDateTime start, LocalDateTime end) {
 		if(start != null && end != null) {
-			if(start.isAfter(startDateTime) && start.isBefore(endDateTime))
+			if(start.isAfter(startDateTime.toLocalDateTime()) && start.isBefore(endDateTime.toLocalDateTime()))
 				return true;
-			if(end.isAfter(startDateTime) && end.isBefore(endDateTime))
+			if(end.isAfter(startDateTime.toLocalDateTime()) && end.isBefore(endDateTime.toLocalDateTime()))
 				return true;
-			if(start.isBefore(startDateTime) && end.isAfter(endDateTime))
+			if(start.isBefore(startDateTime.toLocalDateTime()) && end.isAfter(endDateTime.toLocalDateTime()))
 				return true;
 		}
 		return false;

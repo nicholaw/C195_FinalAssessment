@@ -3,8 +3,7 @@ package sceneUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -32,12 +31,12 @@ public class DateBox extends GridPane {
      * @param date  -the LocalDateTime to use
      * @param error -the error label used to inform the user of any invalid date selections
      */
-    public DateBox(ResourceBundle rb, ZonedDateTime date, Label error) {
+    public DateBox(ResourceBundle rb, LocalDate date, Label error) {
         dateLabel   =   new Label("");
         monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
         dayCombo	=	new ComboBox<>(days);
         yearCombo   =   new ComboBox<>(FXCollections.observableArrayList(date.getYear(), date.getYear() + 1));
-        setDateTime(date);
+        setDate(date);
         setResourceBundle(rb);
         monthCombo.setOnAction(event -> {
             updateDays();
@@ -58,40 +57,25 @@ public class DateBox extends GridPane {
         comboPane.setHgap(10);
     }//constructor
 
-    /**
-     * Returns the user-selected day of the month.
-     * @return -the selected day
-     */
-    public int getDayOfMonth() {
-        return dayCombo.getValue();
-    }
 
     /**
-     * Returns the user-selected month.
-     * @return -the selected month
+     * Returns the user-selected date.
+     * @return -the date selected by the user via the ComboBoxes on this scene element
      */
-    public int getMonthOfYear() {
-        return monthCombo.getValue().getMonthOfYear();
-    }
-
-    /**
-     * Returns the user-selected year
-     * @return -the selected year
-     */
-    public int getYear() {
-        return yearCombo.getValue();
+    public LocalDate getDate() {
+        return LocalDate.of(yearCombo.getValue(), monthCombo.getValue().getMonthOfYear(), dayCombo.getValue());
     }
 
     /**
      * Sets the combo boxes to match the given LocalDateTime.
-     * @param currentDate	-the provided LocalDateTime
+     * @param date	-the provided LocalDateTime
      */
-    public void setDateTime(ZonedDateTime currentDate) {
-        if(currentDate != null) {
-            yearCombo.setValue(currentDate.getYear());
-            monthCombo.setValue(Month.getMonth(currentDate.getMonthValue()));
+    public void setDate(LocalDate date) {
+        if(date != null) {
+            yearCombo.setValue(date.getYear());
+            monthCombo.setValue(Month.getMonth(date.getMonthValue()));
             updateDays();
-            dayCombo.setValue(currentDate.getDayOfMonth());
+            dayCombo.setValue(date.getDayOfMonth());
         }
     }//setDateTime
 

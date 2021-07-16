@@ -78,7 +78,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 				if(newAppointment) {
 					appointment.Appointment a = new appointment.Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
 							apptTypeCombo.getValue(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
-							(Location)locationBox.getValue());
+							locationBox.getValue());
 					if(controller.addAppointment(a))
 						customerInfo.getCustomer().addAppointment(a);
 				} else {
@@ -275,7 +275,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	 * Prepares this scene for scheduling a new appointment.
 	 */
     public void loadNewAppointment() {
-		dateTimePane.setDateTime(ZonedDateTime.now(ZoneId.systemDefault()));
+		dateTimePane.setDateTime(LocalDateTime.now());
 		appointmentToEdit = null;
 		submitButton.setText(this.controller.getResourceBundle().getString("schedule"));
 		sceneLabel.setText(this.controller.getResourceBundle().getString("schedule_appointment"));
@@ -332,7 +332,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//check for start change
-		ZonedDateTime tempDateTime = dateTimePane.startDateTime();
+		LocalDateTime tempDateTime = dateTimePane.startDateTime();
 		if(!appointmentToEdit.getStartDateTime().equals(tempDateTime)) {
 			changesMade = true;
 			if(commitChanges) {
@@ -445,13 +445,13 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		//Check that meeting time is within business hours (08:00-22:00 EST)
 		var startTime = LocalTime.of(start.getHour(), start.getMinute());
 		var endTime = LocalTime.of(end.getHour(), end.getMinute());
-		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
+		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS.toLocalTime()) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime())) {
 			valid = false;
 			String errorMessage = controller.getResourceBundle().getString("hours_error");
 			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
 					controller.getResourceBundle().getString("to") + " " + AppointmentConstants.CLOSE_HOURS;
 			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
-		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS)) {
+		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime())) {
 			valid = false;
 			String errorMessage = controller.getResourceBundle().getString("hours_error");
 			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS + " " +
@@ -486,6 +486,10 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//Check that date/time is not in the past
+		if(start.isBefore(LocalDateTime.now())) {
+			valid = false;
+			timeErrorLabel.setError(ErrorCode.APPOINTMENT_IN_PAST_ERROR);
+		}
 
 		return valid;
 	}//validateForm

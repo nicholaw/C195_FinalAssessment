@@ -1,7 +1,6 @@
 package appointment;
 
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 
 /**
  * Constants regarding certain properties of appointments such as
@@ -13,12 +12,16 @@ public class AppointmentConstants {
     public static final String TIME_FORMAT = "HH:mm";
 
     //Time zone constants
-    public static final String ZONE_PREFIX = "UTC";
-    public static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
+    public static final ZoneId ZONE_UTC = ZoneId.of("UTC");
+    public static final ZoneId ZONE_EST = ZoneId.of("EST");
 
-    //Business hours    TODO: should be EST, not local time
-    public static final LocalTime OPEN_HOURS = LocalTime.of(8, 0);
-    public static final LocalTime CLOSE_HOURS = LocalTime.of(22, 0);
+    //Business hours    TODO: should be EST, not local time nor UTC
+    //public static final LocalTime OPEN_HOURS = LocalTime.of(8, 0);
+    //public static final LocalTime CLOSE_HOURS = LocalTime.of(22, 0);
+    public static final ZonedDateTime OPEN_HOURS =
+            ZonedDateTime.of(LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0)), ZONE_EST);
+    public static final ZonedDateTime CLOSE_HOURS =
+            ZonedDateTime.of(LocalDateTime.of(LocalDate.now(), LocalTime.of(22, 0)), ZONE_EST);
 
     //Maximum allowed characters
     public static final int MAX_CHARS_TITLE = 50;

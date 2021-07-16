@@ -208,8 +208,10 @@ public class DBConnection {
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
-                var start = ZonedDateTime.of((LocalDateTime)result.getObject("start"), ZoneId.systemDefault());
-                var end = ZonedDateTime.of((LocalDateTime)result.getObject("end"), ZoneId.systemDefault());
+                var start = ZonedDateTime.of((LocalDateTime)result.getObject("start"),
+                        ZoneId.ofOffset(DBConstants.ZONE_PREFIX, DBConstants.ZONE_OFFSET));
+                var end = ZonedDateTime.of((LocalDateTime)result.getObject("end"),
+                        ZoneId.ofOffset(DBConstants.ZONE_PREFIX, DBConstants.ZONE_OFFSET));
                 list.add(new appointment.Appointment(result.getLong("appointment_id"),
                         result.getString("title"), result.getString("description"),
                         Type.getType(result.getString("type")), start, end, id,

@@ -4,6 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
@@ -25,10 +26,10 @@ public class DateTimeBox extends GridPane {
      * @param error -label to display any errors with the selected date or times
      */
     public DateTimeBox(ResourceBundle rb, Label error) {
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
-        date    =   new DateBox(rb, currentDateTime, error);
-        start   =   new TimeBox(currentDateTime);
-        end     =   new TimeBox(currentDateTime);
+        var currentDateTime = LocalDateTime.now();
+        date    =   new DateBox(rb, currentDateTime.toLocalDate(), error);
+        start   =   new TimeBox(currentDateTime.toLocalTime());
+        end     =   new TimeBox(currentDateTime.toLocalTime());
         startLabel  = new Label("");
         endLabel    = new Label("");
         setResourceBundle(rb);
@@ -56,43 +57,43 @@ public class DateTimeBox extends GridPane {
      * Returns the appointment end time as entered by the user.
      * @return  -LocalDateTime of the end of the appointment
      */
-    public ZonedDateTime endDateTime() {
-        return ZonedDateTime.of(LocalDateTime.of(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), end.getHour(), end.getMinute()), ZoneId.systemDefault());
+    public LocalDateTime endDateTime() {
+        return LocalDateTime.of(date.getDate(), end.getTime());
     }
 
     /**
      * Returns the appointment start time  as entered by the user.
      * @return  -LocalDateTime of the start of the appointment
      */
-    public ZonedDateTime startDateTime() {
-        return ZonedDateTime.of(LocalDateTime.of(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), start.getHour(), start.getMinute()), ZoneId.systemDefault());
+    public LocalDateTime startDateTime() {
+        return LocalDateTime.of(date.getDate(), start.getTime());
     }
 
     /**
      * Sets the date and times to be displayed by this scene element.
      * @param dateTime  -the LocalDateTime to be displayed
      */
-    public void setDateTime(ZonedDateTime dateTime) {
-        date.setDateTime(dateTime);
-        start.setTime(dateTime);
-        end.setTime(dateTime);
+    public void setDateTime(LocalDateTime dateTime) {
+        date.setDate(dateTime.toLocalDate());
+        start.setTime(dateTime.toLocalTime());
+        end.setTime(dateTime.toLocalTime());
     }
 
     /**
      * Sets the start time to be displayed by this scene element.
      * @param dateTime  -the time to be displayed
      */
-    public void setStart(ZonedDateTime dateTime) {
-        date.setDateTime(dateTime);
-        start.setTime(dateTime);
+    public void setStart(LocalDateTime dateTime) {
+        date.setDate(dateTime.toLocalDate());
+        start.setTime(dateTime.toLocalTime());
     }
 
     /**
      * Sets the end time to be displayed by this scene element.
      * @param dateTime -the time to be displayed
      */
-    public void setEnd(ZonedDateTime dateTime) {
-        end.setTime(dateTime);
+    public void setEnd(LocalDateTime dateTime) {
+        end.setTime(dateTime.toLocalTime());
     }
 
     /**

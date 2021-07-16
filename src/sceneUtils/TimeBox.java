@@ -3,7 +3,9 @@ package sceneUtils;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import javafx.scene.layout.HBox;
 import utils.Hour;
 import utils.Minute;
@@ -20,7 +22,7 @@ public class TimeBox extends HBox {
 	 * Constructs this scene element with the provided LocalTime.
 	 * @param time -the initial time to set
 	 */
-	public TimeBox(ZonedDateTime time) {
+	public TimeBox(LocalTime time) {
 		hourCombo	= new ComboBox<>(FXCollections.observableArrayList(Hour.values()));
 		minuteCombo = new ComboBox<>(FXCollections.observableArrayList(Minute.values()));
 		setTime(time);
@@ -32,28 +34,16 @@ public class TimeBox extends HBox {
 		this.setSpacing(5);
 	}//constructor
 
-	/**
-	 * Returns the user-selected hour.
-	 * @return	-the selected hour
-	 */
-	public int getHour() {
-		return hourCombo.getValue().getHourOfDay();
-	}
-
-	/**
-	 * Returns the user-selected minute of the hour.
-	 * @return	-the selected minute
-	 */
-	public int getMinute() {
-		return minuteCombo.getValue().getMinuteOfHour();
+	public LocalTime getTime() {
+		return LocalTime.of(hourCombo.getValue().getHourOfDay(), minuteCombo.getValue().getMinuteOfHour());
 	}
 
 	/**
 	 * Sets the time displayed by this TimeBox
-	 * @param currentTime
+	 * @param time -the time to set
 	 */
-	public void setTime(ZonedDateTime currentTime) {
-		hourCombo.setValue(Hour.getHour(currentTime.getHour()));
-		minuteCombo.setValue(Minute.getMinute(currentTime.getMinute()));
+	public void setTime(LocalTime time) {
+		hourCombo.setValue(Hour.getHour(time.getHour()));
+		minuteCombo.setValue(Minute.getMinute(time.getMinute()));
 	}//setValues
 }//TimeBox
