@@ -7,7 +7,7 @@ public enum Location {
     LONDON("London, UK"),
     NEW_YORK("New York City, US"),
     PHOENIX("Phoenix, USA"),
-    QUEBEC("Quebec, CA"); //TODO: change to montreal
+    QUEBEC("Montréal, CA");
 
     private final String location;
 

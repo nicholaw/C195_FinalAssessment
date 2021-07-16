@@ -15,8 +15,6 @@ import utils.Contact;
 import utils.Location;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
@@ -248,8 +246,8 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			apptTypeCombo.setValue(a.getType());
 			descriptionArea.setText(a.getDescription());
 			appointmentToEdit = a;
-			dateTimePane.setStart(a.getStartDateTime());
-			dateTimePane.setEnd(a.getEndDateTime());
+			dateTimePane.setStart(a.getLocalStartDateTime());
+			dateTimePane.setEnd(a.getLocalEndDateTime());
 			locationBox.setValue(a.getLocation());
 			submitButton.setText(this.controller.getResourceBundle().getString("update"));
 			sceneLabel.setText(this.controller.getResourceBundle().getString("update_appointment"));
@@ -327,27 +325,29 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			changesMade = true;
 			if(commitChanges) {
 				controller.addAppointmentUpdate(AppointmentFieldCode.TYPE_COMBO, apptTypeCombo.getValue().toString());
-				appointmentToEdit.setType((Type) apptTypeCombo.getValue());
+				appointmentToEdit.setType(apptTypeCombo.getValue());
 			}
 		}
 
 		//check for start change
 		LocalDateTime tempDateTime = dateTimePane.startDateTime();
-		if(!appointmentToEdit.getStartDateTime().equals(tempDateTime)) {
+		if(!appointmentToEdit.getLocalStartDateTime().equals(tempDateTime)) {
 			changesMade = true;
 			if(commitChanges) {
-				controller.addAppointmentUpdate(AppointmentFieldCode.START_TIME, tempDateTime.format(ControllerConstants.TIMESTAMP_FORMAT));
 				appointmentToEdit.setStartDateTime(tempDateTime);
+				controller.addAppointmentUpdate(AppointmentFieldCode.START_TIME,
+						appointmentToEdit.getUTCStartDateTime().format(ControllerConstants.TIMESTAMP_FORMAT));
 			}
 		}
 
 		//check for end change
 		tempDateTime = dateTimePane.endDateTime();
-		if(!appointmentToEdit.getEndDateTime().equals(tempDateTime)) {
+		if(!appointmentToEdit.getLocalEndDateTime().equals(tempDateTime)) {
 			changesMade = true;
 			if(commitChanges) {
-				controller.addAppointmentUpdate(AppointmentFieldCode.END_TIME, tempDateTime.format(ControllerConstants.TIMESTAMP_FORMAT));
 				appointmentToEdit.setEndDateTime(tempDateTime);
+				controller.addAppointmentUpdate(AppointmentFieldCode.END_TIME,
+						appointmentToEdit.getUTCEndDateTime().format(ControllerConstants.TIMESTAMP_FORMAT));
 			}
 		}
 

@@ -10,7 +10,6 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -208,10 +207,8 @@ public class DBConnection {
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
-                var start = ZonedDateTime.of((LocalDateTime)result.getObject("start"),
-                        ZoneId.ofOffset(DBConstants.ZONE_PREFIX, DBConstants.ZONE_OFFSET));
-                var end = ZonedDateTime.of((LocalDateTime)result.getObject("end"),
-                        ZoneId.ofOffset(DBConstants.ZONE_PREFIX, DBConstants.ZONE_OFFSET));
+                var start = (LocalDateTime)result.getObject("start");
+                var end = (LocalDateTime)result.getObject("end");
                 list.add(new appointment.Appointment(result.getLong("appointment_id"),
                         result.getString("title"), result.getString("description"),
                         Type.getType(result.getString("type")), start, end, id,
@@ -337,12 +334,10 @@ public class DBConnection {
 	/**
 	 *	Returns a collection of Strings describing appointments in the database which start
 	 *  withing fifteen minutes of the given date and time.
-	 *  @param dateTime -the current date and time
-	 *  @param interval -the amount of time in which to look for existing appointments
-     *  @param units    -the unit of time in which to count the interval of time
-	 *  return          -the collection of upcoming appointments
-	 */
-	public Collection<String> getUpcomingAppointments(ZonedDateTime dateTime, int interval, String units) {
+     * @param dateTime -the current date and time
+     *  @param interval -the amount of time in which to look for existing appointments
+     */
+	public Collection<String> getUpcomingAppointments(ZonedDateTime dateTime, int interval) {
 		Collection<String> appointments = new HashSet<>();
 		String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
 		String sql =	"SELECT " 													+ 
@@ -425,8 +420,8 @@ public class DBConnection {
 			stmt.setString	(3, a.getDescription());
 			stmt.setString  (4, a.getLocation().getLocation());
 			stmt.setString	(5, a.getType().getType());
-			stmt.setString	(6, a.getStartDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
-			stmt.setString	(7, a.getEndDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			stmt.setString	(6, a.getUTCStartDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			stmt.setString	(7, a.getUTCEndDateTime().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			stmt.setString	(8, timestamp);
 			stmt.setString	(9, user.getUsername());
 			stmt.setString	(10, timestamp);

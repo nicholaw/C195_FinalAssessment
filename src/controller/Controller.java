@@ -1,6 +1,7 @@
 package controller;
 
 import appointment.Appointment;
+import appointment.AppointmentConstants;
 import appointment.AppointmentFieldCode;
 import utils.Type;
 import customer.Customer;
@@ -82,7 +83,7 @@ public class Controller {
 	 */
 	public boolean addAppointment(Appointment a) {
 		if(dbConnection.insertAppointment(a, currentUser,
-				ZonedDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
+				ZonedDateTime.now(AppointmentConstants.ZONE_UTC).format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			return true;
 		}
 		return false;
@@ -128,12 +129,10 @@ public class Controller {
 	 */
     public boolean addCustomer(Customer c) {
 		if(dbConnection.insertCustomer(c, currentUser.getUsername(),
-				ZonedDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
+				ZonedDateTime.now(AppointmentConstants.ZONE_UTC).format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)))) {
 			customers.add(c);
-			System.out.printf("Customer %d(%s) added successfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
 			return true;
-		} else {
-			System.out.printf("Customer %d(%s) added unsuccessfully.\n\n", c.getCustomerId(), c.getName()); //FOR TESTING
+		} else {//FOR TESTING
 			return false;
 		}
     }//addCustomer
@@ -229,7 +228,7 @@ public class Controller {
 		messageAlert.setAlertType(Alert.AlertType.INFORMATION);
 		messageAlert.setTitle(rb.getString("upcoming_appointments_title"));
 		String message = "";
-		Set<String> appointments = new HashSet<>(dbConnection.getUpcomingAppointments(ZonedDateTime.now(), DBConstants.TIME_INTERVAL, DBConstants.TIME_UNIT));
+		Set<String> appointments = new HashSet<>(dbConnection.getUpcomingAppointments(ZonedDateTime.now(AppointmentConstants.ZONE_UTC), DBConstants.TIME_INTERVAL));
 		if((appointments != null) && !(appointments.isEmpty())) {
 			message += rb.getString("upcoming_appointments_true");
 			message += "\n\n";
@@ -427,7 +426,7 @@ public class Controller {
 	 * @return -the next available id
 	 */
     public long getNextCustomerId() {
-        return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("kkMMmmddYY")));
+        return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("MMmmkkddYY")));
     }
 
 	/**
@@ -522,7 +521,7 @@ public class Controller {
 		if(appointmentUpdates != null) {
 			//add user and date to appointment updates for last updated by and last updated
 			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATED_BY.getColName(), currentUser.getUsername());
-			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATE_DATE.getColName(), ZonedDateTime.now().format(ControllerConstants.TIMESTAMP_FORMAT));
+			appointmentUpdates.put(AppointmentColumns.APPOINTMENT_UPDATE_DATE.getColName(), ZonedDateTime.now(AppointmentConstants.ZONE_UTC).format(ControllerConstants.TIMESTAMP_FORMAT));
 			return dbConnection.updateAppointment(appointmentUpdates, appointmentId);
 		}
         return false;
@@ -537,7 +536,7 @@ public class Controller {
 		if(customerUpdates != null) {
 			//add user and date to customer updates for last updated by and last updated
 			customerUpdates.put(CustomerColumns.CUSTOMER_UPDATE_BY.getColName(), currentUser.getUsername());
-			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), ZonedDateTime.now().format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
+			customerUpdates.put(CustomerColumns.CUSTOMER_LAST_UPDATE.getColName(), ZonedDateTime.now(AppointmentConstants.ZONE_UTC).format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN)));
 			return dbConnection.updateCustomer(customerUpdates, customerId);
 		}
         return false;

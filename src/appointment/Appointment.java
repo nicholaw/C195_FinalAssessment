@@ -215,12 +215,20 @@ public class Appointment {
     }//getDescription
 
 	/**
-	 * Returns the end date and time of this appointment.
+	 * Returns the local end date and time of this appointment.
 	 * @return	-this appointment's end date and time
 	 */
-    public LocalDateTime getEndDateTime() {
+    public LocalDateTime getLocalEndDateTime() {
         return endDateTime.toLocalDateTime();
-    }//getEndDateTime
+    }//getLocalEndDateTime
+
+	/**
+	 * Returns the UTC end date and time of this appointment.
+	 * @return	-this appointment's end date and time in UTC
+	 */
+	public ZonedDateTime getUTCEndDateTime() {
+    	return endDateTime;
+	}//getUTCEndDateTime
 
 	/**
 	 * Returns the location of this appointment.
@@ -234,9 +242,17 @@ public class Appointment {
 	 * Returns the starting date and time of this appointment.
 	 * @return	-this appointment's starting date and time
 	 */
-    public LocalDateTime getStartDateTime() {
+    public LocalDateTime getLocalStartDateTime() {
         return startDateTime.toLocalDateTime();
-    }//getStartDateTime
+    }//getLocalStartDateTime
+
+	/**
+	 * Returns the UTC start date and time of this appointment.
+	 * @return	-this appointment's start date and time in UTC
+	 */
+	public ZonedDateTime getUTCStartDateTime() {
+		return startDateTime;
+	}//getUTCStartDateTime
 
 	/**
 	 * Returns the title of this appointment.
@@ -270,7 +286,7 @@ public class Appointment {
 	 */
 	public boolean overlaps(Appointment a) {
 		if(a != null) {
-			return this.overlaps(a.getStartDateTime(), a.getEndDateTime());
+			return this.overlaps(a.getLocalStartDateTime(), a.getLocalEndDateTime());
 		}
 		return false;
 	}//overlaps

@@ -13,7 +13,7 @@ public class AppointmentConstants {
 
     //Time zone constants
     public static final ZoneId ZONE_UTC = ZoneId.of("UTC");
-    public static final ZoneId ZONE_EST = ZoneId.of("EST");
+    public static final ZoneId ZONE_EST = ZoneId.of("US/Eastern");
 
     //Business hours    TODO: should be EST, not local time nor UTC
     //public static final LocalTime OPEN_HOURS = LocalTime.of(8, 0);
