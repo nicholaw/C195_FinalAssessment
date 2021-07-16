@@ -74,7 +74,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			clearErrors();
 			if(this.validateForm()) {
 				if(newAppointment) {
-					appointment.Appointment a = new appointment.Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
+					Appointment a = new Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
 							apptTypeCombo.getValue(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
 							locationBox.getValue());
 					if(controller.addAppointment(a))
@@ -316,7 +316,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			changesMade = true;
 			if(commitChanges) {
 				controller.addAppointmentUpdate(AppointmentFieldCode.LOCATION_COMBO, locationBox.getValue().toString());
-				appointmentToEdit.setLocation((Location) locationBox.getValue());
+				appointmentToEdit.setLocation(locationBox.getValue());
 			}
 		}
 

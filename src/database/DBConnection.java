@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -33,6 +33,21 @@ public class DBConnection {
             conn = getDataSource().getConnection();
         } catch (SQLException e) {
             conn = null;
+            e.printStackTrace();
+        }
+
+        /////////////FOR TESTING///////////////////////////////
+        String sql = "SELECT appointment_id, title, start, end FROM appointments";
+        try(var stmt = conn.prepareStatement(sql)) {
+            var result = stmt.executeQuery();
+            while(result.next()) {
+                System.out.printf("%d\t%s\t%s\t%s",
+                        result.getLong("appointment_id"),
+                        result.getString("title"),
+                        result.getTimestamp("start").toString(),
+                        result.getTimestamp("end").toString());
+            }
+        } catch(SQLException e) {
             e.printStackTrace();
         }
     }//constructor
@@ -207,11 +222,13 @@ public class DBConnection {
             stmt.setLong(1, id);
             var result = stmt.executeQuery();
             while(result.next()) {
-                var start = (LocalDateTime)result.getObject("start");
-                var end = (LocalDateTime)result.getObject("end");
-                list.add(new appointment.Appointment(result.getLong("appointment_id"),
-                        result.getString("title"), result.getString("description"),
-                        Type.getType(result.getString("type")), start, end, id,
+                list.add(new Appointment(result.getLong("appointment_id"),
+                        result.getString("title"),
+                        result.getString("description"),
+                        Type.getType(result.getString("type")),
+                        ZonedDateTime.ofInstant(ZonedDateTime.of(result.getTimestamp("start").toLocalDateTime(), ZoneId.of("UTC")).toInstant(), ZoneId.systemDefault()).toLocalDateTime(),
+                        ZonedDateTime.ofInstant(ZonedDateTime.of(result.getTimestamp("end").toLocalDateTime(), ZoneId.of("UTC")).toInstant(), ZoneId.systemDefault()).toLocalDateTime(),
+                        id,
                         controller.getContact(result.getInt("contact")),
                         Location.getLocation(result.getString("location"))));
             }
