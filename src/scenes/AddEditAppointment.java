@@ -494,7 +494,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 			c.setAppointments(controller.getCustomerAppointments(customerInfo.getCustomer()));
 		}
 		for(appointment.Appointment a : c.getAppointments()) {
-			if(a.overlaps(start, end)) {
+			if(a.overlaps(start.atZone(ZoneId.systemDefault()), end.atZone(ZoneId.systemDefault()))) {
 				if(newAppointment) {
 					overlappingAppts.add(a);
 				} else {

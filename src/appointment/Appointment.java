@@ -242,19 +242,6 @@ public class Appointment {
 	}//getContact
 
 	/**
-	 * Checks if this appointment's start and end times overlap the times of the given appointment. Returns
-	 * ture if the times overlap and false otherwise.
-	 * @param a -the appointment to be checked against
-	 * @return	-whether this and the given appointment overlap
-	 */
-	public boolean overlaps(Appointment a) {
-		if(a != null) {
-			return this.overlaps(a.getLocalStartDateTime(), a.getLocalEndDateTime());
-		}
-		return false;
-	}//overlaps
-
-	/**
 	 * Sets the title of this appointment to the given String.
 	 * @param title -the title to be set
 	 */
@@ -336,21 +323,35 @@ public class Appointment {
 
 	/**
 	 * Checks if this appointment's start and end times overlap the given start and end times. Returns
-	 * ture if the times overlap and false otherwise.
-	 * @param start -the start time to be checked against
-	 * @param end	-the end time to be checked against
+	 * false if the times do not overlap and true otherwise.
+	 * @param startDateTime -the start time to be checked against
+	 * @param endDateTime	-the end time to be checked against
 	 * @return	-whether this appointment overlaps the given start and end times
 	 */
-	public boolean overlaps(LocalDateTime start, LocalDateTime end) {
-		if(start != null && end != null) {
-			if(start.isAfter(startDateTime.toLocalDateTime()) && start.isBefore(endDateTime.toLocalDateTime()))
-				return true;
-			if(end.isAfter(startDateTime.toLocalDateTime()) && end.isBefore(endDateTime.toLocalDateTime()))
-				return true;
-			if(start.isBefore(startDateTime.toLocalDateTime()) && end.isAfter(endDateTime.toLocalDateTime()))
-				return true;
-		}
-		return false;
+	public boolean overlaps(ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+		//check arguments are not null
+		if(startDateTime == null || endDateTime == null)
+			return false;
+
+		//check arguments are in UTC and convert to UTC if necessary
+		ZonedDateTime convertedStartDateTime;
+		ZonedDateTime convertedEndDateTime;
+		if(startDateTime.getZone().equals(AppointmentConstants.ZONE_UTC))
+			convertedStartDateTime = startDateTime;
+		else
+			convertedStartDateTime = ZonedDateTime.ofInstant(startDateTime.toInstant(), AppointmentConstants.ZONE_UTC);
+		if(endDateTime.getZone().equals(AppointmentConstants.ZONE_UTC))
+			convertedEndDateTime = endDateTime;
+		else
+			convertedEndDateTime = ZonedDateTime.ofInstant(endDateTime.toInstant(), AppointmentConstants.ZONE_UTC);
+
+		//check for overlap
+		if(convertedStartDateTime.isAfter(this.endDateTime) && convertedEndDateTime.isAfter(this.endDateTime)) {
+			return false;
+		} else if(convertedStartDateTime.isBefore(this.startDateTime) && convertedEndDateTime.isBefore(this.startDateTime)) {
+			return false;
+		} else
+			return true;
 	}//overlaps
 
 	@Override
