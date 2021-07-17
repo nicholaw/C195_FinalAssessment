@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 /**
  * Application which allows a user to add, edit, and delete customers and their
  * appointments to a linked database.
+ * @author Nicholas Warner 	001447619
  */
 public class AppointmentScheduler extends Application {
 
@@ -24,6 +25,10 @@ public class AppointmentScheduler extends Application {
     public void stop() {
     }
 
+    /**
+     * Launches the application.
+     * @param args -arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

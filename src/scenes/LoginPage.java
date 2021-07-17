@@ -1,6 +1,7 @@
 package scenes;
 
 import controller.Controller;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -40,31 +41,30 @@ public class LoginPage extends BorderPane implements Refreshable {
         errorMessageLabel   =   new ErrorLabel(this.controller.getResourceBundle());
         submitButton        =   new Button(this.controller.getResourceBundle().getString("submit"));
 
-        //Add nodes to containers and style
-        var usernamePane = new HBox(usernameLabel);
-        usernamePane.setAlignment(Pos.CENTER_RIGHT);
-        var passwordPane = new HBox(passwordLabel);
-        passwordPane.setAlignment(Pos.CENTER_RIGHT);
+        //Add nodes to containers
         var fieldPane = new GridPane();
-        fieldPane.setPadding(new Insets(10,10,10,10));
-        fieldPane.setHgap(10);
-        fieldPane.setVgap(10);
-        fieldPane.setAlignment(Pos.CENTER);
-        fieldPane.add(usernamePane, 0, 0);   fieldPane.add(usernameField, 1, 0);
-        fieldPane.add(passwordPane, 0, 1);   fieldPane.add(passwordField, 1, 1);
+        fieldPane.add(usernameLabel, 0, 0);
+        fieldPane.add(usernameField, 1, 0);
+        fieldPane.add(passwordLabel, 0, 1);
+        fieldPane.add(passwordField, 1, 1);
         var buttonPane = new HBox(submitButton);
-        buttonPane.setAlignment(Pos.CENTER_RIGHT);
-        buttonPane.setPadding(new Insets(10, 10, 10, 10));
+        var errorPane = new HBox(errorMessageLabel);
         var contentPane = new GridPane();
-        contentPane.setPadding(new Insets(10,10,10,10));
-        contentPane.setHgap(10);
-        contentPane.setVgap(10);
-        contentPane.setAlignment(Pos.CENTER);
-        contentPane.add(errorMessageLabel, 0, 0);
+        contentPane.add(errorPane, 0, 0);
         contentPane.add(fieldPane, 0, 1);
         contentPane.add(buttonPane, 0, 2);
         this.setCenter(contentPane);
-        this.setPrefSize(500, 500);
+
+        //Style scene elements
+        fieldPane.setHgap(10);
+        fieldPane.setVgap(10);
+        fieldPane.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.setAlignment(Pos.CENTER_RIGHT);
+        errorMessageLabel.setWrapText(true);
+        errorMessageLabel.setAlignment(Pos.CENTER);
+        errorPane.setAlignment(Pos.CENTER_RIGHT);
+        contentPane.setVgap(10);
+        contentPane.setAlignment(Pos.CENTER);
 
         //Add event listeners to buttons and fields
         submitButton.setOnAction(event -> {

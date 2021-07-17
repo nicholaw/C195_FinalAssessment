@@ -61,7 +61,7 @@ public class Controller {
 	 * @param scn -the main scene for this application
 	 */
     public Controller(Scene scn) {
-    	rb = ResourceBundle.getBundle("localization.Localization", Locale.ENGLISH);
+    	rb = ResourceBundle.getBundle("localization.Localization", Locale.getDefault());
 		contentPane = new BorderPane();
 		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()), SupportedLocale.LOCALE_ENGLISH);
 		contentPane.setTop(header);
