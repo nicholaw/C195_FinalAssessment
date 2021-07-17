@@ -15,6 +15,9 @@ import utils.Contact;
 import utils.Location;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
@@ -236,6 +239,31 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	}//clearErrors
 
 	/**
+	 * Checks if the given local start and end times are within business hours. Returns true if the appointment falls
+	 * within business hours and false otherwise.
+	 * @param start	-the local start time of the appointment
+	 * @param end -the local end time of the appointment
+	 * @return -whether the start and end times fall within business hours
+	 */
+	private boolean isDuringBusinessHours(LocalDateTime start, LocalDateTime end) {
+		//Convert LocalDateTimes to ZonedDateTimes
+		var zonedLocalStart = ZonedDateTime.of(start, ZoneId.systemDefault());
+		var zonedLocalEnd = ZonedDateTime.of(end, ZoneId.systemDefault());
+		//Convert ZonedDateTimes to the business hour time zone
+		var convertedLocalStart = ZonedDateTime.ofInstant(zonedLocalStart.toInstant(), AppointmentConstants.OPEN_HOURS.getZone());
+		var convertedLocalEnd = ZonedDateTime.ofInstant(zonedLocalEnd.toInstant(), AppointmentConstants.OPEN_HOURS.getZone());
+		//Compare the times
+		if(convertedLocalStart.toLocalTime().isBefore(AppointmentConstants.OPEN_HOURS.toLocalTime())) {
+			return false;
+		} else if(convertedLocalEnd.toLocalTime().isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime()) ||
+			convertedLocalEnd.toLocalTime().isBefore(AppointmentConstants.OPEN_HOURS.toLocalTime())) {
+			return false;
+		} else {
+			return true;
+		}
+	}//isDuringBusinessHours
+
+	/**
 	 * Displays an existing appointment on this scene by setting the appropriate value of each input to match
 	 * the given appointment.
 	 * @param a	-the appointment to display
@@ -450,16 +478,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//Check that meeting time is within business hours (08:00-22:00 EST)
-		var startTime = LocalTime.of(start.getHour(), start.getMinute());
-		var endTime = LocalTime.of(end.getHour(), end.getMinute());
-		if(startTime.isBefore(AppointmentConstants.OPEN_HOURS.toLocalTime()) || startTime.isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime())) {
-			valid = false;
-			String errorMessage = controller.getResourceBundle().getString("hours_error"); //TODO: create a method for this to prevent repetition
-			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS.toLocalTime() + " " +
-					controller.getResourceBundle().getString("to") + " " +
-					AppointmentConstants.CLOSE_HOURS.toLocalTime() + " EST";
-			timeErrorLabel.setError(ErrorCode.APPOINTMENT_BUSINESS_HOURS_ERROR, errorMessage);
-		} else if(endTime.isAfter(AppointmentConstants.CLOSE_HOURS.toLocalTime())) {
+		if(!isDuringBusinessHours(start, end)) {
 			valid = false;
 			String errorMessage = controller.getResourceBundle().getString("hours_error");
 			errorMessage = errorMessage + " " + AppointmentConstants.OPEN_HOURS.toLocalTime() + " " +
@@ -469,7 +488,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 		}
 
 		//Check that meeting does not overlap another existing appointment
-		Customer c = customerInfo.getCustomer();
+		var c = customerInfo.getCustomer();
 		var overlappingAppts = new HashSet<appointment.Appointment>();
 		if(c.getAppointments() == null) {
 			c.setAppointments(controller.getCustomerAppointments(customerInfo.getCustomer()));

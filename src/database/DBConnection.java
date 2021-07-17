@@ -1,7 +1,6 @@
 package database;
 
 import appointment.Appointment;
-import appointment.AppointmentConstants;
 import utils.*;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
@@ -36,9 +35,6 @@ public class DBConnection {
             conn = null;
             e.printStackTrace();
         }
-
-        System.out.println(AppointmentConstants.OPEN_HOURS.toLocalTime());
-        System.out.println(AppointmentConstants.CLOSE_HOURS.toLocalTime());
     }//constructor
 
     /**
