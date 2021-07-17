@@ -14,10 +14,8 @@ import sceneUtils.*;
 import utils.Contact;
 import utils.Location;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
@@ -37,7 +35,9 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 	private final ComboBox<Location> locationBox;	private final ComboBox<Type>	apptTypeCombo;
 
 	/**
-	 * Constructs this scene.
+	 * Constructs this scene. The event listeners assigned to controls in this class use lambda expressions to
+	 * facilitate taking the desired operations after an event is triggered without having to determine the
+	 * source or its state.
 	 * @param controller	-the controller
 	 */
     public AddEditAppointment(Controller controller) {

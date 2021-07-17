@@ -21,7 +21,7 @@ public enum Location {
 
     /**
      * Returns the name of this location.
-     * @return
+     * @return -the name of this location
      */
     public String getLocation() {
         return this.location;

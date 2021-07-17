@@ -33,7 +33,7 @@ public enum SupportedLocale {
 
     /**
      * Returns the String language code of this supported locale.
-     * @return
+     * @return -the language code
      */
     public String getLanguageCode() {
         return languageCode;

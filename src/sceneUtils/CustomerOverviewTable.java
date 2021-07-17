@@ -22,6 +22,7 @@ public class CustomerOverviewTable extends TableView<Customer> {
     /**
      * Constructs the AppointmentOverviewTable with the given ResourceBundle.
      * @param rb -the ResourceBundle
+     * @param customers -the customers to be displayed in this TableView
      */
     public CustomerOverviewTable(ResourceBundle rb, ObservableList<Customer> customers) {
         //Set class attributes

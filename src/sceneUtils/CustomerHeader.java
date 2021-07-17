@@ -19,6 +19,7 @@ public class CustomerHeader extends GridPane {
 	
 	/**
 	 * Constructs this scene element
+	 * @param labelText -the text to be displayed in this header
 	 */
 	public CustomerHeader(String labelText) {
 		label		=	new Label(labelText);

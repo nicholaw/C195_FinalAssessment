@@ -24,7 +24,7 @@ public class DBConnection {
 
     /**
      * Constructs this DBConnection.
-     * @param controller
+     * @param controller -the main application controller
      */
     public DBConnection(Controller controller) {
         this.controller = controller;
@@ -336,8 +336,9 @@ public class DBConnection {
 	/**
 	 *	Returns a collection of Strings describing appointments in the database which start
 	 *  withing fifteen minutes of the given date and time.
-     * @param dateTime -the current date and time
+     *  @param dateTime -the current date and time
      *  @param interval -the amount of time in which to look for existing appointments
+     *  @return -the collection of stringified upcoming appointments
      */
 	public Collection<String> getUpcomingAppointments(ZonedDateTime dateTime, int interval) {
 		Collection<String> appointments = new HashSet<>();
