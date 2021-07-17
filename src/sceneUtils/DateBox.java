@@ -20,10 +20,6 @@ public class DateBox extends GridPane {
     private ComboBox<Month>   monthCombo;
     private ComboBox<Integer> dayCombo;
     private ComboBox<Integer> yearCombo;
-    private ObservableList<Integer> days = FXCollections.observableArrayList(new Integer[] {
-            1,	2,	3,	4,	5,	6,	7,	8,	9,	10,
-            11,	12,	13,	14,	15,	16,	17,	18,	19,	20,
-            21,	22,	23,	24,	25,	26,	27,	28,	29,	30});
 
     /**
      * Constructs this scene element with the given ResourceBundle and LocalDateTime.
@@ -34,7 +30,7 @@ public class DateBox extends GridPane {
     public DateBox(ResourceBundle rb, LocalDate date, Label error) {
         dateLabel   =   new Label("");
         monthCombo	=	new ComboBox<>(FXCollections.observableArrayList(Month.values()));
-        dayCombo	=	new ComboBox<>(days);
+        dayCombo	=	new ComboBox<>();
         yearCombo   =   new ComboBox<>(FXCollections.observableArrayList(date.getYear(), date.getYear() + 1));
         setDate(date);
         setResourceBundle(rb);
@@ -74,10 +70,21 @@ public class DateBox extends GridPane {
         if(date != null) {
             yearCombo.setValue(date.getYear());
             monthCombo.setValue(Month.getMonth(date.getMonthValue()));
+            if(dayCombo.getItems() == null || dayCombo.getItems().size() <= 0)
+                initializeDayCombo();
             updateDays();
             dayCombo.setValue(date.getDayOfMonth());
         }
     }//setDateTime
+
+    /**
+     *
+     */
+    private void initializeDayCombo() {
+        for(int i = 1; i <= monthCombo.getValue().getNumDays(); i++) {
+            dayCombo.getItems().add(i);
+        }
+    }//initializeDayCombo
 
     /**
      * Sets the ResourceBundle used by this scene element.
@@ -93,10 +100,10 @@ public class DateBox extends GridPane {
      */
     private void updateDays() {
         if(dayCombo.getItems().size() < monthCombo.getValue().getNumDays()) {
-            days.add(dayCombo.getItems().size() + 1);
+            dayCombo.getItems().add(dayCombo.getItems().size() + 1);
             updateDays();
         } else if(dayCombo.getItems().size() > monthCombo.getValue().getNumDays()) {
-            days.remove(dayCombo.getItems().size());
+            dayCombo.getItems().remove(dayCombo.getItems().size() - 1);
             updateDays();
         }
     }//updateDays
