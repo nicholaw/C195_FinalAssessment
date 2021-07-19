@@ -58,6 +58,10 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
                 Appointment appt = appointmentsTable.getSelectedAppointment();
                 if(controller.deleteAppointment(appt)) {
                     customerInfo.getCustomer().removeAppointment(appt);
+                    controller.displayInformationalAlert(controller.getResourceBundle().getString("successful_delete_title"),
+                            controller.getResourceBundle().getString("successful_delete_appointment1") +
+                            " " + appt.getAppointmentId() + " " +
+                            controller.getResourceBundle().getString("successful_delete_appointment2"));
                 }
                 appointmentsTable.refresh();
             }

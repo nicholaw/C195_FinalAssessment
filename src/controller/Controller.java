@@ -63,7 +63,8 @@ public class Controller {
     public Controller(Scene scn) {
     	rb = ResourceBundle.getBundle("localization.Localization", Locale.getDefault());
 		contentPane = new BorderPane();
-		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()), SupportedLocale.LOCALE_ENGLISH);
+		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()),
+				SupportedLocale.contains(Locale.getDefault().getLanguage()));
 		contentPane.setTop(header);
 		scn.getStylesheets().add(ControllerConstants.STYLE_DESTINATION);
 		scn.setRoot(contentPane);
@@ -312,7 +313,19 @@ public class Controller {
     	messageAlert.setContentText(message);
 		var result = messageAlert.showAndWait();
 		return (result.isPresent() && result.get() == ButtonType.OK);
-	}
+	}//displayConfirmationAlert
+
+	/**
+	 * Displays an Information alert with the provided title and message.
+	 * @param title -title of the alert
+	 * @param message -content text of the alert
+	 */
+	public void displayInformationalAlert(String title, String message) {
+		messageAlert.setAlertType(Alert.AlertType.INFORMATION);
+		messageAlert.setTitle(title);
+		messageAlert.setContentText(message);
+		messageAlert.showAndWait();
+	}//displayInformationalAlert
 
 	/**
 	 * Returns an ObservableList of the types of appointments offered by this application. Used for populating
@@ -433,6 +446,21 @@ public class Controller {
 	public ResourceBundle getResourceBundle() {
     	return rb;
 	}
+
+	/**
+	 * Returns the localization matching the given key for the resource bundle this
+	 * controller is currently using. Returns the empty string if no such key
+	 * is found.
+	 * @param key -the localization key
+	 * @return -the localization value
+	 */
+	public String getString(String key) {
+		try{
+			return rb.getString(key);
+		} catch(Exception e) {
+			return "";
+		}
+	}//getString
 
 	/**
 	 * Hashes the password entered by the user in the password field on the login form. Used for

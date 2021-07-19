@@ -71,6 +71,10 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
                         editCustomerButton.setDisable(true);
                         deleteCustomerButton.setDisable(true);
                         customersTable.refresh();
+                        controller.displayInformationalAlert(controller.getString("successful_delete_title"),
+                                controller.getString("successful_delete_customer1") + " " +
+                                        selectedCustomer.getName() + "(#" + selectedCustomer.getCustomerId() + ") " +
+                                        controller.getString("successful_delete_customer2"));
                     }
                 }
             }

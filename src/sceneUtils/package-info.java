@@ -1,4 +1,4 @@
 /**
- * Utilities for classes in the {@see scenes} scenes package.
+ * Utilities for classes in the scenes package.
  */
 package sceneUtils;

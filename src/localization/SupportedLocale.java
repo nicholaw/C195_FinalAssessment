@@ -32,6 +32,20 @@ public enum SupportedLocale {
     }
 
     /**
+     * Returns the SupportedLocale matching the provided language code if such a
+     * SupportedLocale exists. Otherwise returns Locale for English.
+     * @param code -the language code to match
+     * @return -the matching locale
+     */
+    public static SupportedLocale contains(String code) {
+        for(SupportedLocale sl : SupportedLocale.values()) {
+            if(sl.languageCode.equals(code))
+                return sl;
+        }
+        return SupportedLocale.LOCALE_ENGLISH;
+    }//contains
+
+    /**
      * Returns the String language code of this supported locale.
      * @return -the language code
      */
