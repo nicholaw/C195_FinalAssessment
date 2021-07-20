@@ -1,6 +1,7 @@
 package scenes;
 
 import controller.Controller;
+import customer.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -34,6 +35,7 @@ public class ReportOverview extends BorderPane implements Refreshable {
     private ComboBox<MonthlyReport> months;
     private Button returnButton;
     private Report appointmentReport;
+    private Customer requestingCustomer;
 
     /**
      * Constructs this scene with the given Controller.
@@ -61,7 +63,7 @@ public class ReportOverview extends BorderPane implements Refreshable {
         //Add event listeners to button and toggles
         returnButton.setOnAction(event -> {
             this.clear();
-            controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
+            controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, requestingCustomer);
         });
         months.setOnAction(event -> {
             HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport());
@@ -107,16 +109,13 @@ public class ReportOverview extends BorderPane implements Refreshable {
      * Generates and displays the report to be viewed when the controller transitions
      * to this scene.
      */
-    public void initiate() {
-        //set value of months to the current month
+    public void initiate(Customer customer) {
         months.setValue(MonthlyReport.getMonthToReport(LocalDateTime.now().getMonthValue()));
-        //set byType toggle as selected
         byTypeToggle.setSelected(true);
-        //get reports form db and generate gridPanes to display them
         HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport());
         appointmentReport.generateReports(reports[0], reports[1]);
-        //display the reports by type
         appointmentReport.displayByType();
+        requestingCustomer = customer;
     }//initiate
 
     @Override

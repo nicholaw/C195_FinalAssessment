@@ -211,7 +211,7 @@ public class Controller {
 				contentPane.setCenter(editAppt);
 				break;
 			case REPORT_OVERVIEW:
-				reportOverview.initiate();
+				reportOverview.initiate((Customer)participant);
 				contentPane.setCenter(reportOverview);
 				break;
 			default:
@@ -428,7 +428,7 @@ public class Controller {
      * @return -the next available id
      */
     public long getNextAppointmentId() {
-        return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("MMQkkDDDmm")));
+        return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("MMmmkkddss")));
     }
 
 	/**

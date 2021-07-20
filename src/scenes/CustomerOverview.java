@@ -26,7 +26,6 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
     Button viewAppointmentsButton;
     Button deleteCustomerButton;
     Button logoutButton;
-    Button reportButton;
 
     /**
      * Constructs this scene.
@@ -43,7 +42,6 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         deleteCustomerButton    = new   Button("");
         logoutButton            = new   Button("");
         editCustomerButton      = new   Button("");
-        reportButton            = new   Button("");
         setElementText();
 		
 		//set initial states for buttons
@@ -79,9 +77,6 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
                 }
             }
         });//deleteCustomerButton
-        reportButton.setOnAction(event -> {
-            controller.changeScene(SceneCode.REPORT_OVERVIEW, null);
-        });
         logoutButton.setOnAction(event -> {
 			this.clear();
             controller.changeScene(SceneCode.LOGIN, null);
@@ -96,7 +91,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
 
         //Add scene elements to containers
         var buttonPane = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, deleteCustomerButton);
-        var logoutPane = new HBox(reportButton, logoutButton);
+        var logoutPane = new HBox(logoutButton);
         var tablePane = new GridPane();
         tablePane.add(customersTable, 0, 0);
         tablePane.add(buttonPane, 0, 1);
@@ -122,7 +117,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
     public void refresh(ResourceBundle rb) {
         setElementText();
         customersTable.setResourceBundle(controller.getResourceBundle());
-    }
+    }//refresh
 
     /**
      * Sets the text for each label and button on this scene based on the user-selected language.
@@ -138,8 +133,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         deleteCustomerButton.setText(this.controller.getResourceBundle().getString("delete") + " " +
                 this.controller.getResourceBundle().getString("customer"));
         logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
-        reportButton.setText(controller.getResourceBundle().getString("generate_report"));
-    }
+    }//setElementText
 
     /**
      * Clears the controls for displaying customer information and disables and relevant buttons.
@@ -149,7 +143,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
 		viewAppointmentsButton.setDisable(true);
 		deleteCustomerButton.setDisable(true);
 		customersTable.refresh();
-	}
+	}//clear
 
     /**
      * Refreshes the TableView which displays the list of customers.

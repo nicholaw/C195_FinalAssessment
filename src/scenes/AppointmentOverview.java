@@ -23,7 +23,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
     private CustomerHeader customerInfo;	    private AppointmentOverviewTable appointmentsTable;
     private Button scheduleButton;              private Button editButton;
     private Button deleteButton;                private Button returnButton;
-    private Customer customerToDisplay;
+    private Customer customerToDisplay;         private Button reportsButton;
 
     /**
      * Constructs this scene.
@@ -39,6 +39,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         editButton 			= 	new Button("");
         deleteButton 		= 	new Button("");
         returnButton 		= 	new Button("");
+        reportsButton       =   new Button("");
         setElementText();
 
         //Set initial states for scene elements
@@ -76,13 +77,17 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
                     editButton.setDisable(false);
             }
         });
+        reportsButton.setOnAction(event -> {
+            controller.changeScene(SceneCode.REPORT_OVERVIEW, customerInfo.getCustomer());
+            this.clear();
+        });
 
         //Add scene elements to containers
         var headerPane = new GridPane();
         headerPane.add(sceneLabel, 0, 0);
         headerPane.add(customerInfo, 0, 1);
         var buttonPane = new HBox(scheduleButton, editButton, deleteButton);
-        var footerPane = new HBox(returnButton);
+        var footerPane = new HBox(reportsButton, returnButton);
         var tablePane = new GridPane();
         tablePane.add(appointmentsTable, 0, 0);
         tablePane.add(buttonPane, 0, 1);
@@ -98,6 +103,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         contentPane.setVgap(20);
         tablePane.setVgap(10);
         buttonPane.setSpacing(10);
+        footerPane.setSpacing(10);
         sceneLabel.getStyleClass().add("scene-label");
     }//constructor
 
@@ -138,17 +144,17 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         setElementText();
         customerInfo.setText(rb.getString("customer"));
         appointmentsTable.setResourceBundle(rb);
-    }
+    }//refresh
 
     /**
      * Sets the text for each label and button on this scene based on the user-selected language.
      */
     private void setElementText() {
-	    sceneLabel.setText(controller.getResourceBundle().getString("appointment_overview"));
-	    returnButton.setText(controller.getResourceBundle().getString("return"));
-	    scheduleButton.setText(controller.getResourceBundle().getString("schedule_appointment"));
-        deleteButton.setText(controller.getResourceBundle().getString("delete") + " " +
-                controller.getResourceBundle().getString("appointment"));
-        editButton.setText(controller.getResourceBundle().getString("update_appointment"));
-    }
+	    sceneLabel.setText(controller.getString("appointment_overview"));
+	    returnButton.setText(controller.getString("return"));
+	    scheduleButton.setText(controller.getString("schedule_appointment"));
+        deleteButton.setText(controller.getString("delete") + " " + controller.getString("appointment"));
+        editButton.setText(controller.getString("update_appointment"));
+        reportsButton.setText(controller.getString("view_reports"));
+    }//setElementText
 }//class AppointmentOverview
