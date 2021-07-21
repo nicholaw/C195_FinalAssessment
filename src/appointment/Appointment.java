@@ -48,8 +48,6 @@ public class Appointment {
 		this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
 		this.location		=	location;
-		//this.startDateTime	=	ZonedDateTime.now();
-		//this.endDateTime	=	ZonedDateTime.now();
 		date = new SimpleStringProperty(this, "date", "");
 		start = new SimpleStringProperty(this, "start", "");
 		end = new SimpleStringProperty(this, "end", "");

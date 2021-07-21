@@ -25,6 +25,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
     Button editCustomerButton;
     Button viewAppointmentsButton;
     Button deleteCustomerButton;
+    Button contactScheduleButton;
     Button logoutButton;
 
     /**
@@ -42,6 +43,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         deleteCustomerButton    = new   Button("");
         logoutButton            = new   Button("");
         editCustomerButton      = new   Button("");
+        contactScheduleButton   = new   Button("");
         setElementText();
 		
 		//set initial states for buttons
@@ -91,7 +93,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
 
         //Add scene elements to containers
         var buttonPane = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, deleteCustomerButton);
-        var logoutPane = new HBox(logoutButton);
+        var logoutPane = new HBox(contactScheduleButton, logoutButton);
         var tablePane = new GridPane();
         tablePane.add(customersTable, 0, 0);
         tablePane.add(buttonPane, 0, 1);
@@ -123,15 +125,16 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
      * Sets the text for each label and button on this scene based on the user-selected language.
      */
     private void setElementText() {
-        sceneLabel.setText(this.controller.getResourceBundle().getString("customer_overview"));
-        addCustomerButton.setText(this.controller.getResourceBundle().getString("add") + " " +
-                this.controller.getResourceBundle().getString("customer"));
-        editCustomerButton.setText(this.controller.getResourceBundle().getString("edit") + " " +
-                this.controller.getResourceBundle().getString("customer"));
-        viewAppointmentsButton.setText(this.controller.getResourceBundle().getString("view") + " " +
-                this.controller.getResourceBundle().getString("appointments"));
-        deleteCustomerButton.setText(this.controller.getResourceBundle().getString("delete") + " " +
-                this.controller.getResourceBundle().getString("customer"));
+        sceneLabel.setText(this.controller.getString("customer_overview"));
+        addCustomerButton.setText(this.controller.getString("add") + " " +
+                this.controller.getString("customer"));
+        editCustomerButton.setText(this.controller.getString("edit") + " " +
+                this.controller.getString("customer"));
+        viewAppointmentsButton.setText(this.controller.getString("view") + " " +
+                this.controller.getString("appointments"));
+        deleteCustomerButton.setText(this.controller.getString("delete") + " " +
+                this.controller.getString("customer"));
+        contactScheduleButton.setText(controller.getString("contact_schedule"));
         logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
     }//setElementText
 

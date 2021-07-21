@@ -11,6 +11,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import utils.Country;
 import utils.Division;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -203,6 +207,46 @@ public class Customer {
 	public ObservableList<Appointment> getAppointments() {
 		return appointments;
 	}
+
+	/**
+	 * Returns an ObservableList of the appointments this customer has scheduled for the given month of
+	 * the given year.
+	 * @param month -the month to match
+	 * @param year -the year to match
+	 * @return -the appointments during the given month and year
+	 */
+	public ObservableList<Appointment> getAppointmentsByMonth(Month month, int year) {
+		var list = new ArrayList<Appointment>();
+		for(Appointment a : appointments) {
+			if(a.getLocalStartDateTime().getMonth().equals(month) && a.getLocalStartDateTime().getYear() == year)
+				list.add(a);
+		}
+		return FXCollections.observableArrayList(list);
+	}//getAppointmentsByMonth
+
+	/**
+	 * Returns an ObservableList of appointments this customer has scheduled within the provided range of
+	 * dates (inclusive).
+	 * @param rangeBegin -the first date of the range
+	 * @param rangeEnd -the last date of the range
+	 * @return -list of appointments which fall within the range
+	 */
+	public ObservableList<Appointment> getAppointmentsByRange(LocalDate rangeBegin, LocalDate rangeEnd) {
+		var list = new ArrayList<Appointment>();
+		if(rangeBegin == null || rangeEnd == null)
+			return FXCollections.observableArrayList(list);
+		if(rangeBegin.isAfter(rangeEnd))
+			return FXCollections.observableArrayList(list);
+		for(Appointment a : appointments) {
+			if(a.getLocalStartDateTime().toLocalDate().isAfter(rangeBegin) &&
+					a.getLocalStartDateTime().toLocalDate().isBefore(rangeEnd))
+				list.add(a);
+			else if(a.getLocalStartDateTime().toLocalDate().isEqual(rangeBegin) ||
+					a.getLocalStartDateTime().toLocalDate().isEqual(rangeEnd))
+				list.add(a);
+		}
+		return FXCollections.observableArrayList(list);
+	}//getAppointmentsByRange
 
 	/**
 	 * Returns this customer's address.

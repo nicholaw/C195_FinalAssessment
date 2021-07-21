@@ -1,13 +1,14 @@
 package sceneUtils;
 
 import appointment.Appointment;
-import javafx.collections.ObservableList;
+import customer.Customer;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 /**
@@ -28,6 +29,7 @@ public class AppointmentOverviewTable extends GridPane {
     private TableColumn<Appointment, String> startCol;
     private TableColumn<Appointment, String> endCol;
     private TableColumn<Appointment, String> descCol;
+    private Customer parentCustomer;
     private ResourceBundle rb;
 
     /**
@@ -66,16 +68,27 @@ public class AppointmentOverviewTable extends GridPane {
         weeklyRadio = new RadioButton();
         monthSelector = new ComboBox();
         weekSelector = new ComboBox();
+        parentCustomer = null;
 
         //Set initial states for scene elements
         monthlyRadio.setToggleGroup(unitGroup);
         weeklyRadio.setToggleGroup(unitGroup);
-        setToggleText();
-        unitGroup.selectToggle(monthlyRadio);
         monthSelector.getItems().setAll(Month.values());
-        monthSelector.setValue(LocalDateTime.now().getMonth());
         weekSelector.getItems().setAll(1, 2, 3, 4);
-        weekSelector.setValue(weekSelector.getItems().get(0));
+        setToggleText();
+        clear();
+
+        //Add event listeners to radio buttons and combo boxes
+        monthlyRadio.setOnAction(event -> {
+            weekSelector.setDisable(true);
+            setTableItems();
+        });
+        weeklyRadio.setOnAction(event -> {
+            weekSelector.setDisable(false);
+            setTableItems();
+        });
+        monthSelector.setOnAction(event -> setTableItems());
+        weekSelector.setOnAction(event -> setTableItems());
 
         //Add elements to containers
         var selectorPane = new HBox(monthSelector, weekSelector);
@@ -91,12 +104,22 @@ public class AppointmentOverviewTable extends GridPane {
     }//constructor
 
     /**
+     * Resets each element on this scene to its initial state.
+     */
+    public void clear() {
+        unitGroup.selectToggle(monthlyRadio);
+        monthSelector.setValue(LocalDateTime.now().getMonth());
+        weekSelector.setValue(weekSelector.getItems().get(0));
+        weekSelector.setDisable(true);
+    }//clear
+
+    /**
      * Returns the appointment the user has selected from the TableView.
      * @return  -the selected appointment
      */
     public Appointment getSelectedAppointment() {
         return appointmentTable.getSelectionModel().getSelectedItem();
-    }
+    }//getSelectedAppointment
 
     /**
      * Refreshes the TableView displaying the appointments
@@ -107,12 +130,27 @@ public class AppointmentOverviewTable extends GridPane {
 
     /**
      * Sets the items for this TableView to the provided ObservableList of appointments.
-     * @param appointments  -the provided appointments
+     * @param c  -the customer whose appointments to display
      */
-    public void setAppointments(ObservableList<Appointment> appointments) {
-        appointmentTable.setItems(appointments);
-        appointmentTable.refresh();
+    public void setParentCustomer(Customer c) {
+        parentCustomer = c;
+        setTableItems();
     }//setAppointments
+
+    /**
+     * Set the items displayed in the tableview based on the parent customer and the time range the
+     * user has selected.
+     */
+    private void setTableItems() {
+        if(weeklyRadio.isSelected()) {
+
+        } else {
+            appointmentTable.setItems(parentCustomer.getAppointmentsByMonth(monthSelector.getValue(),
+                    LocalDateTime.now().getYear()));
+            appointmentTable.refresh();
+        }
+        appointmentTable.refresh();
+    }//setMonthData
 
     /**
      * Sets the ResourceBundle for this class to use.
@@ -145,4 +183,8 @@ public class AppointmentOverviewTable extends GridPane {
         monthlyRadio.setText(rb.getString("monthly"));
         weeklyRadio.setText(rb.getString("weekly"));
     }//setToggleText
+
+    private void calculateDates() {
+        //TODO: use LocalDate
+    }
 }//AppointmentOverviewTable
