@@ -79,29 +79,7 @@ public class Controller {
         currentUser = null;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		var selectedMonth = Month.JULY;
-		var currentYear = LocalDate.now().getYear();
-		var month = LocalDate.of(currentYear, selectedMonth, 1);
-		int firstDayValue = month.getDayOfWeek().getValue() - 1;
-		var weeks = new HashMap<Integer, LocalDate[]>();
-		LocalDate lastDate = month;
-		for(int i = 1; i < 6; i++) {
-			LocalDate[] dates = new LocalDate[2];
-			dates[0] = lastDate;
-			if(i == 5) {
-				dates[1] = LocalDate.of(currentYear, selectedMonth, selectedMonth.length(month.isLeapYear()));
-			} else {
-				dates[1] = LocalDate.of(currentYear, selectedMonth, (7 - firstDayValue + 7 * (i - 1)));
-				lastDate = dates[1].plusDays(1);
-			}
-			weeks.put(i, dates);
-		}//for
 
-		System.out.println(selectedMonth);
-		System.out.println("Week\tStartDate\tEndDate");
-		for(Integer i : weeks.keySet()) {
-			System.out.printf("%d\t%s\t%s\n", i, weeks.get(i)[0], weeks.get(i)[1]);
-		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 

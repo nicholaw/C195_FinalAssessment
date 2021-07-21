@@ -1,18 +1,18 @@
 package sceneUtils;
 
 import appointment.Appointment;
+import appointment.AppointmentConstants;
 import customer.Customer;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import utils.WeekOfMonth;
 
 /**
  * TableView for displaying appointment information for a chosen customer on the
@@ -23,7 +23,7 @@ public class AppointmentOverviewTable extends GridPane {
     private RadioButton weeklyRadio;
     private RadioButton monthlyRadio;
     private ComboBox<Month> monthSelector;
-    private ComboBox weekSelector;
+    private ComboBox<WeekOfMonth> weekSelector;
     private TableView<Appointment> appointmentTable;
     private TableColumn<Appointment, Long> idCol;
     private TableColumn<Appointment, String> titleCol;
@@ -32,6 +32,7 @@ public class AppointmentOverviewTable extends GridPane {
     private TableColumn<Appointment, String> startCol;
     private TableColumn<Appointment, String> endCol;
     private TableColumn<Appointment, String> descCol;
+    private HashMap<Integer, WeekOfMonth> weeks;
     private Customer parentCustomer;
     private ResourceBundle rb;
 
@@ -71,13 +72,17 @@ public class AppointmentOverviewTable extends GridPane {
         weeklyRadio = new RadioButton();
         monthSelector = new ComboBox();
         weekSelector = new ComboBox();
+        weeks = new HashMap<>();
+        for(int i = 0; i < 5; i++) {
+            weeks.put(i, null);
+            weekSelector.getItems().add(weeks.get(i));
+        }
         parentCustomer = null;
 
         //Set initial states for scene elements
         monthlyRadio.setToggleGroup(unitGroup);
         weeklyRadio.setToggleGroup(unitGroup);
         monthSelector.getItems().setAll(Month.values());
-        weekSelector.getItems().setAll(1, 2, 3, 4);
         setToggleText();
         clear();
 
@@ -88,13 +93,14 @@ public class AppointmentOverviewTable extends GridPane {
         });
         weeklyRadio.setOnAction(event -> {
             weekSelector.setDisable(false);
+            calculateWeeks();
+            weekSelector.setValue(weekSelector.getItems().get(0));
             setTableItems();
         });
         monthSelector.setOnAction(event -> {
             if(weeklyRadio.isSelected())
                 calculateWeeks();
-            setTableItems();
-        });
+            setTableItems();});
         weekSelector.setOnAction(event -> setTableItems());
 
         //Add elements to containers
@@ -116,8 +122,10 @@ public class AppointmentOverviewTable extends GridPane {
     public void clear() {
         unitGroup.selectToggle(monthlyRadio);
         monthSelector.setValue(LocalDateTime.now().getMonth());
+        calculateWeeks();
         weekSelector.setValue(weekSelector.getItems().get(0));
         weekSelector.setDisable(true);
+        parentCustomer = null;
     }//clear
 
     /**
@@ -149,13 +157,24 @@ public class AppointmentOverviewTable extends GridPane {
      * user has selected.
      */
     private void setTableItems() {
-        if(weeklyRadio.isSelected()) {
-
+        if(parentCustomer != null) {
+            if(weeklyRadio.isSelected()) {
+                int mapIndex;
+                try {
+                    mapIndex = weekSelector.getValue().getMapIndex();
+                } catch(NullPointerException e) {
+                    mapIndex = 0;
+                }
+                appointmentTable.setItems(parentCustomer.getAppointmentsByRange(weeks.get(mapIndex).getStart(),
+                        weeks.get(mapIndex).getEnd()));
+            } else {
+                appointmentTable.setItems(parentCustomer.getAppointmentsByMonth(monthSelector.getValue(),
+                        LocalDateTime.now().getYear()));
+            }
+            appointmentTable.refresh();
         } else {
-            appointmentTable.setItems(parentCustomer.getAppointmentsByMonth(monthSelector.getValue(),
-                    LocalDateTime.now().getYear()));
+            appointmentTable.setItems(null);
         }
-        appointmentTable.refresh();
     }//setMonthData
 
     /**
@@ -190,26 +209,31 @@ public class AppointmentOverviewTable extends GridPane {
         weeklyRadio.setText(rb.getString("weekly"));
     }//setToggleText
 
-    private HashMap<Integer, LocalDate[]> calculateWeeks() {
+    /**
+     * Returns a HashMap of the beginning and ends dates for each week of the
+     * month the user selected with the month selector combo box.
+     * @return -map of the start and end of each week
+     */
+    private void calculateWeeks() {
         var selectedMonth = monthSelector.getValue();
         var currentYear = LocalDate.now().getYear();
         var month = LocalDate.of(currentYear, selectedMonth, 1);
         int firstDayValue = month.getDayOfWeek().getValue() - 1;
-        var weeks = new HashMap<Integer, LocalDate[]>();
         LocalDate lastDate = month;
-        for(int i = 1; i < 6; i++) {
+        for(int i = 0; i < 5; i++) {
             LocalDate[] dates = new LocalDate[2];
-            dates[0] = lastDate;
-            if(i == 5) {
-                var w5 = (7 - firstDayValue + 6 * (i - 1));
-                var w5d = w5 - (w5 - selectedMonth.length(month.isLeapYear()));
-                dates[1] = LocalDate.of(currentYear, selectedMonth, w5d);
+            dates[AppointmentConstants.START_OF_WEEK] = lastDate;
+            if(i == 4) {
+                dates[AppointmentConstants.END_OF_WEEK] = LocalDate.of(currentYear, selectedMonth, selectedMonth.length(month.isLeapYear()));
             } else {
-                dates[1] = LocalDate.of(currentYear, selectedMonth, (7 - firstDayValue + 6 * (i - 1)));
-                lastDate = dates[1].plusDays(1);
+                dates[AppointmentConstants.END_OF_WEEK] = LocalDate.of(currentYear, selectedMonth, (7 - firstDayValue + 7 * (i)));
+                lastDate = dates[AppointmentConstants.END_OF_WEEK].plusDays(1);
             }
-            weeks.put(i, dates);
+            weeks.replace(i, WeekOfMonth.of(dates[0], dates[1], i));
         }//for
-        return weeks;
+        weekSelector.getItems().removeAll(weekSelector.getItems());
+        for(Integer i : weeks.keySet())
+            weekSelector.getItems().add(weeks.get(i));
+        weekSelector.setValue(weekSelector.getItems().get(0));
     }//calculateWeeks
 }//AppointmentOverviewTable

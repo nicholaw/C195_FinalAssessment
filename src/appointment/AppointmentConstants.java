@@ -24,4 +24,8 @@ public class AppointmentConstants {
     //Maximum allowed characters
     public static final int MAX_CHARS_TITLE = 50;
     public static final int MAX_CHARS_DESC = 50;
+
+    //Array indexes for weekly ranges
+    public static final int START_OF_WEEK = 0;
+    public static final int END_OF_WEEK = 1;
 }
