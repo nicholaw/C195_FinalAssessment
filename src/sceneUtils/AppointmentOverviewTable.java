@@ -6,9 +6,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 /**
@@ -87,7 +90,11 @@ public class AppointmentOverviewTable extends GridPane {
             weekSelector.setDisable(false);
             setTableItems();
         });
-        monthSelector.setOnAction(event -> setTableItems());
+        monthSelector.setOnAction(event -> {
+            if(weeklyRadio.isSelected())
+                calculateWeeks();
+            setTableItems();
+        });
         weekSelector.setOnAction(event -> setTableItems());
 
         //Add elements to containers
@@ -147,7 +154,6 @@ public class AppointmentOverviewTable extends GridPane {
         } else {
             appointmentTable.setItems(parentCustomer.getAppointmentsByMonth(monthSelector.getValue(),
                     LocalDateTime.now().getYear()));
-            appointmentTable.refresh();
         }
         appointmentTable.refresh();
     }//setMonthData
@@ -184,7 +190,26 @@ public class AppointmentOverviewTable extends GridPane {
         weeklyRadio.setText(rb.getString("weekly"));
     }//setToggleText
 
-    private void calculateDates() {
-        //TODO: use LocalDate
-    }
+    private HashMap<Integer, LocalDate[]> calculateWeeks() {
+        var selectedMonth = monthSelector.getValue();
+        var currentYear = LocalDate.now().getYear();
+        var month = LocalDate.of(currentYear, selectedMonth, 1);
+        int firstDayValue = month.getDayOfWeek().getValue() - 1;
+        var weeks = new HashMap<Integer, LocalDate[]>();
+        LocalDate lastDate = month;
+        for(int i = 1; i < 6; i++) {
+            LocalDate[] dates = new LocalDate[2];
+            dates[0] = lastDate;
+            if(i == 5) {
+                var w5 = (7 - firstDayValue + 6 * (i - 1));
+                var w5d = w5 - (w5 - selectedMonth.length(month.isLeapYear()));
+                dates[1] = LocalDate.of(currentYear, selectedMonth, w5d);
+            } else {
+                dates[1] = LocalDate.of(currentYear, selectedMonth, (7 - firstDayValue + 6 * (i - 1)));
+                lastDate = dates[1].plusDays(1);
+            }
+            weeks.put(i, dates);
+        }//for
+        return weeks;
+    }//calculateWeeks
 }//AppointmentOverviewTable
