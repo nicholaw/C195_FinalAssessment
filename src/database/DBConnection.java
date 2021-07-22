@@ -1,6 +1,7 @@
 package database;
 
 import appointment.Appointment;
+import controller.ControllerConstants;
 import utils.*;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
@@ -9,8 +10,8 @@ import javax.sql.DataSource;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -332,6 +333,96 @@ public class DBConnection {
         }
         return map;
     }//getMonthlyReportByType
+
+    /**
+     * Returns an array of three HashMaps which correspond to each of the required reports:
+     * totals appointments each month, total appointments of each type, and total appointments
+     * of each location.
+     * @return -the array of reports
+     */
+    public HashMap[] getReports() {
+        var reports = new HashMap[3];
+        reports[0] = getMonthReport();
+        reports[1] = getTypeReport();
+        reports[2] = getLocationReport();
+        return reports;
+    }//getReports
+
+    /**
+     * Returns a HashMap of the total number of appointments scheduled for each month.
+     * @return -Map of scheduled appointments by month
+     */
+    private HashMap<Month, Integer> getMonthReport() {
+        var monthMap = new HashMap<Month, Integer>();
+        for(Month m : Month.values()) {
+            monthMap.put(m, getMonthCount(ZonedDateTime.of(LocalDate.of(LocalDate.now().getYear(),
+                    m.getValue(), 1), LocalTime.MIDNIGHT, ZoneId.of("UTC"))));
+        }
+        return monthMap;
+    }//getMonthReport
+
+    /**
+     * Returns the number of appointments scheduled within a month after the provided date.
+     * @param month -the provided date
+     * @return -the number of scheduled appointments
+     */
+    private Integer getMonthCount(ZonedDateTime month) {
+        Integer count = 0;
+        String sql = "SELECT COUNT(Appointment_ID) AS count FROM appointments WHERE start BETWEEN ? AND DATE_ADD(?, INTERVAL 1 MONTH) ";
+        try(var stmt = conn.prepareStatement(sql)) {
+            String formattedDateTime = month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
+            stmt.setString(1, formattedDateTime);
+            stmt.setString(2, formattedDateTime);
+            var result = stmt.executeQuery();
+            if(result.next())
+                count = result.getInt("count");
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }//getMonthCount
+
+    /**
+     * Returns a HashMap containing the total number of appointments for each location.
+     * @return -HashMap of appointments by location
+     */
+    private HashMap<Location, Integer> getLocationReport() {
+        String sql = "SELECT COUNT(Appointment_ID) AS count, location FROM appointments GROUP BY location";
+        var resultMap = new HashMap<Location, Integer>();
+        for(Location l : Location.values())
+            resultMap.put(l, 0);
+        try(var stmt = conn.prepareStatement(sql)) {
+            var result = stmt.executeQuery();
+            while(result.next()) {
+                resultMap.replace(Location.getLocation(result.getString("location")),
+                        result.getInt("count"));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return resultMap;
+    }//getReports
+
+    /**
+     * Returns a HashMap containing the total number of appointments for each type.
+     * @return -HashMap of appointments by type
+     */
+    private HashMap<Type, Integer> getTypeReport() {
+        String sql = "SELECT COUNT(Appointment_ID) AS count, type FROM appointments GROUP BY type";
+        var resultMap = new HashMap<Type, Integer>();
+        for(Type t : Type.values())
+            resultMap.put(t, 0);
+        try(var stmt = conn.prepareStatement(sql)) {
+            var result = stmt.executeQuery();
+            while(result.next()) {
+                resultMap.replace(Type.getType(result.getString("type")),
+                        result.getInt("count"));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return resultMap;
+    }//getReports
 	
 	/**
 	 *	Returns a collection of Strings describing appointments in the database which start

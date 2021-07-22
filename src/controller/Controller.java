@@ -215,6 +215,7 @@ public class Controller {
 				contentPane.setCenter(customerReport);
 				break;
 			case REPORT_TOTAL:
+				totalsReport.initialize();
 				contentPane.setCenter(totalsReport);
 				break;
 			default:
@@ -441,6 +442,16 @@ public class Controller {
     public long getNextCustomerId() {
         return Long.parseLong(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("MMmmkkddYY")));
     }
+
+	/**
+	 * Returns an array of three HashMaps which correspond to each of the required reports:
+	 * totals appointments each month, total appointments of each type, and total appointments
+	 * of each location.
+	 * @return -the array of reports
+	 */
+	public HashMap[] getReports() {
+    	return dbConnection.getReports();
+	}//getReports
 
 	/**
 	 * Returns the ResourceBundle currently being used by this application.
