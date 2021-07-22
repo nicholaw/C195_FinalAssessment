@@ -15,9 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import java.io.*;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,7 +40,8 @@ public class Controller {
     private AddEditCustomer editCust;
     private CustomerOverview custOverview;
     private AppointmentOverview apptOverview;
-    private ReportOverview reportOverview;
+    private CustomerReport customerReport;
+    private TotalsReport totalsReport;
     private final DBConnection dbConnection;
 	private final File loginAttemptDestinaiton;
 	private final Set<Refreshable> scenes;
@@ -77,10 +75,6 @@ public class Controller {
         scenes.add(login = new LoginPage(this));
         this.changeScene(SceneCode.LOGIN, null);
         currentUser = null;
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }//constructor
 
 	/**
@@ -150,8 +144,7 @@ public class Controller {
 	 * @param code		-code denoting which customer field is to be updated
 	 * @param update	-the updated to be added
 	 */
-	public void addCustomerUpdate(CustomerFieldCode code, String update)
-	{
+	public void addCustomerUpdate(CustomerFieldCode code, String update) {
 		switch(code) {
 			case NAME_FIELD:
 				customerUpdates.put(CustomerColumns.CUSTOMER_NAME.getColName(), update);
@@ -218,8 +211,11 @@ public class Controller {
 				contentPane.setCenter(editAppt);
 				break;
 			case REPORT_OVERVIEW:
-				reportOverview.initiate((Customer)participant);
-				contentPane.setCenter(reportOverview);
+				customerReport.initiate((Customer)participant);
+				contentPane.setCenter(customerReport);
+				break;
+			case REPORT_TOTAL:
+				contentPane.setCenter(totalsReport);
 				break;
 			default:
 				System.out.println("ERROR: Scene code was not recognized");
@@ -609,7 +605,8 @@ public class Controller {
         scenes.add(editCust = new AddEditCustomer(this));
 		scenes.add(custOverview = new CustomerOverview(this));
 		scenes.add(apptOverview = new AppointmentOverview(this));
-		scenes.add(reportOverview = new ReportOverview(this));
+		scenes.add(customerReport = new CustomerReport(this));
+		scenes.add(totalsReport = new TotalsReport(this));
         messageAlert = new Alert(Alert.AlertType.NONE);
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);

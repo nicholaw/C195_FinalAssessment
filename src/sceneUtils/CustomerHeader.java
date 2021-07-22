@@ -22,22 +22,23 @@ public class CustomerHeader extends GridPane {
 	 * @param labelText -the text to be displayed in this header
 	 */
 	public CustomerHeader(String labelText) {
-		label		=	new Label(labelText);
-		idField		=	new TextField("");
-		nameField	=	new TextField("");
-		phoneField	=	new TextField("");
-		customer	=	null;
+		label =	new Label(labelText + ":");
+		idField	= new TextField("");
+		nameField =	new TextField("");
+		phoneField = new TextField("");
+		customer = null;
 		idField.setDisable(true);
 		nameField.setDisable(true);
 		phoneField.setDisable(true);
 
 		//Add elements to containers
-		var fieldPane = new HBox(nameField, phoneField);
+		var fieldPane = new HBox(idField, nameField);
 		this.add(label, 0, 0);
 		this.add(fieldPane, 0, 1);
 
 		//Style elements
 		fieldPane.setSpacing(10);
+		nameField.setPrefColumnCount(16);
 	}//constructor
 
 	/**
@@ -55,13 +56,13 @@ public class CustomerHeader extends GridPane {
 	 * Sets the text of each scene element to the information of the customer to display.
 	 */
 	private void setCustomerInfo() {
-		idField.setText("" + customer.getCustomerId());
+		idField.setText("#" + customer.getCustomerId());
 		nameField.setText(customer.getName());
 		phoneField.setText(customer.getPhone());
 	}
 
 	public void setText(String labelText) {
-		label.setText(labelText);
+		label.setText(labelText + ":");
 	}
 
 	/**

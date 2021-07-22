@@ -155,6 +155,6 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
 	    scheduleButton.setText(controller.getString("schedule_appointment"));
         deleteButton.setText(controller.getString("delete") + " " + controller.getString("appointment"));
         editButton.setText(controller.getString("update_appointment"));
-        reportsButton.setText(controller.getString("view_reports"));
+        reportsButton.setText(controller.getString("customer_reports"));
     }//setElementText
 }//class AppointmentOverview

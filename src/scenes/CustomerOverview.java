@@ -25,7 +25,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
     Button editCustomerButton;
     Button viewAppointmentsButton;
     Button deleteCustomerButton;
-    Button contactScheduleButton;
+    Button reportsButton;
     Button logoutButton;
 
     /**
@@ -43,7 +43,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
         deleteCustomerButton    = new   Button("");
         logoutButton            = new   Button("");
         editCustomerButton      = new   Button("");
-        contactScheduleButton   = new   Button("");
+        reportsButton = new   Button("");
         setElementText();
 		
 		//set initial states for buttons
@@ -79,6 +79,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
                 }
             }
         });//deleteCustomerButton
+        reportsButton.setOnAction(event -> this.controller.changeScene(SceneCode.REPORT_TOTAL, null));
         logoutButton.setOnAction(event -> {
 			this.clear();
             controller.changeScene(SceneCode.LOGIN, null);
@@ -93,7 +94,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
 
         //Add scene elements to containers
         var buttonPane = new HBox(addCustomerButton, editCustomerButton, viewAppointmentsButton, deleteCustomerButton);
-        var logoutPane = new HBox(contactScheduleButton, logoutButton);
+        var logoutPane = new HBox(reportsButton, logoutButton);
         var tablePane = new GridPane();
         tablePane.add(customersTable, 0, 0);
         tablePane.add(buttonPane, 0, 1);
@@ -134,7 +135,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
                 this.controller.getString("appointments"));
         deleteCustomerButton.setText(this.controller.getString("delete") + " " +
                 this.controller.getString("customer"));
-        contactScheduleButton.setText(controller.getString("contact_schedule"));
+        reportsButton.setText(controller.getString("view_reports"));
         logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
     }//setElementText
 

@@ -13,6 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import sceneUtils.CustomerHeader;
 import sceneUtils.Refreshable;
 import sceneUtils.Report;
 import sceneUtils.SceneCode;
@@ -26,9 +27,10 @@ import java.util.ResourceBundle;
 /**
  * Displays a report of the number of appointments by month or by location.
  */
-public class ReportOverview extends BorderPane implements Refreshable {
+public class CustomerReport extends BorderPane implements Refreshable {
     private Controller controller;
     private Label sceneLabel;
+    private CustomerHeader customerHeader;
     private ToggleGroup selectionGroup;
     private RadioButton byTypeToggle;
     private RadioButton byLocationToggle;
@@ -41,11 +43,12 @@ public class ReportOverview extends BorderPane implements Refreshable {
      * Constructs this scene with the given Controller.
      * @param controller -the application's main controller
      */
-    public ReportOverview(Controller controller) {
+    public CustomerReport(Controller controller) {
         this.controller = controller;
 
         //Instantiate scene elements
         sceneLabel = new Label("");
+        customerHeader = new CustomerHeader(this.controller.getString("customer"));
         byTypeToggle = new RadioButton();
         byLocationToggle = new RadioButton();
         selectionGroup = new ToggleGroup();
@@ -84,10 +87,11 @@ public class ReportOverview extends BorderPane implements Refreshable {
         var togglePane = new HBox(byTypeToggle, byLocationToggle);
         var contentPane = new GridPane();
         contentPane.add(sceneLabel, 0, 0);
-        contentPane.add(months, 0, 1);
-        contentPane.add(togglePane, 0, 2);
-        contentPane.add(appointmentReport, 0, 3);
-        contentPane.add(returnButton, 0, 4);
+        contentPane.add(customerHeader, 0, 1);
+        contentPane.add(months, 0, 2);
+        contentPane.add(togglePane, 0, 3);
+        contentPane.add(appointmentReport, 0, 4);
+        contentPane.add(returnButton, 0, 5);
         this.setCenter(contentPane);
 
         //Style scene elements
@@ -116,6 +120,7 @@ public class ReportOverview extends BorderPane implements Refreshable {
         appointmentReport.generateReports(reports[0], reports[1]);
         appointmentReport.displayByType();
         requestingCustomer = customer;
+        customerHeader.setCustomer(customer);
     }//initiate
 
     @Override
@@ -127,10 +132,11 @@ public class ReportOverview extends BorderPane implements Refreshable {
      * Sets the text of each scene element based on the ResourceBundle being used.
      */
     public void setElementText() {
-        sceneLabel.setText(controller.getResourceBundle().getString("monthly_appointment_report"));
-        byTypeToggle.setText(controller.getResourceBundle().getString("by_type"));
-        byLocationToggle.setText(controller.getResourceBundle().getString("by_location"));
-        returnButton.setText(controller.getResourceBundle().getString("return"));
+        sceneLabel.setText(controller.getString("monthly_appointment_report"));
+        byTypeToggle.setText(controller.getString("by_type"));
+        byLocationToggle.setText(controller.getString("by_location"));
+        returnButton.setText(controller.getString("return"));
+        customerHeader.setText(controller.getString("customer"));
     }//setElementText
 
     /**
