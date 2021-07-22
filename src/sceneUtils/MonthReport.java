@@ -5,7 +5,15 @@ import javafx.scene.layout.GridPane;
 import java.time.Month;
 import java.util.HashMap;
 
+/**
+ * Represents a report which displays the total number of appointments
+ * scheduled for each month.
+ */
 public class MonthReport extends GridPane {
+    /**
+     * Constructs this report with the provided HashMap
+     * @param report -the report
+     */
     public MonthReport(HashMap<Month, Integer> report) {
         //Declare quarterly grid panes
         var quarter1 = new GridPane();

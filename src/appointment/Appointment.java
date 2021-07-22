@@ -25,6 +25,7 @@ public class Appointment {
 	private LongProperty	customerId;
 	private Contact			contact;
 	private Location		location;
+	private StringProperty locationProperty;
 
 	/**
 	 * Constructs this appointment from two provided LocalDateTimes representing the start and end of this appointment.
@@ -48,6 +49,7 @@ public class Appointment {
 		this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
 		this.location		=	location;
+		this.locationProperty = new SimpleStringProperty(this, "location", location.toString());
 		date = new SimpleStringProperty(this, "date", "");
 		start = new SimpleStringProperty(this, "start", "");
 		end = new SimpleStringProperty(this, "end", "");
@@ -301,6 +303,7 @@ public class Appointment {
 	 */
 	public void setLocation(Location l) {
     	this.location = l;
+    	this.locationProperty.setValue(l.toString());
 	}//setLocation
 
 	/**

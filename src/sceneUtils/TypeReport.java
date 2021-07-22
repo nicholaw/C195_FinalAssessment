@@ -5,7 +5,15 @@ import javafx.scene.layout.GridPane;
 import utils.Type;
 import java.util.HashMap;
 
+/**
+ * Represents a report of the total number of appointments scheduled for
+ * each type.
+ */
 public class TypeReport extends GridPane {
+    /**
+     * Constructs the report with the provided HashMap
+     * @param report -the report data
+     */
     public TypeReport(HashMap<Type, Integer> report) {
         int row = 0;
         int col = 0;

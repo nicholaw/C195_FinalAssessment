@@ -1,7 +1,6 @@
 package database;
 
 import appointment.Appointment;
-import controller.ControllerConstants;
 import utils.*;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import controller.Controller;
@@ -281,7 +280,6 @@ public class DBConnection {
             stmt.setString(2, formattedDateTime);
             stmt.setInt(3, 1);
             var result = stmt.executeQuery();
-            System.out.println("THE QUERY WAS EXECUTED\t");
             Location l;
             while(result.next()) {
                 l = Location.getLocation(result.getString("location"));

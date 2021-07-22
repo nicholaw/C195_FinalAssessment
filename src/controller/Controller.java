@@ -378,6 +378,25 @@ public class Controller {
 		return contacts;
 	}//getContacts
 
+	/**
+	 * Return a HashMap of each company contact mapped the appointments to which they
+	 * are assigned.
+	 * @return -the map of contacts and appointments
+	 */
+	public HashMap<Contact, Set<Appointment>> getContactSchedule() {
+		var schedule = new HashMap<Contact, Set<Appointment>>();
+		for(Contact c : contacts)
+			schedule.put(c, new HashSet<>());
+		for(Customer c : customers) {
+			if(c.getAppointments() == null)
+				c.setAppointments(this.getCustomerAppointments(c));
+			for(Appointment a : c.getAppointments()) {
+				schedule.get(a.getContact()).add(a);
+			}
+		}
+		return schedule;
+	}//getContactSchedule
+
     /**
      * Returns an ObservableList of countries supported by this application.
      * @return -the list of countries

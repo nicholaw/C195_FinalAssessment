@@ -27,6 +27,7 @@ public class TotalsReport extends BorderPane implements Refreshable {
     private MonthReport monthReport;
     private LocationReport locationReport;
     private TypeReport typeReport;
+    private Schedule contactSchedule;
 
     public TotalsReport(Controller controller) {
         this.controller = controller;
@@ -60,17 +61,13 @@ public class TotalsReport extends BorderPane implements Refreshable {
         }
 
         //Add event listeners
-        totalsRadio.setOnAction(event -> {
-            setTotals();
-        });
-        schedulesRadio.setOnAction(event -> {
-            setSchedules();
-        });
+        totalsRadio.setOnAction(event -> setTotals());
+        schedulesRadio.setOnAction(event -> setSchedules());
         byMonthButton.setOnAction(event -> tablePane.setCenter(monthReport));
         byTypeButton.setOnAction(event -> tablePane.setCenter(typeReport));
         byLocationButton.setOnAction(event -> tablePane.setCenter(locationReport));
+        contactCombo.setOnAction(event -> contactSchedule.setItems(contactCombo.getValue()));
         returnButton.setOnAction(event -> controller.changeScene(SceneCode.CUSTOMER_OVERVIEW, null));
-
 
         //Add scene elements to containers
         var titlePane = new GridPane();
@@ -109,11 +106,15 @@ public class TotalsReport extends BorderPane implements Refreshable {
         totalsRadio.setSelected(true);
         byMonthButton.setSelected(true);
         tablePane.setCenter(monthReport);
+        contactCombo.setValue(contactCombo.getItems().get(0));
+        contactSchedule = new Schedule(controller.getContactSchedule(),
+                contactCombo.getValue(), controller.getResourceBundle());
     }//initialize
 
     @Override
     public void refresh(ResourceBundle rb) {
         setElementText();
+        contactSchedule.refreshText(rb);
     }//refresh
 
     private void setElementText() {
@@ -138,6 +139,6 @@ public class TotalsReport extends BorderPane implements Refreshable {
     private void setSchedules() {
         selectorPane.getChildren().removeAll(byMonthButton, byTypeButton, byLocationButton);
         selectorPane.add(contactCombo, 0, 1, 2, 1);
-        tablePane.setCenter(null);
+        tablePane.setCenter(contactSchedule);
     }//setSchedules
 }//
