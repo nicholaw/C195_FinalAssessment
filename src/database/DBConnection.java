@@ -251,10 +251,10 @@ public class DBConnection {
      * @param month -the month to be reported
      * @return  -the array of reports
      */
-    public HashMap[] getMonthlyReports(ZonedDateTime month) {
+    public HashMap[] getMonthlyReports(ZonedDateTime month, long customerId) {
         var mapArray = new HashMap[2];
-        mapArray[0] = getMonthlyReportByType(month);
-        mapArray[1] = getMonthlyReportByLocation(month);
+        mapArray[0] = getMonthlyReportByType(month, customerId);
+        mapArray[1] = getMonthlyReportByLocation(month, customerId);
         return mapArray;
     }//getMonthlyReports
 
@@ -263,7 +263,7 @@ public class DBConnection {
      * @param month -the month to be reported
      * @return  -the number of unique appointments for each location
      */
-    private HashMap<Location, Integer> getMonthlyReportByLocation(ZonedDateTime month) {
+    private HashMap<Location, Integer> getMonthlyReportByLocation(ZonedDateTime month, long customerId) {
         var map = new HashMap<Location, Integer>();
         for(Location l : Location.values()) {
             map.put(l, 0);
@@ -275,6 +275,7 @@ public class DBConnection {
                         "WHERE "                                    +
                             "start BETWEEN ? "                      +
                             "AND DATE_ADD(?, INTERVAL ? MONTH) "    +
+                            "AND Customer_ID = ? "                  +
                         "GROUP BY location "                        +
                         "ORDER BY location";
         try(var stmt = conn.prepareStatement(sql)) {
@@ -282,6 +283,7 @@ public class DBConnection {
             stmt.setString(1, formattedDateTime);
             stmt.setString(2, formattedDateTime);
             stmt.setInt(3, 1);
+            stmt.setLong(4, customerId);
             var result = stmt.executeQuery();
             Location l;
             while(result.next()) {
@@ -302,7 +304,7 @@ public class DBConnection {
      * @param month -the month to be reported
      * @return  -the number of unique appointments for each type
      */
-    private HashMap<Type, Integer> getMonthlyReportByType(ZonedDateTime month) {
+    private HashMap<Type, Integer> getMonthlyReportByType(ZonedDateTime month, long customerId) {
         var map = new HashMap<Type, Integer>();
         for(Type t : Type.values()) {
             map.put(t, 0);
@@ -314,6 +316,7 @@ public class DBConnection {
                         "WHERE "                                    +
                             "start BETWEEN ? "                      +
                             "AND DATE_ADD(?, INTERVAL ? MONTH) "    +
+                            "AND Customer_ID = ? "                  +
                         "GROUP BY type "                            +
                         "ORDER BY type";
         try(var stmt = conn.prepareStatement(sql)) {
@@ -321,6 +324,7 @@ public class DBConnection {
             stmt.setString(1, formattedDateTime);
             stmt.setString(2, formattedDateTime);
             stmt.setInt(3, 1);
+            stmt.setLong(4, customerId);
             var result = stmt.executeQuery();
             Type t;
             while(result.next()) {

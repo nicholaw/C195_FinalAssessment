@@ -69,7 +69,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
             controller.changeScene(SceneCode.APPOINTMENT_OVERVIEW, requestingCustomer);
         });
         months.setOnAction(event -> {
-            HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport());
+            HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport(), requestingCustomer);
             appointmentReport.generateReports(reports[0], reports[1]);
             if(byTypeToggle.isSelected())
                 appointmentReport.displayByType();
@@ -114,12 +114,12 @@ public class CustomerReport extends BorderPane implements Refreshable {
      * to this scene.
      */
     public void initiate(Customer customer) {
+        requestingCustomer = customer;
         months.setValue(MonthlyReport.getMonthToReport(LocalDateTime.now().getMonthValue()));
         byTypeToggle.setSelected(true);
-        HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport());
+        HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport(), requestingCustomer);
         appointmentReport.generateReports(reports[0], reports[1]);
         appointmentReport.displayByType();
-        requestingCustomer = customer;
         customerHeader.setCustomer(customer);
     }//initiate
 

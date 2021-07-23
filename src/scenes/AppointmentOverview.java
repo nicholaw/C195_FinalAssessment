@@ -128,6 +128,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
             if(c.getAppointments() == null)
                 c.setAppointments(controller.getCustomerAppointments(c));
             appointmentsTable.setParentCustomer(c);
+            appointmentsTable.refreshTable();
         }
 	}//loadOverview
 

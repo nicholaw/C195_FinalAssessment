@@ -451,8 +451,8 @@ public class Controller {
 	 * @param monthToReport -the month for which to get reports
 	 * @return -the reports for the provided month (LocalDateTime)
 	 */
-	public HashMap[] getMonthlyReports(ZonedDateTime monthToReport) {
-    	return dbConnection.getMonthlyReports(monthToReport);
+	public HashMap[] getMonthlyReports(ZonedDateTime monthToReport, Customer customerToReport) {
+    	return dbConnection.getMonthlyReports(monthToReport, customerToReport.getCustomerId());
 	}
 
     /**
