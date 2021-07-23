@@ -76,8 +76,10 @@ public class CustomerReport extends BorderPane implements Refreshable {
             appointmentReport.generateReports(reports[0], reports[1], reports[2]);
             if(byTypeToggle.isSelected())
                 appointmentReport.displayByType();
-            else
+            else if(byLocationToggle.isSelected())
                 appointmentReport.displayByLocation();
+            else
+                appointmentReport.displayByUser();
         });
         byTypeToggle.setOnAction(event -> {
             appointmentReport.displayByType();

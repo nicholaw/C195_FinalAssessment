@@ -13,3 +13,6 @@
 .scene-label{
     -fx-font-size: 24pt;
 }
+.table-header{
+    -fx-font-weight: bold;
+}

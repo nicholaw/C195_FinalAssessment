@@ -73,7 +73,12 @@ public class Report extends BorderPane {
      */
     private void generateByUser(HashMap<String, Integer> users) {
         byUser = new GridPane();
-        int row = 0;
+        var col0 = new Label("username:");
+        var col1 = new Label("appointments:");
+        byUser.addRow(0, col0, col1);
+        col0.getStyleClass().add("table-header");
+        col1.getStyleClass().add("table-header");
+        int row = 1;
         for(String str : users.keySet()) {
             byUser.addRow(row, new Label(str), new Label("" + users.get(str)));
             row++;

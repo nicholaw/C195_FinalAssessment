@@ -135,7 +135,7 @@ public class CustomerOverview  extends BorderPane implements Refreshable {
                 this.controller.getString("appointments"));
         deleteCustomerButton.setText(this.controller.getString("delete") + " " +
                 this.controller.getString("customer"));
-        reportsButton.setText(controller.getString("view_reports"));
+        reportsButton.setText(controller.getString("company_reports"));
         logoutButton.setText(this.controller.getResourceBundle().getString("logout"));
     }//setElementText
 
