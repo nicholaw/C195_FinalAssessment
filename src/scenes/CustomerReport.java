@@ -34,6 +34,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
     private ToggleGroup selectionGroup;
     private RadioButton byTypeToggle;
     private RadioButton byLocationToggle;
+    private RadioButton byUserToggle;
     private ComboBox<MonthlyReport> months;
     private Button returnButton;
     private Report appointmentReport;
@@ -51,6 +52,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
         customerHeader = new CustomerHeader(this.controller.getString("customer"));
         byTypeToggle = new RadioButton();
         byLocationToggle = new RadioButton();
+        byUserToggle = new RadioButton();
         selectionGroup = new ToggleGroup();
         months = new ComboBox<>();
         returnButton = new Button("");
@@ -59,6 +61,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
         //Set initial states of scene elements
         byTypeToggle.setToggleGroup(selectionGroup);
         byLocationToggle.setToggleGroup(selectionGroup);
+        byUserToggle.setToggleGroup(selectionGroup);
         selectionGroup.selectToggle(byTypeToggle);
         months.setItems(MonthlyReport.getMonths());
         setElementText();
@@ -70,7 +73,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
         });
         months.setOnAction(event -> {
             HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport(), requestingCustomer);
-            appointmentReport.generateReports(reports[0], reports[1]);
+            appointmentReport.generateReports(reports[0], reports[1], reports[2]);
             if(byTypeToggle.isSelected())
                 appointmentReport.displayByType();
             else
@@ -82,9 +85,12 @@ public class CustomerReport extends BorderPane implements Refreshable {
         byLocationToggle.setOnAction(event -> {
             appointmentReport.displayByLocation();
         });
+        byUserToggle.setOnAction(event -> {
+            appointmentReport.displayByUser();
+        });
 
         //Add elements to containers
-        var togglePane = new HBox(byTypeToggle, byLocationToggle);
+        var togglePane = new HBox(byTypeToggle, byLocationToggle, byUserToggle);
         var contentPane = new GridPane();
         contentPane.add(sceneLabel, 0, 0);
         contentPane.add(customerHeader, 0, 1);
@@ -118,7 +124,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
         months.setValue(MonthlyReport.getMonthToReport(LocalDateTime.now().getMonthValue()));
         byTypeToggle.setSelected(true);
         HashMap[] reports = controller.getMonthlyReports(months.getValue().getMonthToReport(), requestingCustomer);
-        appointmentReport.generateReports(reports[0], reports[1]);
+        appointmentReport.generateReports(reports[0], reports[1], reports[2]);
         appointmentReport.displayByType();
         customerHeader.setCustomer(customer);
     }//initiate
@@ -135,6 +141,7 @@ public class CustomerReport extends BorderPane implements Refreshable {
         sceneLabel.setText(controller.getString("monthly_appointment_report"));
         byTypeToggle.setText(controller.getString("by_type"));
         byLocationToggle.setText(controller.getString("by_location"));
+        byUserToggle.setText(controller.getString("by_user"));
         returnButton.setText(controller.getString("return"));
         customerHeader.setText(controller.getString("customer"));
     }//setElementText

@@ -252,15 +252,17 @@ public class DBConnection {
      * @return  -the array of reports
      */
     public HashMap[] getMonthlyReports(ZonedDateTime month, long customerId) {
-        var mapArray = new HashMap[2];
+        var mapArray = new HashMap[3];
         mapArray[0] = getMonthlyReportByType(month, customerId);
         mapArray[1] = getMonthlyReportByLocation(month, customerId);
+        mapArray[2] = getMonthlyReportByUsers(month, customerId);
         return mapArray;
     }//getMonthlyReports
 
     /**
-     * Returns a HashMap containing the number of appointments for each location for the given month.
+     * Returns a HashMap containing the number of appointments for each location for the given month and customer.
      * @param month -the month to be reported
+     * @param customerId -the customer to be reported
      * @return  -the number of unique appointments for each location
      */
     private HashMap<Location, Integer> getMonthlyReportByLocation(ZonedDateTime month, long customerId) {
@@ -300,8 +302,9 @@ public class DBConnection {
     }//getMonthlyReportByLocation
 
     /**
-     * Returns a HashMap containing the number of appointments for each type for the given month.
+     * Returns a HashMap containing the number of appointments for each type for the given month and customer.
      * @param month -the month to be reported
+     * @param customerId -the customer to be reported
      * @return  -the number of unique appointments for each type
      */
     private HashMap<Type, Integer> getMonthlyReportByType(ZonedDateTime month, long customerId) {
@@ -338,6 +341,40 @@ public class DBConnection {
         }
         return map;
     }//getMonthlyReportByType
+
+    /**
+     * Returns a HashMap containing the number of appointments for each user for the given month and customer.
+     * @param month -the month to be reported
+     * @param customerId -the customer to be reported
+     * @return  -the number of unique appointments for each user
+     */
+    private HashMap<String, Integer> getMonthlyReportByUsers(ZonedDateTime month, long customerId) {
+        var map = new HashMap<String, Integer>();
+        String sql =    "SELECT "                                       +
+                            "User_Name, "                               +
+                            "COUNT(Appointment_ID) AS count "           +
+                        "FROM appointments LEFT JOIN users "            +
+                            "ON appointments.User_ID = users.USER_ID "  +
+                        "WHERE start BETWEEN ? "                        +
+                            "AND DATE_ADD(?, INTERVAL ? MONTH) "        +
+                            "AND Customer_ID = ? "                      +
+                        "GROUP BY appointments.User_ID "                +
+                        "ORDER BY users.User_Name";
+        try(var stmt = conn.prepareStatement(sql)) {
+            String formattedDateTime = month.format(DateTimeFormatter.ofPattern(DBConstants.TIMESTAMP_PATTERN));
+            stmt.setString(1, formattedDateTime);
+            stmt.setString(2, formattedDateTime);
+            stmt.setInt(3, 1);
+            stmt.setLong(4, customerId);
+            var result = stmt.executeQuery();
+            while(result.next()) {
+                map.put(result.getString("User_Name"), result.getInt("count"));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }//getMonthlyReportByUsers
 
     /**
      * Returns an array of three HashMaps which correspond to each of the required reports:

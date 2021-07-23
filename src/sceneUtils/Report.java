@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class Report extends BorderPane {
     private GridPane byType;
     private GridPane byLocation;
+    private GridPane byUser;
 
     /**
      * Displays the GridPane with the number of appointments by location.
@@ -28,6 +29,13 @@ public class Report extends BorderPane {
     public void displayByType() {
         this.setCenter(byType);
     }//displayByType
+
+    /**
+     * Displays the GridPane with number of appointments by user.
+     */
+    public void displayByUser() {
+        this.setCenter(byUser);
+    }
 
     /**
      * Generates the GridPane that will be used to display the number of appointments by location.
@@ -60,13 +68,29 @@ public class Report extends BorderPane {
     }//generateByType
 
     /**
+     * Generates the GridPane that will display the number of appointments by user.
+     * @param users -the number of appointments by type
+     */
+    private void generateByUser(HashMap<String, Integer> users) {
+        byUser = new GridPane();
+        int row = 0;
+        for(String str : users.keySet()) {
+            byUser.addRow(row, new Label(str), new Label("" + users.get(str)));
+            row++;
+        }
+        byUser.setVgap(10);
+        byUser.setHgap(20);
+    }//generateByUsers
+
+    /**
      * Generates the GridPanes which will display the number of scheduled appointments either
      * by type or location.
      * @param types -the number of appointments by type
      * @param locations -the number of appointment by location
      */
-    public void generateReports(HashMap<Type, Integer> types, HashMap<Location, Integer> locations) {
+    public void generateReports(HashMap<Type, Integer> types, HashMap<Location, Integer> locations, HashMap<String, Integer> users) {
         generateByLocation(locations);
         generateByType(types);
+        generateByUser(users);
     }//generateReports
 }//report
