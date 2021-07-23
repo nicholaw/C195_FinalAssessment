@@ -12,19 +12,19 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import javafx.scene.layout.Pane;
 import utils.WeekOfMonth;
 
 /**
  * TableView for displaying appointment information for a chosen customer on the
  * appointment overview page.
  */
-public class AppointmentOverviewTable extends GridPane {
+public class AppointmentOverviewTable extends TableView<Appointment> {
     private ToggleGroup unitGroup;
     private RadioButton weeklyRadio;
     private RadioButton monthlyRadio;
     private ComboBox<Month> monthSelector;
     private ComboBox<WeekOfMonth> weekSelector;
-    private TableView<Appointment> appointmentTable;
     private TableColumn<Appointment, Long> idCol;
     private TableColumn<Appointment, String> titleCol;
     private TableColumn<Appointment, String> dateCol;
@@ -35,10 +35,10 @@ public class AppointmentOverviewTable extends GridPane {
     private TableColumn<Appointment, String> locationCol;
     private TableColumn<Appointment, String> contactCol;
     private TableColumn<Appointment, String> userCol;
-
     private HashMap<Integer, WeekOfMonth> weeks;
     private Customer parentCustomer;
     private ResourceBundle rb;
+    private GridPane contentPane;
 
     /**
      * Constructs the AppointmentOverviewTable with the given ResourceBundle.
@@ -48,7 +48,6 @@ public class AppointmentOverviewTable extends GridPane {
         this.rb = rb;
 
         //Instantiate table columns
-        appointmentTable = new TableView<>();
         idCol = new TableColumn<>();
         titleCol = new TableColumn<>();
         dateCol = new TableColumn<>();
@@ -74,7 +73,7 @@ public class AppointmentOverviewTable extends GridPane {
         userCol.setCellValueFactory(new PropertyValueFactory<>("user"));
 
         //Add columns to the table
-        appointmentTable.getColumns().setAll(idCol, titleCol, dateCol, startCol, endCol, typeCol,
+        this.getColumns().setAll(idCol, titleCol, dateCol, startCol, endCol, typeCol,
                 descCol, locationCol, contactCol, userCol);
 
         //Instantiate other scene elements
@@ -117,14 +116,15 @@ public class AppointmentOverviewTable extends GridPane {
         //Add elements to containers
         var selectorPane = new HBox(monthSelector, weekSelector);
         var togglePane = new HBox(monthlyRadio, weeklyRadio);
-        add(selectorPane, 0, 0);
-        add(togglePane, 0, 1);
-        add(appointmentTable, 0, 2);
+        contentPane = new GridPane();
+        contentPane.add(selectorPane, 0, 0);
+        contentPane.add(togglePane, 0, 1);
+        contentPane.add(this, 0, 2);
 
         //Style scene elements
         selectorPane.setSpacing(10);
         togglePane.setSpacing(10);
-        setVgap(10);
+        contentPane.setVgap(10);
     }//constructor
 
     /**
@@ -140,19 +140,20 @@ public class AppointmentOverviewTable extends GridPane {
     }//clear
 
     /**
+     * Returns the top-most pane of this scene.
+     * @return -the top-most pane
+     */
+    public Pane getContentPane() {
+        return contentPane;
+    }//getContentPane
+
+    /**
      * Returns the appointment the user has selected from the TableView.
      * @return  -the selected appointment
      */
     public Appointment getSelectedAppointment() {
-        return appointmentTable.getSelectionModel().getSelectedItem();
+        return this.getSelectionModel().getSelectedItem();
     }//getSelectedAppointment
-
-    /**
-     * Refreshes the TableView displaying the appointments
-     */
-    public void refresh() {
-        appointmentTable.refresh();
-    }//refresh
 
     /**
      * Sets the items for this TableView to the provided ObservableList of appointments.
@@ -176,16 +177,16 @@ public class AppointmentOverviewTable extends GridPane {
                 } catch(NullPointerException e) {
                     mapIndex = 0;
                 }
-                appointmentTable.setItems(parentCustomer.getAppointmentsByRange(weeks.get(mapIndex).getStart(),
+                this.setItems(parentCustomer.getAppointmentsByRange(weeks.get(mapIndex).getStart(),
                         weeks.get(mapIndex).getEnd()));
             } else {
-                appointmentTable.setItems(parentCustomer.getAppointmentsByMonth(monthSelector.getValue(),
+                this.setItems(parentCustomer.getAppointmentsByMonth(monthSelector.getValue(),
                         LocalDateTime.now().getYear()));
             }
-            appointmentTable.refresh();
         } else {
-            appointmentTable.setItems(null);
+            this.setItems(null);
         }
+        this.refresh();
     }//setMonthData
 
     /**
@@ -222,6 +223,18 @@ public class AppointmentOverviewTable extends GridPane {
         monthlyRadio.setText(rb.getString("monthly"));
         weeklyRadio.setText(rb.getString("weekly"));
     }//setToggleText
+
+    /**
+     * Refreshes this TableView. First needs to get a new ObservableList from the customer
+     * because of how appointments are stored and retrieved at the moment.
+     */
+    public void refreshTable() {
+        try {
+            setTableItems();
+        } catch (NullPointerException e) {
+
+        }
+    }//refreshTable
 
     /**
      * Returns a HashMap of the beginning and ends dates for each week of the

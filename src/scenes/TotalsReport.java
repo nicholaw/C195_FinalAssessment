@@ -10,6 +10,10 @@ import utils.Contact;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
+/**
+ * Represents the scene where the user can see the total number of appointments scheduled for
+ * for each type, location, and month as well as view appointment schedules for each employee contact.
+ */
 public class TotalsReport extends BorderPane implements Refreshable {
     private Controller controller;
     private Label sceneLabel;
@@ -29,6 +33,10 @@ public class TotalsReport extends BorderPane implements Refreshable {
     private TypeReport typeReport;
     private Schedule contactSchedule;
 
+    /**
+     * Constructs the TotalsReport with the given application controller.
+     * @param controller
+     */
     public TotalsReport(Controller controller) {
         this.controller = controller;
 
@@ -95,12 +103,19 @@ public class TotalsReport extends BorderPane implements Refreshable {
         selectorPane.setVgap(10);
     }//constructor
 
+    /**
+     * Constructs each report with the reports retrieved from the database.
+     * @param reports -the reports
+     */
     private void parseReports(HashMap[] reports) {
         monthReport = new MonthReport(reports[0]);
         typeReport = new TypeReport(reports[1]);
         locationReport = new LocationReport(reports[2]);
     }//parseReports
 
+    /**
+     * Initializes this scene every time another scene transitions to this scene.
+     */
     public void initialize() {
         parseReports(controller.getReports());
         totalsRadio.setSelected(true);
@@ -117,6 +132,9 @@ public class TotalsReport extends BorderPane implements Refreshable {
         contactSchedule.refreshText(rb);
     }//refresh
 
+    /**
+     * Sets the text of each element based on the current ResourceBundle
+     */
     private void setElementText() {
         sceneLabel.setText(controller.getString("appointment_totals"));
         totalsRadio.setText(controller.getString("totals"));
@@ -127,6 +145,9 @@ public class TotalsReport extends BorderPane implements Refreshable {
         returnButton.setText(controller.getString("return"));
     }//setElementText
 
+    /**
+     * Sets the scene to display the totals reports.
+     */
     private void setTotals() {
         selectorPane.getChildren().remove(contactCombo);
         selectorPane.add(byMonthButton, 0, 1, 1, 1);
@@ -136,9 +157,12 @@ public class TotalsReport extends BorderPane implements Refreshable {
         tablePane.setCenter(monthReport);
     }//setTotals
 
+    /**
+     * Sets the scene to display the contact schedules.
+     */
     private void setSchedules() {
         selectorPane.getChildren().removeAll(byMonthButton, byTypeButton, byLocationButton);
         selectorPane.add(contactCombo, 0, 1, 2, 1);
         tablePane.setCenter(contactSchedule);
     }//setSchedules
-}//
+}//TotalsReport

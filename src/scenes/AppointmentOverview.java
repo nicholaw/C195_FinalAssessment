@@ -59,12 +59,12 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
                 Appointment appt = appointmentsTable.getSelectedAppointment();
                 if(controller.deleteAppointment(appt)) {
                     customerInfo.getCustomer().removeAppointment(appt);
+                    appointmentsTable.refreshTable();
                     controller.displayInformationalAlert(controller.getResourceBundle().getString("successful_delete_title"),
                             controller.getResourceBundle().getString("successful_delete_appointment1") +
                             " " + appt.getAppointmentId() + " " +
                             controller.getResourceBundle().getString("successful_delete_appointment2"));
                 }
-                appointmentsTable.refresh();
             }
         });
         returnButton.setOnAction(event -> {
@@ -73,8 +73,8 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         });
         appointmentsTable.setOnMouseClicked(event -> {
             if(appointmentsTable.getSelectedAppointment() != null) {
-                    deleteButton.setDisable(false);
-                    editButton.setDisable(false);
+                deleteButton.setDisable(false);
+                editButton.setDisable(false);
             }
         });
         reportsButton.setOnAction(event -> {
@@ -89,7 +89,7 @@ public class AppointmentOverview  extends BorderPane implements Refreshable {
         var buttonPane = new HBox(scheduleButton, editButton, deleteButton);
         var footerPane = new HBox(reportsButton, returnButton);
         var tablePane = new GridPane();
-        tablePane.add(appointmentsTable, 0, 0);
+        tablePane.add(appointmentsTable.getContentPane(), 0, 0);
         tablePane.add(buttonPane, 0, 1);
         var contentPane = new GridPane();
         contentPane.add(headerPane, 0, 0);
