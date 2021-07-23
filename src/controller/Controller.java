@@ -67,6 +67,7 @@ public class Controller {
 		header = new HeaderPane(this, FXCollections.observableArrayList(SupportedLocale.values()),
 				SupportedLocale.contains(Locale.getDefault().getLanguage()));
 		contentPane.setTop(header);
+		contentPane.setPrefSize(800, 700);
 		scn.getStylesheets().add(ControllerConstants.STYLE_DESTINATION);
 		scn.setRoot(contentPane);
 		loginAttemptDestinaiton = new File(ControllerConstants.LOGIN_ATTEMPT_DESTINATION);
@@ -174,7 +175,7 @@ public class Controller {
 	/**
 	 * Changes the scene the user is viewing by setting the center node of the scene's root
 	 * node to the scene denoted by the given code.
-	 * @param code			-code denoting which scene to chang to
+	 * @param code			-code denoting which scene to change to
 	 * @param participant	-appointment or customer to be displayed in the next scene when applicable
 	 */
 	public void changeScene(SceneCode code, Object participant) {
@@ -418,6 +419,14 @@ public class Controller {
         return null;
     }//getCountry
 
+	/**
+	 * Returns the username of the user currently logged on.
+	 * @return -the username
+	 */
+	public String getCurrentUsername() {
+    	return currentUser.getUsername();
+	}//getCurrentUsername
+
     /**
      * Returns an ObservableList of the customers stored in the database. Used for displaying customers in
 	 * the customer overview scene.
@@ -641,5 +650,5 @@ public class Controller {
         currentUser = dbConnection.getUser(username);
         changeScene(SceneCode.CUSTOMER_OVERVIEW, null);
 		checkForUpcomingAppointments();
-    }
+    }//validLogin
 }//class Controller

@@ -81,6 +81,10 @@ public class Schedule extends TableView<Appointment> {
         this.setItems(FXCollections.observableArrayList(schedule.get(c)));
     }//setItems
 
+    /**
+     * Set the name of each comment
+     * @param rb
+     */
     private void setColumnNames(ResourceBundle rb) {
         dateColumn.setText(rb.getString("date"));
         startColumn.setText(rb.getString("start"));

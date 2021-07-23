@@ -193,12 +193,14 @@ public class DBConnection {
                             "end, "                                         +
                             "contact_name, "                                +
                             "appts.Contact_ID AS contact, "                 +
-                            "location "                                     +
+                            "location, "                                    +
+                            "User_Name AS username "                        +
                         "FROM "                                             +
-                            "appointments AS appts "                        +
-                            "LEFT JOIN "                                    +
-                                "contacts AS conts "                        +
-                            "ON appts.contact_id = conts.contact_id "       +
+                            "(appointments AS appts "                       +
+                            "LEFT JOIN contacts AS conts "                  +
+                                "ON appts.contact_id = conts.contact_id) "  +
+                            "LEFT JOIN users "                              +
+                                "ON appts.User_ID = users.User_ID "         +
                         "WHERE "                                            +
                             "appts.customer_id = ? "                        +
                         "ORDER BY "                                         +
@@ -211,11 +213,12 @@ public class DBConnection {
                         result.getString("title"),
                         result.getString("description"),
                         Type.getType(result.getString("type")),
-                        ZonedDateTime.ofInstant(ZonedDateTime.of(result.getTimestamp("start").toLocalDateTime(), ZoneId.of("UTC")).toInstant(), ZoneId.systemDefault()).toLocalDateTime(),
-                        ZonedDateTime.ofInstant(ZonedDateTime.of(result.getTimestamp("end").toLocalDateTime(), ZoneId.of("UTC")).toInstant(), ZoneId.systemDefault()).toLocalDateTime(),
-                        id,
-                        controller.getContact(result.getInt("contact")),
-                        Location.getLocation(result.getString("location"))));
+                        ZonedDateTime.ofInstant(ZonedDateTime.of(result.getTimestamp("start").toLocalDateTime(),
+                                ZoneId.of("UTC")).toInstant(), ZoneId.systemDefault()).toLocalDateTime(),
+                        ZonedDateTime.ofInstant(ZonedDateTime.of(result.getTimestamp("end").toLocalDateTime(),
+                                ZoneId.of("UTC")).toInstant(), ZoneId.systemDefault()).toLocalDateTime(),
+                        id, controller.getContact(result.getInt("contact")),
+                        Location.getLocation(result.getString("location")), result.getString("username")));
             }
         }catch(SQLException e) {
             e.printStackTrace();

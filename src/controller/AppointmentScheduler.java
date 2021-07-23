@@ -18,6 +18,7 @@ public class AppointmentScheduler extends Application {
         stage.setScene(scene);
         stage.setTitle("Appointment Scheduler");
         new Controller(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 

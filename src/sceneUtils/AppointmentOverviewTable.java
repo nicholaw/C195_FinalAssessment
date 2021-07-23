@@ -27,11 +27,15 @@ public class AppointmentOverviewTable extends GridPane {
     private TableView<Appointment> appointmentTable;
     private TableColumn<Appointment, Long> idCol;
     private TableColumn<Appointment, String> titleCol;
-    private TableColumn<Appointment, String> typeCol;
     private TableColumn<Appointment, String> dateCol;
     private TableColumn<Appointment, String> startCol;
     private TableColumn<Appointment, String> endCol;
+    private TableColumn<Appointment, String> typeCol;
     private TableColumn<Appointment, String> descCol;
+    private TableColumn<Appointment, String> locationCol;
+    private TableColumn<Appointment, String> contactCol;
+    private TableColumn<Appointment, String> userCol;
+
     private HashMap<Integer, WeekOfMonth> weeks;
     private Customer parentCustomer;
     private ResourceBundle rb;
@@ -47,24 +51,31 @@ public class AppointmentOverviewTable extends GridPane {
         appointmentTable = new TableView<>();
         idCol = new TableColumn<>();
         titleCol = new TableColumn<>();
-        typeCol = new TableColumn<>();
         dateCol = new TableColumn<>();
         startCol = new TableColumn<>();
         endCol = new TableColumn<>();
+        typeCol = new TableColumn<>();
         descCol = new TableColumn<>();
+        locationCol = new TableColumn<>();
+        contactCol = new TableColumn<>();
+        userCol = new TableColumn<>();
         setColumnNames();
 
         //Set cell value factory for each column
         idCol.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         startCol.setCellValueFactory(new PropertyValueFactory<>("start"));
         endCol.setCellValueFactory(new PropertyValueFactory<>("end"));
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
         descCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+        locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+        contactCol.setCellValueFactory(new PropertyValueFactory<>("contact"));
+        userCol.setCellValueFactory(new PropertyValueFactory<>("user"));
 
         //Add columns to the table
-        appointmentTable.getColumns().setAll(idCol, titleCol, typeCol, dateCol, startCol, endCol, descCol);
+        appointmentTable.getColumns().setAll(idCol, titleCol, dateCol, startCol, endCol, typeCol,
+                descCol, locationCol, contactCol, userCol);
 
         //Instantiate other scene elements
         unitGroup = new ToggleGroup();
@@ -198,6 +209,9 @@ public class AppointmentOverviewTable extends GridPane {
         startCol.setText(rb.getString("start"));
         endCol.setText(rb.getString("end"));
         descCol.setText(rb.getString("description"));
+        locationCol.setText(rb.getString("location"));
+        contactCol.setText(rb.getString("contact"));
+        userCol.setText(rb.getString("user"));
     }//setColumnNames
 
     /**

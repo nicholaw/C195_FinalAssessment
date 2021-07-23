@@ -26,6 +26,8 @@ public class Appointment {
 	private Contact			contact;
 	private Location		location;
 	private StringProperty locationProperty;
+	private StringProperty contactProperty;
+	private StringProperty userProperty;
 
 	/**
 	 * Constructs this appointment from two provided LocalDateTimes representing the start and end of this appointment.
@@ -41,15 +43,17 @@ public class Appointment {
 	 */
 	public Appointment(long appointmentId, String title, String description, Type type,
 					   LocalDateTime startDateTime, LocalDateTime endDateTime,
-					   long customerId, Contact contact, Location location) {
+					   long customerId, Contact contact, Location location, String username) {
 		this.appointmentId	=	new SimpleLongProperty(this, "appointmentId", appointmentId);
 		this.title 			= 	new SimpleStringProperty(this, "title", title);
 		this.description 	= 	new SimpleStringProperty(this, "description", description);
 		this.type 			= 	new SimpleObjectProperty<>(this, "type", type);
 		this.customerId 	= 	new SimpleLongProperty(this, "customerId", customerId);
 		this.contact 		= 	contact;
+		this.contactProperty = 	new SimpleStringProperty(this, "contact", contact.getName());
 		this.location		=	location;
 		this.locationProperty = new SimpleStringProperty(this, "location", location.toString());
+		this.userProperty 	= 	new SimpleStringProperty(this, "user", username);
 		date = new SimpleStringProperty(this, "date", "");
 		start = new SimpleStringProperty(this, "start", "");
 		end = new SimpleStringProperty(this, "end", "");
@@ -71,6 +75,14 @@ public class Appointment {
 	 */
 	public StringProperty titleProperty() {
 		return title;
+	}
+
+	/**
+	 * Returns a StringProperty for displaying the name of the contact for this appointment in a TableView.
+	 * @return -StringProperty of the name of the contact
+	 */
+	public StringProperty contactProperty() {
+		return contactProperty;
 	}
 
 	/**
@@ -143,6 +155,14 @@ public class Appointment {
 	 */
 	public StringProperty contactEmailProperty() {
 		return new SimpleStringProperty(this, "contactEmail", contact.getEmail());
+	}
+
+	/**
+	 * Returns a StringProperty for displaying the username of the user who created this appointment.
+	 * @return -StringProperty of the user's username
+	 */
+	public StringProperty userProperty() {
+		return userProperty;
 	}
 
 	/**
@@ -312,6 +332,7 @@ public class Appointment {
 	 */
 	public void setContact(Contact c) {
     	this.contact = c;
+    	this.contactProperty.setValue(c.getName());
 	}//setContact
 
 	/**

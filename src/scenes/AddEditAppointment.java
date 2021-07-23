@@ -79,7 +79,7 @@ public class AddEditAppointment extends BorderPane implements Refreshable {
 				if(newAppointment) {
 					Appointment a = new Appointment(this.controller.getNextAppointmentId(), apptTitleField.getText(), descriptionArea.getText(),
 							apptTypeCombo.getValue(), dateTimePane.startDateTime(), dateTimePane.endDateTime(), customerInfo.getCustomerId(), contactBox.getSelectedContact(),
-							locationBox.getValue());
+							locationBox.getValue(), this.controller.getCurrentUsername());
 					if(controller.addAppointment(a))
 						customerInfo.getCustomer().addAppointment(a);
 				} else {
