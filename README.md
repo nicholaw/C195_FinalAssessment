@@ -8,21 +8,21 @@ appointments of each type are scheduled for each month. The hypothetical corpora
 Montreal, and the United Kingdom, and therefore offers services in English and French across multiple time zones.
 
 ###Author: 
-Nicholas Warner
+Nicholas Warner     
 nwarn17@wgu.edu
 
 ###Version:    
-0.9.0 
-July, 13, 2021
+0.9.0     
+July 13, 2021
 
 ###IDE:
-IntelliJ IDEA 2021.1.3 (Community Edition)
-Build #IC-211.7628.21
+IntelliJ IDEA 2021.1.3 (Community Edition)     
+Build #IC-211.7628.21      
 June 29, 2021
 
 ###Resources:
-JDK 11.0.9
-JavaFX 11.0.2
+JDK 11.0.9     
+JavaFX 11.0.2     
 MySQL-Connector-Java 8.0.23
 
 ##Directions For Use:
@@ -32,6 +32,5 @@ MySQL-Connector-Java 8.0.23
 4. Edit a customer by selecting a customer from the tableview on the customer overview screen and selecting the 'Edit' button. This will take you to a form where you may edit the customer's information.
 5. Schedule an appointment for a customer by selecting a customer from the tableview on the customer overview screen and selecting the 'View Appointments' button. On the next screen, select the 'Schedule Appointment' button and fill out the form with the appointment information.
 6. Edit a customer's appointment by selecting a customer from the tableview on the customer overview screen, selecting the 'View Appointments' button, selecting the appointment you would like to edit from the tableview on the following appointments overview screen, and then selecting the 'Edit Appointment' button. This will take you to a form where you may edit the appointment's information.
-7. To view a report of the all the appointments scheduled for each month, select the 'Generate Report' button on the customer overview screen.
-
-Reports are listed on a month-to-month basis and show how many appointments of each type and in each location are scheduled for the selected month.
+7. View reports for an individual customer on a month-to-month basis by selecting a customer selecting a customer from the tableview on the customer overview screen and clicking the 'View Appointments' button. Then on the next page, click the 'Customer Reports' button.
+8. View the schedule for all company contacts by clicking the 'Company Reports' button and then selecting the 'Schedules' radio button on the following page.

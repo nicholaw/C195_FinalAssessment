@@ -69,8 +69,14 @@ public class TotalsReport extends BorderPane implements Refreshable {
         }
 
         //Add event listeners
-        totalsRadio.setOnAction(event -> setTotals());
-        schedulesRadio.setOnAction(event -> setSchedules());
+        totalsRadio.setOnAction(event -> {
+            setTotals();
+            sceneLabel.setText(controller.getString("appointment_totals"));
+        });
+        schedulesRadio.setOnAction(event -> {
+            setSchedules();
+            sceneLabel.setText(controller.getString("contact_schedule"));
+        });
         byMonthButton.setOnAction(event -> tablePane.setCenter(monthReport));
         byTypeButton.setOnAction(event -> tablePane.setCenter(typeReport));
         byLocationButton.setOnAction(event -> tablePane.setCenter(locationReport));
@@ -129,14 +135,18 @@ public class TotalsReport extends BorderPane implements Refreshable {
     @Override
     public void refresh(ResourceBundle rb) {
         setElementText();
-        contactSchedule.refreshText(rb);
+        if(contactSchedule != null)
+            contactSchedule.refreshText(rb);
     }//refresh
 
     /**
      * Sets the text of each element based on the current ResourceBundle
      */
     private void setElementText() {
-        sceneLabel.setText(controller.getString("appointment_totals"));
+        if(totalsRadio.isSelected())
+            sceneLabel.setText(controller.getString("appointment_totals"));
+        else
+            sceneLabel.setText(controller.getString("contact_schedule"));
         totalsRadio.setText(controller.getString("totals"));
         schedulesRadio.setText(controller.getString("schedules"));
         byMonthButton.setText(controller.getString("by_month"));
